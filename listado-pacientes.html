@@ -1,0 +1,126 @@
+<title>Mockup listado de pacientes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f4f2; --card:#fff; --line:#e6e6e3; --text:#1d1d1b; --muted:#6b6b66;
+    --accent:#8fb8cc; --accent-strong:#7aa9c0; --accent-soft:#e3eff5;
+    --green:#5fae8a; --green-soft:#e6f4ec; --amber:#b9852a; --amber-soft:#fbefd6;
+    --banner:#fbb900;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+  .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
+  aside{background:#f7f7f5;border-right:1px solid var(--line);padding:16px 6px;display:flex;flex-direction:column}
+  .logo{font-weight:600;letter-spacing:.06em;font-size:14px;padding:0 8px 22px}
+  .org{font-size:12px;color:var(--muted);padding:0 9px 12px}
+  .nav a{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;color:#3a3a37;text-decoration:none;font-size:15px;margin-bottom:2px}
+  .nav a.active{background:#fff;border:1px solid var(--line);color:var(--text);font-weight:500}
+  .badge{background:var(--accent-strong);color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;display:grid;place-items:center}
+  .cookies{margin-top:auto;padding:12px;color:#3a3a37;font-size:14px}
+  .banner{background:var(--banner);text-align:center;padding:8px;font-size:14px}
+  .banner button{margin-left:10px;border:0;background:#fff;border-radius:999px;padding:4px 12px;font:inherit;font-weight:500}
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:18px 40px;border-bottom:1px solid var(--line)}
+  .crumb{color:var(--muted);font-size:14px}.crumb b{color:var(--text);font-weight:500}
+  .user{display:flex;align-items:center;gap:12px;font-size:13px}
+  .avatar-lg{width:36px;height:36px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-weight:600}
+
+  /* CONTENIDO A ANCHO COMPLETO (sin huecos laterales) */
+  main{padding:32px 40px}
+  .head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
+  h1{margin:0 0 6px;font-size:26px;font-weight:600}
+  .sub{color:var(--muted);font-size:16px}
+  .actions{display:flex;gap:12px;align-items:center}
+  .btn-sede{display:flex;align-items:center;gap:8px;border:1px solid var(--accent);background:var(--accent-soft);border-radius:999px;padding:11px 18px;font:inherit;font-size:15px;color:var(--text)}
+  .btn-sede b{font-weight:600}
+  .btn-add{border:0;background:var(--accent);border-radius:999px;padding:12px 22px;font:inherit;font-weight:600;font-size:15px}
+
+  .filters{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:22px}
+  .frow{display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .frow .btn-sede{flex:none;white-space:nowrap}
+  .search{display:flex;align-items:center;gap:10px;flex:0 1 520px;border:1px solid var(--line);background:#f8f8f6;border-radius:999px;padding:14px 20px;font-size:15px;color:var(--muted);white-space:nowrap}
+  .tabs{display:flex;gap:6px;margin-top:16px;background:#f3f3f1;border-radius:999px;padding:5px;flex-wrap:wrap}
+  .tabs span{flex:1;text-align:center;padding:11px 14px;border-radius:999px;font-size:15px;color:#3a3a37;white-space:nowrap}
+  .tabs span.on{background:var(--accent);color:var(--text);font-weight:600}
+
+  /* TABLA CON COLUMNAS EQUIDISTANTES */
+  .table{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+  .row{display:grid;grid-template-columns:repeat(6,1fr);align-items:center;border-bottom:1px solid var(--line);padding:18px 0}
+  .row>div{display:flex;justify-content:center;text-align:center}
+  .row:not(.th)>div:first-child{text-align:left}
+  .row>div:not(:first-child)>div{display:flex;flex-direction:column;align-items:center}
+  .row.th{padding:16px 0;font-size:12px;font-weight:600;letter-spacing:.06em;color:#3a3a37}
+  .row:last-child{border-bottom:0}
+  .pat{display:flex;gap:12px;align-items:center}
+  .ini{width:40px;height:40px;border-radius:50%;background:#eef1f3;display:grid;place-items:center;font-weight:600;flex:none}
+  .name{font-size:15px;font-weight:500}
+  .meta{font-size:12px;color:var(--muted);line-height:1.5}
+  .stack{display:flex;flex-direction:column;gap:6px}
+  .link{font-size:12px;color:var(--muted)}
+  .pill{font-size:12px;padding:4px 12px;border-radius:999px;background:var(--green-soft);color:var(--green);font-weight:500;width:max-content}
+  .pill.amber{background:var(--amber-soft);color:var(--amber)}
+  .bar{display:flex;gap:4px;margin-top:8px}.bar i{width:18px;height:3px;border-radius:2px;background:#2e5f78}.bar i.off{background:#e1e1de}
+  .sm{font-size:13px}.sm small{color:var(--muted)}
+  .dot::before{content:"•";margin-right:6px}
+  .act{display:flex;flex-direction:column;gap:8px;align-items:center}
+  .b{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;font-weight:500}
+  .b.p{background:var(--accent);border-color:var(--accent)}
+</style>
+<div class="app">
+  <aside>
+    <div class="logo">⁂ BIOTASMART</div>
+    <div class="org">Clínica Demo</div>
+    <nav class="nav">
+      <a>Inicio</a><a class="active">Pacientes</a><a>Stock de tests</a><a>Pagos <span class="badge">1</span></a><a>Ajustes</a>
+    </nav>
+    <div class="cookies">🍪 Preferencias de cookies</div>
+  </aside>
+  <div>
+    <div class="banner">👁 Estás viendo la plataforma como <b>Clínica Demo</b> (demo@clinica-ejemplo.es) <button>Salir</button></div>
+    <div class="topbar">
+      <div class="crumb">Inicio &nbsp;›&nbsp; <b>Pacientes</b></div>
+      <div class="user">文A <span>Español ▾</span><div style="text-align:right"><b>Clínica Demo</b><br><small style="color:var(--muted)">Profesional</small></div><div class="avatar-lg">CD</div></div>
+    </div>
+    <main>
+      <div class="head">
+        <div><h1>Pacientes</h1><div class="sub">128 pacientes · 110 informes sin ver · 3 sin formulario</div></div>
+        <div class="actions">
+          <button class="btn-add">＋ Añadir paciente</button>
+        </div>
+      </div>
+
+      <div class="filters">
+        <!-- Línea 1: buscador + sede a la derecha -->
+        <div class="frow">
+          <div class="search">🔍 Buscar por nombre, email o código...</div>
+          <button class="btn-sede">📍 Sede <b>Todas las sedes</b> ▾</button>
+        </div>
+        <!-- Línea 2: filtros -->
+        <div class="tabs">
+          <span class="on">Todos (131)</span><span>Sin ver (113)</span><span>En curso (17)</span><span>Cuestionario pendiente (0)</span><span>Para repetir (61)</span><span>Sin formulario (3)</span><span>Sin test (0)</span>
+        </div>
+      </div>
+
+      <div class="table">
+        <div class="row th"><div>PACIENTE</div><div>SEDE</div><div>ESTADO DEL TEST</div><div>ÚLTIMO MOVIMIENTO</div><div>INFORME</div><div>ACCIÓN</div></div>
+        <div id="rows"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<script>
+const data=[
+ ["LM","Lucía Martín","#999001002824","lucia.martin@ejemplo.com","Madrid","ok","Informe listo","20 oct","• Sin ver",1],
+ ["PR","Pablo Ruiz","#999001005968","pablo.ruiz@ejemplo.com","Madrid","ok","Informe listo","28 sept","Visto 13 nov",0],
+ ["ET","Elena Torres","#999002001108","elena.torres@ejemplo.com","Barcelona","ok","Informe listo","12 jun","• Sin ver",1],
+ ["MG","Marta Gil","#999001005878","marta.gil@ejemplo.com","Madrid","rec","Recogida solicitada","10 nov","—",2],
+ ["JS","Jorge Sanz","#999003002792","jorge.sanz@ejemplo.com","Madrid","ok","Informe listo","25 ago","• Sin ver",1]];
+document.getElementById('rows').innerHTML=data.map(d=>`
+<div class="row">
+ <div><div class="pat"><div class="ini">${d[0]}</div><div><div class="name">${d[1]}</div><div class="meta">Avanzado · ${d[2]}<br>${d[3]}</div></div></div></div>
+ <div><div class="stack"><span class="sm">${d[4]}</span><span class="link">Mover de sede</span></div></div>
+ <div><div><div class="pill ${d[5]=='rec'?'amber':''}">${d[6]}</div><div class="bar">${d[5]=='rec'?'<i></i><i></i><i></i><i class=off></i><i class=off></i>':'<i></i><i></i><i></i><i></i><i></i>'}</div></div></div>
+ <div class="sm">${d[6]} · <small>${d[7]}</small></div>
+ <div class="sm">${d[8]}</div>
+ <div><div class="act">${d[9]==2?'<button class="b">Ver respuestas</button>':`<button class="b">⤓ PDF</button><button class="b ${d[9]?'p':''}">Ver informe</button>`}</div></div>
+</div>`).join('');
+</script>

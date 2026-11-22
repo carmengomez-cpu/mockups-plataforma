@@ -1,0 +1,383 @@
+<title>Mockup ficha con test</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f4f2; --card:#fff; --line:#e6e6e3; --text:#1d1d1b; --muted:#6b6b66;
+    --accent:#8fb8cc; --accent-soft:#e3eff5; --navy:#2e5f78;
+    --green:#3f9a70; --green-soft:#e6f4ec; --banner:#fbb900; --blue-soft:#eef4f8;
+    --wa:#25a35a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+  button{font:inherit;color:inherit}
+  .banner{background:var(--banner);text-align:center;padding:8px;font-size:14px}
+  .banner button{margin-left:10px;border:0;background:#fff;border-radius:999px;padding:4px 12px;font-weight:500}
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 40px;border-bottom:1px solid var(--line)}
+  .crumb{color:var(--muted)}.crumb b{color:var(--text);font-weight:500}
+  .user{display:flex;align-items:center;gap:12px;font-size:13px}
+  .av{width:36px;height:36px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-weight:600}
+
+  main{display:grid;grid-template-columns:380px 1fr;gap:24px;padding:22px 40px;align-items:start}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px}
+
+  /* ===== Columna izquierda: perfil ===== */
+  .profile{padding:22px 22px 18px;position:relative;text-align:center}
+  .edit-ic{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:15px;cursor:pointer}
+  .edit-ic:hover{background:var(--accent-soft);border-color:var(--accent)}
+  .big-av{width:76px;height:76px;border-radius:50%;background:var(--accent-soft);color:var(--navy);display:grid;place-items:center;font-size:26px;font-weight:600;margin:0 auto 10px}
+  .profile h1{font-size:21px;margin:0 0 2px}
+  .code{color:var(--muted);font-size:13px}
+  .status{display:inline-block;margin-top:8px;background:var(--green-soft);color:var(--green);font-size:12px;font-weight:500;padding:4px 12px;border-radius:999px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-weight:500;cursor:pointer}
+  .btn.p{background:var(--accent);border-color:var(--accent)}
+  .btn.wide{width:100%;margin-top:14px}
+
+  .block{text-align:left;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+  .ttl{font-size:11px;letter-spacing:.08em;color:var(--muted);margin:0 0 8px;font-weight:600;text-transform:uppercase}
+
+  /* Envíos: link de pago | formulario */
+  .sends{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end}
+  .linkbox{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:#f8f8f6;border-radius:999px;padding:4px 4px 4px 12px;min-width:0}
+  .linkbox span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:#3a3a37}
+  .icb{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;font-size:13px;flex:none}
+  .icb:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .icb.wa{color:var(--wa)}
+  .chans{display:flex;gap:6px}
+  .sub-st{font-size:11px;margin-top:6px}
+  .sub-st.ok{color:var(--green)} .sub-st.pend{color:#b9852a}
+
+  /* Datos */
+  .field{display:flex;gap:10px;align-items:center;padding:6px 0}
+  .field .ic{width:30px;height:30px;border-radius:8px;background:#f3f3f1;display:grid;place-items:center;flex:none;font-size:13px}
+  .field small{display:block;color:var(--muted);font-size:11px}
+  .field span{font-size:14px;word-break:break-all}
+  .field .empty{color:#a3a39e}
+  .sede{background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin-bottom:6px}
+  .sede label{display:block;font-size:11px;color:var(--navy);font-weight:600;letter-spacing:.06em;margin-bottom:6px}
+  .sede select{width:100%;height:36px;border-radius:999px;border:1px solid var(--accent);background:#fff;padding:0 12px;font:inherit;font-weight:600;cursor:pointer}
+
+  /* ===== Derecha ===== */
+  .right{display:flex;flex-direction:column;gap:16px;min-width:0}
+  .progress{padding:18px 28px}
+  .ph{display:flex;justify-content:space-between;margin-bottom:16px;font-size:13px}
+  .ph b{color:var(--green)}
+  .ph .tname{font-weight:600;font-size:15px}
+  .steps{display:grid;grid-template-columns:repeat(5,1fr);position:relative}
+  .steps::before{content:"";position:absolute;top:13px;left:10%;right:10%;height:2px;background:var(--navy)}
+  .st{text-align:center;position:relative}
+  .st i{width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;margin:0 auto 8px;font-style:normal;font-size:13px}
+  .st b{display:block;font-size:13px;font-weight:500}.st small{color:var(--muted);font-size:12px}
+
+  .tabsbar{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:10px}
+  .tabs{display:flex;gap:4px}
+  .tabs a{padding:12px 16px;font-size:15px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tabs a{border-radius:10px 10px 0 0;transition:background .15s}
+  .tabs a:hover{background:#ecece9;color:var(--text)}
+  .tabs a.on{color:var(--navy);font-weight:700;border-bottom:3px solid var(--navy);background:var(--accent-soft)}
+  .panel{display:flex;flex-direction:column;gap:16px}
+  .hidden{display:none!important}
+
+  /* Historial: línea temporal horizontal */
+  .hist{padding:18px 28px 22px}
+  .hh{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+  .tsel{height:34px;border-radius:999px;border:1px solid var(--accent);background:var(--accent-soft);padding:0 14px;font:inherit;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer}
+  .ev.pend i{border-color:#d6d6d2}
+  .ev.pend b{color:var(--muted);font-weight:500}
+  .tl .fill{position:absolute;top:8px;left:10%;height:2px;background:var(--navy);z-index:0}
+  .tl.partial::before{background:#e1e1de}
+  .ev{z-index:1}
+  .tag-ok.run{background:#fbefd6;color:#b9852a}
+  .tl{display:grid;grid-template-columns:repeat(5,1fr);position:relative}
+  .tl::before{content:"";position:absolute;top:8px;left:10%;right:10%;height:2px;background:var(--navy)}
+  .ev{text-align:center;position:relative}
+  .ev i{display:block;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--navy);margin:0 auto 10px}
+  .ev.last i{background:var(--navy);box-shadow:0 0 0 4px var(--accent-soft)}
+  .ev b{display:block;font-size:13px;font-weight:600}
+  .ev small{color:var(--muted);font-size:12px}
+  .testc{overflow:hidden}
+  .tr{display:flex;justify-content:space-between;align-items:center;padding:14px 20px}
+  .tr small{color:var(--muted)}
+  .tag-ok{font-size:12px;padding:4px 12px;border-radius:999px;background:var(--green-soft);color:var(--green);font-weight:500}
+  .avisos{border-top:1px solid var(--line);padding:12px 20px;font-size:13px}
+  .avisos small{display:block;color:var(--muted);font-size:11px;margin-bottom:2px}
+  .tools{display:flex;gap:8px;padding-bottom:8px}
+  .tools .btn{padding:8px 14px;font-size:13px}
+
+  .sample{padding:22px 28px;display:flex;justify-content:space-between;align-items:center;gap:24px}
+  .sample h2{margin:0 0 8px;font-size:18px}.sample p{margin:0;color:var(--muted);max-width:440px}
+  .kpis{display:flex}.kpi{padding:0 24px;border-left:1px solid var(--line);text-align:right}.kpi:first-child{border:0}
+  .kpi b{font-size:32px;font-weight:600;display:block}.kpi small{color:var(--muted)}
+  .range{background:var(--blue-soft);border-radius:18px;padding:22px 28px}
+  .range .t{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+  .range .n{font-size:34px;font-weight:600}
+  .bars div{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #dde7ee}
+
+  /* ===== Pop-up vincular test ===== */
+  .modal.lg{max-width:520px}
+  .mhead{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+  .xbtn{border:0;background:#f3f3f1;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px}
+  .stock-n{font-size:13px;color:var(--muted);margin:0 0 14px}
+  .tlist{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto;margin-bottom:18px}
+  .titem{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:14px;padding:11px 14px;cursor:pointer}
+  .titem:hover{border-color:var(--accent)}
+  .titem.on{border-color:var(--navy);background:var(--accent-soft)}
+  .titem input{accent-color:var(--navy);width:16px;height:16px;margin:0}
+  .titem .tc{font-weight:600;font-size:14px}
+  .titem .tt{font-size:12px;color:var(--muted)}
+  .titem .cad{margin-left:auto;font-size:12px;color:var(--muted);text-align:right}
+  .nostock{text-align:center;padding:8px 0 4px}
+  .nostock .mic{margin:0 auto 14px;background:#f0f0ee}
+  .nostock .mact{justify-content:center}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .demo{position:fixed;right:16px;bottom:16px;background:#1d1d1b;color:#fff;border-radius:14px;padding:10px 12px;font-size:12px;z-index:9;display:flex;gap:8px;align-items:center;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+  .demo button{border:0;border-radius:999px;padding:5px 10px;background:#3a3a37;color:#fff;cursor:pointer;font-size:12px}
+  .demo button.on{background:var(--accent);color:#1d1d1b;font-weight:600}
+
+  /* ===== Pop-up confirmación de sede ===== */
+  .overlay{position:fixed;inset:0;background:rgba(20,30,35,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+  .overlay.show{display:flex}
+  .modal{background:#fff;border-radius:20px;padding:26px 28px;max-width:420px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.2)}
+  .modal .mic{width:44px;height:44px;border-radius:50%;background:#fbefd6;display:grid;place-items:center;font-size:20px;margin-bottom:14px}
+  .modal h3{margin:0 0 8px;font-size:18px}
+  .modal p{margin:0 0 18px;color:#3a3a37;line-height:1.5}
+  .move{display:flex;align-items:center;gap:10px;background:#f5f5f3;border-radius:12px;padding:10px 14px;margin-bottom:20px;font-weight:600}
+  .move .from{color:var(--muted);text-decoration:line-through;font-weight:500}
+  .mact{display:flex;justify-content:flex-end;gap:10px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1d1d1b;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;display:none;z-index:11}
+</style>
+<div class="banner">👁 Estás viendo la plataforma como <b>Clínica Demo</b> (demo@clinica-ejemplo.es) <button>Salir</button></div>
+<div class="topbar">
+  <div class="crumb">Inicio &nbsp;›&nbsp; Pacientes &nbsp;›&nbsp; <b>Lucía Martín</b></div>
+  <div class="user">文A <span>Español ▾</span><div style="text-align:right"><b>Clínica Demo</b><br><small style="color:var(--muted)">Profesional</small></div><div class="av">CD</div></div>
+</div>
+
+<main>
+  <!-- ===== COLUMNA IZQUIERDA ===== -->
+  <aside class="card profile">
+    <button class="edit-ic" title="Editar paciente" aria-label="Editar paciente">✎</button>
+    <div class="big-av">LM</div>
+    <h1>Lucía Martín</h1>
+    <div class="code">#999001002824</div>
+    <div class="status">● Informe listo · sin ver</div>
+    <button class="btn p wide" onclick="openLink()">＋ Vincular nuevo test</button>
+
+    <!-- Envíos: link de pago + formulario -->
+    <div class="block">
+      <div class="sends">
+        <div style="min-width:0">
+          <p class="ttl">Link de pago</p>
+          <div class="linkbox">
+            <span>buy.stripe.com/test_8wM4gk2Hx7bQ</span>
+            <button class="icb" title="Copiar link" onclick="toast('Link copiado')">⧉</button>
+            <button class="icb" title="Compartir" onclick="toast('Compartir link de pago')">↗</button>
+          </div>
+          <div class="sub-st pend">● Pendiente de pago</div>
+        </div>
+        <div>
+          <p class="ttl">Envío de formulario</p>
+          <div class="chans">
+            <button class="icb wa" title="Enviar por WhatsApp" onclick="toast('Formulario enviado por WhatsApp')">💬</button>
+            <button class="icb" title="Enviar por email" onclick="toast('Formulario enviado por email')">✉</button>
+            <button class="icb" title="Enviar por SMS" onclick="toast('Formulario enviado por SMS')">📱</button>
+          </div>
+          <div class="sub-st ok">✓ Enviado 24 sept</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos: sede primero -->
+    <div class="block">
+      <div class="sede">
+        <label for="sede">SEDE</label>
+        <select id="sede">
+          <option>Madrid</option><option>Barcelona</option><option>Valencia</option>
+        </select>
+      </div>
+      <p class="ttl" style="margin-top:10px">Contacto</p>
+      <div class="field"><div class="ic">✉</div><div><small>Email</small><span>lucia.martin@ejemplo.com</span></div></div>
+      <div class="field"><div class="ic">☎</div><div><small>Teléfono</small><span class="empty">Sin teléfono</span></div></div>
+      <div class="field"><div class="ic">⌂</div><div><small>Dirección</small><span class="empty">Sin dirección</span></div></div>
+    </div>
+  </aside>
+
+  <!-- ===== DERECHA ===== -->
+  <section class="right">
+    <div class="card progress">
+      <div class="ph"><span class="tname">Microbiota intestinal · Proceso del test</span><b>Informe listo · sin ver</b></div>
+      <div class="steps">
+        <div class="st"><i>✓</i><b>Tubo asignado</b><small>—</small></div>
+        <div class="st"><i>✓</i><b>Cuestionario</b><small>24 sept</small></div>
+        <div class="st"><i>✓</i><b>Recogida</b><small>25 sept</small></div>
+        <div class="st"><i>✓</i><b>Laboratorio</b><small>07 oct</small></div>
+        <div class="st"><i>✓</i><b>Informe</b><small>20 oct</small></div>
+      </div>
+    </div>
+
+    <div class="tabsbar">
+      <div class="tabs" role="tablist">
+        <a class="on" data-tab="informe">Informe</a><a data-tab="microbiota">Microbiota</a><a data-tab="cuestionario">Cuestionario</a><a data-tab="notas">Notas</a><a data-tab="historial">Historial (2)</a>
+      </div>
+      <div class="tools" id="tools"><button class="btn">Modo consulta</button><button class="btn">⤓ Descargar PDF</button><button class="btn p">➤ Enviarme el PDF por correo</button></div>
+    </div>
+
+    <!-- ===== Panel HISTORIAL ===== -->
+    <div class="panel hidden" id="p-historial">
+      <div class="card hist">
+        <div class="hh">
+          <p class="ttl" style="margin:0">Línea temporal</p>
+          <select id="testSel" class="tsel" aria-label="Elegir test"></select>
+        </div>
+        <div class="tl" id="tl"></div>
+      </div>
+
+      <p class="ttl" style="margin:18px 0 8px">Test seleccionado</p>
+      <div class="card testc">
+        <div class="tr">
+          <div><b id="tcCode"></b> · <span id="tcType"></span><br><small id="tcDate"></small></div>
+          <span class="tag-ok" id="tcTag"></span>
+        </div>
+        <div class="avisos"><small>Avisos</small><span id="tcAv"></span></div>
+      </div>
+    </div>
+
+    <!-- ===== Panel genérico (Microbiota / Cuestionario / Notas) ===== -->
+    <div class="panel hidden" id="p-otro"><div class="card" style="padding:40px;text-align:center;color:var(--muted)" id="otro-txt"></div></div>
+
+    <!-- ===== Panel INFORME ===== -->
+    <div class="panel" id="p-informe">
+    <div class="card sample">
+      <div><h2>La muestra</h2><p>Firmicutes (59.84%) y Bacteroidota (32.71%) son los filos principales.</p></div>
+      <div class="kpis"><div class="kpi"><b>4,07</b><small>Diversidad</small></div><div class="kpi"><b>193</b><small>Riqueza</small></div><div class="kpi"><b>0,77</b><small>Uniformidad</small></div></div>
+    </div>
+
+    <div class="range">
+      <div class="t"><span class="n">18</span><div><b style="font-size:16px">Fuera del rango</b><br><small style="color:var(--muted)">de la población de referencia</small></div></div>
+      <div class="bars"><div><span>Alistipes</span><b>15,9%</b></div></div>
+    </div>
+    </div>
+  </section>
+</main>
+
+<!-- Pop-up de confirmación -->
+<div class="overlay" id="ov" role="dialog" aria-modal="true" aria-labelledby="mt">
+  <div class="modal">
+    <div class="mic">⚠️</div>
+    <h3 id="mt">¿Cambiar de sede a este paciente?</h3>
+    <p>Vas a mover a <b>Lucía Martín</b> a otra sede. Sus tests e informes pasarán a gestionarse desde la nueva sede.</p>
+    <div class="move"><span class="from" id="from">Madrid</span> → <span id="to">Barcelona</span></div>
+    <div class="mact">
+      <button class="btn" id="cancel">Cancelar</button>
+      <button class="btn p" id="confirm">Sí, cambiar de sede</button>
+    </div>
+  </div>
+</div>
+<!-- Pop-up vincular nuevo test: CON stock -->
+<div class="overlay" id="ovStock" role="dialog" aria-modal="true" aria-labelledby="st1">
+  <div class="modal lg">
+    <div class="mhead"><h3 id="st1">Vincular nuevo test a Lucía Martín</h3><button class="xbtn" onclick="closeM('ovStock')" aria-label="Cerrar">✕</button></div>
+    <p class="stock-n">Tienes <b>5 tests</b> en stock en la sede Madrid. Elige cuál quieres vincular.</p>
+    <div class="tlist" id="tlist"></div>
+    <div class="mact">
+      <button class="btn" onclick="closeM('ovStock')">Cancelar</button>
+      <button class="btn p" id="doLink" disabled>Vincular test</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pop-up vincular nuevo test: SIN stock -->
+<div class="overlay" id="ovNo" role="dialog" aria-modal="true" aria-labelledby="st2">
+  <div class="modal">
+    <div style="text-align:right"><button class="xbtn" onclick="closeM('ovNo')" aria-label="Cerrar">✕</button></div>
+    <div class="nostock">
+      <div class="mic">📦</div>
+      <h3 id="st2">No tienes ningún test en stock</h3>
+      <p>Para vincular un test a este paciente primero necesitas tener tests disponibles.</p>
+      <div class="mact"><button class="btn p" onclick="closeM('ovNo');toast('Abriendo pedido de tests…')">Pedir más tests</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Control solo para la maqueta -->
+<div class="demo">Simular:
+  <button class="on" data-stock="1">Con stock</button>
+  <button data-stock="0">Sin stock</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const sel=document.getElementById('sede'), ov=document.getElementById('ov');
+  let current=sel.value;
+  sel.addEventListener('change',()=>{
+    document.getElementById('from').textContent=current;
+    document.getElementById('to').textContent=sel.value;
+    ov.classList.add('show');
+  });
+  document.getElementById('cancel').onclick=()=>{sel.value=current;ov.classList.remove('show')};
+  document.getElementById('confirm').onclick=()=>{current=sel.value;ov.classList.remove('show');toast('Paciente movido a '+current)};
+  // Historial: varios tests
+  const TESTS=[
+    {code:'#999001002824',type:'Microbiota intestinal',date:'Asignado el 17/08/2026',tag:'Informe listo',done:true,av:'Todavía no se ha enviado ningún aviso.',
+     ev:[['Tubo asignado','17/08/2026'],['Cuestionario recibido','24/09/2026'],['Recogida solicitada','25/09/2026'],['En el laboratorio','07/10/2026'],['Informe listo','20/10/2026']]},
+    {code:'#999001007140',type:'Microbiota intestinal (repetición)',date:'Asignado el 05/11/2026',tag:'En curso',done:false,av:'Recordatorio de cuestionario enviado por WhatsApp el 08/11/2026.',
+     ev:[['Tubo asignado','05/11/2026'],['Cuestionario recibido','12/11/2026'],['Recogida solicitada',null],['En el laboratorio',null],['Informe listo',null]]}
+  ];
+  const testSel=document.getElementById('testSel'), tl=document.getElementById('tl');
+  testSel.innerHTML=TESTS.map((t,i)=>`<option value="${i}">Test ${t.code} · ${t.tag}</option>`).join('');
+  function renderTest(i){
+    const t=TESTS[i], lastDone=t.ev.map(e=>!!e[1]).lastIndexOf(true), n=t.ev.length;
+    tl.classList.toggle('partial',!t.done);
+    const fillW=lastDone<=0?0:(lastDone/(n-1))*80;
+    tl.innerHTML=(t.done?'':`<span class="fill" style="width:${fillW}%"></span>`)+t.ev.map((e,k)=>
+      `<div class="ev ${!e[1]?'pend':''} ${k===lastDone?'last':''}"><i></i><b>${e[0]}</b><small>${e[1]||'Pendiente'}</small></div>`).join('');
+    document.getElementById('tcCode').textContent=t.code;
+    document.getElementById('tcType').textContent=t.type;
+    document.getElementById('tcDate').textContent=t.date;
+    const tag=document.getElementById('tcTag'); tag.textContent=t.tag; tag.classList.toggle('run',!t.done);
+    document.getElementById('tcAv').textContent=t.av;
+  }
+  testSel.onchange=()=>renderTest(+testSel.value);
+  testSel.value=1; renderTest(1);
+
+  // Pestañas
+  const tabs=document.querySelectorAll('[data-tab]');
+  tabs.forEach(t=>t.onclick=()=>{
+    tabs.forEach(x=>x.classList.toggle('on',x===t));
+    const k=t.dataset.tab;
+    document.getElementById('p-informe').classList.toggle('hidden',k!=='informe');
+    document.getElementById('p-historial').classList.toggle('hidden',k!=='historial');
+    const other=!['informe','historial'].includes(k);
+    document.getElementById('p-otro').classList.toggle('hidden',!other);
+    if(other) document.getElementById('otro-txt').textContent='Contenido de '+t.textContent+' (no incluido en la maqueta)';
+    document.getElementById('tools').style.visibility=k==='informe'?'visible':'hidden';
+  });
+
+  // ===== Vincular nuevo test =====
+  let hasStock=true, picked=null;
+  const stockTests=[
+    ['#999001006012','Microbiota intestinal · Avanzado','Caduca 03/2027'],
+    ['#999001006013','Microbiota intestinal · Avanzado','Caduca 03/2027'],
+    ['#999001006027','Microbiota intestinal · Básico','Caduca 05/2027'],
+    ['#999001006031','Microbiota intestinal · Básico','Caduca 05/2027'],
+    ['#999004000215','Nutrición','Caduca 08/2027']];
+  const tlist=document.getElementById('tlist'), doLink=document.getElementById('doLink');
+  tlist.innerHTML=stockTests.map((t,i)=>`<label class="titem"><input type="radio" name="tst" value="${i}"><div><div class="tc">${t[0]}</div><div class="tt">${t[1]}</div></div><div class="cad">${t[2]}</div></label>`).join('');
+  tlist.addEventListener('change',e=>{
+    picked=+e.target.value;
+    tlist.querySelectorAll('.titem').forEach((el,i)=>el.classList.toggle('on',i===picked));
+    doLink.disabled=false;
+  });
+  doLink.onclick=()=>{closeM('ovStock');toast('Test '+stockTests[picked][0]+' vinculado a Lucía Martín')};
+  function openLink(){
+    if(hasStock){picked=null;doLink.disabled=true;tlist.querySelectorAll('input').forEach(i=>i.checked=false);tlist.querySelectorAll('.titem').forEach(el=>el.classList.remove('on'));document.getElementById('ovStock').classList.add('show')}
+    else document.getElementById('ovNo').classList.add('show');
+  }
+  function closeM(id){document.getElementById(id).classList.remove('show')}
+  document.querySelectorAll('[data-stock]').forEach(b=>b.onclick=()=>{
+    hasStock=b.dataset.stock==='1';
+    document.querySelectorAll('[data-stock]').forEach(x=>x.classList.toggle('on',x===b));
+  });
+  ['ovStock','ovNo'].forEach(id=>{const o=document.getElementById(id);o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show')})});
+
+  function toast(t){const e=document.getElementById('toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',2200)}
+</script>

@@ -1,0 +1,295 @@
+<title>Mockup stock de tests</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f0f0ef; --card:#fff; --line:#e3e3e0; --field:#f0f0ef; --text:#1d1d1b; --muted:#66665f;
+    --accent:#97bdd0; --accent-soft:#e6f0f5; --navy:#2e5f78; --banner:#fbb900;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;border-top:4px solid var(--banner)}
+  button{font:inherit;color:inherit}
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 40px;border-bottom:1px solid var(--line)}
+  .crumb{color:var(--muted);font-size:15px}.crumb b{color:var(--text);font-weight:500}
+  .user{display:flex;align-items:center;gap:12px;font-size:14px}
+  .av{width:40px;height:40px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-weight:600}
+  main{padding:28px 40px}
+  .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:16px;flex-wrap:wrap}
+  h1{margin:0;font-size:26px}
+  .acts{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:11px 18px;font-weight:500;cursor:pointer}
+  .btn.p{background:var(--accent);border-color:var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px 28px;margin-bottom:22px}
+  .card h2{margin:0 0 4px;font-size:19px}
+  .desc{color:var(--muted);margin:0}
+
+  /* Cabecera del recuadro con desplegable de sede */
+  .ch{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}
+  .sedesel{display:flex;align-items:center;gap:8px;border:1px solid var(--accent);background:var(--accent-soft);border-radius:999px;padding:0 6px 0 14px;height:40px}
+  .sedesel span{color:var(--navy);font-size:13px}
+  .sedesel select{border:0;background:transparent;font:inherit;font-weight:600;color:var(--text);height:100%;padding-right:6px;cursor:pointer;outline:none}
+
+  .sedes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .sc{border:1px solid var(--line);border-radius:18px;padding:14px 18px;cursor:pointer;transition:.15s;text-align:left;background:#fff}
+  .sc:hover{border-color:var(--accent)}
+  .sc small{color:#3a3a37;font-size:14px}
+  .sc b{display:block;font-size:26px;margin-top:4px}
+
+  /* Vista de una sede */
+  .one{display:grid;grid-template-columns:220px 1fr;gap:14px}
+  .tot{background:var(--accent-soft);border-radius:18px;padding:16px 20px}
+  .tot small{color:var(--navy);font-weight:500}
+  .tot b{display:block;font-size:38px;margin-top:4px}
+  .tot em{font-style:normal;color:var(--muted);font-size:12px}
+  .types{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .ty{border:1px solid var(--line);border-radius:18px;padding:14px 18px}
+  .ty small{color:var(--muted)}
+  .ty b{display:block;font-size:24px;margin-top:4px}
+  .hidden{display:none}
+  .fchip{background:var(--accent-soft);color:var(--navy);border-radius:999px;padding:7px 14px;font-size:13px;white-space:nowrap}
+  .fchip b{font-weight:600}
+  .emptyrow td{color:var(--muted);padding:28px}
+  .ck{width:56px}
+  .ck input,td.ck input{width:18px;height:18px;accent-color:var(--navy);cursor:pointer}
+  tbody tr{cursor:pointer}
+  tbody tr:hover{background:#fafaf9}
+  tbody tr.sel{background:var(--accent-soft)}
+  .abar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--navy);color:#fff;border-radius:16px;padding:10px 12px 10px 18px;margin-bottom:12px}
+  .abar.hidden{display:none}
+  .abtns{display:flex;gap:8px;flex-wrap:wrap}
+  .abar .btn{padding:8px 14px;font-size:13px;color:var(--text)}
+  .abar .btn:disabled{opacity:.45;cursor:not-allowed}
+  .abar .btn.ghost{background:transparent;border-color:rgba(255,255,255,.4);color:#fff}
+
+  /* Pop-ups */
+  .overlay{position:fixed;inset:0;background:rgba(20,30,35,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+  .overlay.show{display:flex}
+  .modal{background:#fff;border-radius:20px;padding:24px 26px;max-width:460px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.2)}
+  .modal h3{margin:0 0 6px;font-size:18px}
+  .modal p{margin:0 0 16px;color:var(--muted)}
+  .modal .field{width:100%;height:42px;border-radius:999px;border:1px solid var(--line);background:var(--field);padding:0 16px;font:inherit;margin-bottom:12px}
+  .plist{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow:auto;margin-bottom:18px}
+  .pi{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;cursor:pointer}
+  .pi.on{border-color:var(--navy);background:var(--accent-soft)}
+  .pi .in{width:32px;height:32px;border-radius:50%;background:#eef1f3;display:grid;place-items:center;font-weight:600;font-size:12px;flex:none}
+  .pi small{display:block;color:var(--muted);font-size:12px}
+  .mact{display:flex;justify-content:flex-end;gap:10px}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .chips span{background:#f3f3f1;border-radius:999px;padding:4px 10px;font-size:12px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1d1d1b;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;display:none;z-index:11}
+
+  .ord{margin-top:16px}
+  .ord .st{font-weight:600}
+  .ordrow{display:grid;grid-template-columns:120px 1fr 1fr auto;gap:16px;margin-top:14px;align-items:center}
+  .link{color:var(--navy);cursor:pointer}
+
+  .search{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--field);border-radius:999px;padding:12px 18px;color:var(--muted);margin:16px 0}
+  table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  th{font-size:12px;letter-spacing:.06em;text-align:center;padding:14px;border-bottom:1px solid var(--line);color:#3a3a37}
+  td{padding:14px;border-bottom:1px solid var(--line);text-align:center}
+  td small{display:block;color:var(--muted)}
+  tr:last-child td{border-bottom:0}
+  @media (max-width:800px){main,.topbar{padding-left:16px;padding-right:16px}.sedes,.one,.types{grid-template-columns:1fr}.ordrow{grid-template-columns:1fr}}
+</style>
+<div class="topbar">
+  <div class="crumb">Inicio &nbsp;›&nbsp; <b>Stock de tests</b></div>
+  <div class="user">文A <span>Español ▾</span><div style="text-align:right">Clínica Demo<br><small style="color:var(--muted)">Profesional</small></div><div class="av">CD</div></div>
+</div>
+
+<main>
+  <div class="head">
+    <h1>Stock de tests</h1>
+    <div class="acts">
+      <button class="btn p">Pedir más tests</button>
+    </div>
+  </div>
+
+  <!-- STOCK POR SEDE con desplegable -->
+  <section class="card">
+    <div class="ch">
+      <div><h2>Stock por sede</h2><p class="desc">Tubos de cada sede sin asignar a ningún paciente.</p></div>
+      <label class="sedesel">📍 <span>Sede</span>
+        <select id="sede">
+          <option value="all">Todas las sedes</option>
+          <option>Madrid</option><option>Barcelona</option><option>Mallorca</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="sedes" id="vAll"></div>
+
+    <div class="one hidden" id="vOne">
+      <div class="tot"><small id="oName"></small><b id="oTot"></b><em>tubos sin asignar</em></div>
+      <div class="types" id="oTypes"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Pedidos por llegar</h2>
+    <div class="ord">
+      <div class="st">En preparación · 20 tubos</div>
+      <p class="desc">Aún no han salido de nuestro almacén.</p>
+      <div class="ordrow"><span>20 tubos</span><span>Solicitado el 17/11/2026 · a 30 días</span><span style="color:var(--muted)">Sede: Madrid</span><span class="link">Ver pedido</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="ch" style="margin-bottom:0">
+      <h2>Tests disponibles en la clínica</h2>
+      <span class="fchip" id="fchip">Mostrando: <b>Todas las sedes</b> · <span id="cnt"></span></span>
+    </div>
+    <div class="search">🔍 Buscar por código de tubo, centro o paciente...</div>
+
+    <!-- Barra de acciones: aparece al seleccionar tests -->
+    <div class="abar hidden" id="abar">
+      <span><b id="selN">1</b> <span id="selTxt">test seleccionado</span></span>
+      <div class="abtns">
+        <button class="btn p" id="aLink">＋ Vincular a paciente</button>
+        <button class="btn" id="aMove">⇄ Mover de sede</button>
+        <button class="btn ghost" id="aClear">Quitar selección</button>
+      </div>
+    </div>
+
+    <table>
+      <thead><tr><th class="ck"><input type="checkbox" id="ckAll" aria-label="Seleccionar todos"></th><th>TUBO Y PACIENTE</th><th>SEDE</th><th>TIPO DE TEST</th><th>FECHA DE ALTA</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </section>
+</main>
+
+<!-- Pop-up vincular -->
+<div class="overlay" id="ovLink" role="dialog" aria-modal="true" aria-labelledby="lt">
+  <div class="modal">
+    <h3 id="lt">Vincular test a un paciente</h3>
+    <p>Test <b id="linkCode"></b>. Elige el paciente.</p>
+    <input class="field" id="pq" placeholder="🔍 Buscar paciente por nombre o email">
+    <div class="plist" id="plist"></div>
+    <div class="mact"><button class="btn" data-close="ovLink">Cancelar</button><button class="btn p" id="doLink" disabled>Vincular test</button></div>
+  </div>
+</div>
+
+<!-- Pop-up mover de sede -->
+<div class="overlay" id="ovMove" role="dialog" aria-modal="true" aria-labelledby="mvt">
+  <div class="modal">
+    <h3 id="mvt">Mover de sede</h3>
+    <p>Vas a mover <b id="moveN"></b>:</p>
+    <div class="chips" id="moveChips"></div>
+    <select class="field" id="moveTo">
+      <option value="">Elige la sede de destino…</option>
+      <option>Madrid</option><option>Barcelona</option><option>Mallorca</option>
+    </select>
+    <div class="mact"><button class="btn" data-close="ovMove">Cancelar</button><button class="btn p" id="doMove" disabled>Mover tests</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+  const DATA={
+    Madrid:{tot:18,types:[['Microbiota · Avanzado',9],['Microbiota · Básico',6],['Nutrición',3]]},
+    Barcelona:{tot:23,types:[['Microbiota · Avanzado',12],['Microbiota · Básico',7],['Nutrición',4]]},
+    Mallorca:{tot:14,types:[['Microbiota · Avanzado',5],['Microbiota · Básico',6],['Nutrición',3]]}
+  };
+  const sel=document.getElementById('sede'), vAll=document.getElementById('vAll'), vOne=document.getElementById('vOne');
+  vAll.innerHTML=Object.entries(DATA).map(([n,d])=>`<button class="sc" data-s="${n}"><small>${n}</small><b>${d.tot}</b></button>`).join('');
+  vAll.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{sel.value=b.dataset.s;render()});
+  const TUBES=[
+    ['#999001006012','Madrid','Microbiota · Avanzado','02/11/2026'],
+    ['#999001006013','Madrid','Microbiota · Avanzado','02/11/2026'],
+    ['#999001006027','Barcelona','Microbiota · Básico','02/11/2026'],
+    ['#999001006031','Barcelona','Microbiota · Avanzado','30/10/2026'],
+    ['#999001006044','Madrid','Microbiota · Básico','28/10/2026'],
+    ['#999004000215','Mallorca','Nutrición','28/10/2026'],
+    ['#999001006058','Mallorca','Microbiota · Avanzado','21/10/2026'],
+    ['#999004000222','Barcelona','Nutrición','21/10/2026']];
+  let selected=new Set(), visible=[];
+  function renderTable(s){
+    const rows=TUBES.filter(t=>s==='all'||t[1]===s);
+    visible=rows.map(t=>t[0]);
+    selected=new Set([...selected].filter(c=>visible.includes(c)));
+    document.getElementById('tbody').innerHTML=rows.length
+      ? rows.map(t=>`<tr data-code="${t[0]}" class="${selected.has(t[0])?'sel':''}"><td class="ck"><input type="checkbox" ${selected.has(t[0])?'checked':''} aria-label="Seleccionar ${t[0]}"></td><td><b>${t[0]}</b><small>Sin asignar</small></td><td>${t[1]}</td><td>${t[2]}</td><td>${t[3]}</td></tr>`).join('')
+      : `<tr class="emptyrow"><td colspan="5">No hay tests disponibles en esta sede.</td></tr>`;
+    updateBar();
+    document.querySelector('#fchip b').textContent=s==='all'?'Todas las sedes':s;
+    document.getElementById('cnt').textContent=rows.length+(rows.length===1?' test':' tests');
+  }
+  // ===== Selección =====
+  const tbody=document.getElementById('tbody'), ckAll=document.getElementById('ckAll'), abar=document.getElementById('abar');
+  tbody.addEventListener('click',e=>{
+    const tr=e.target.closest('tr[data-code]'); if(!tr) return;
+    const c=tr.dataset.code;
+    selected.has(c)?selected.delete(c):selected.add(c);
+    tr.classList.toggle('sel',selected.has(c));
+    tr.querySelector('input').checked=selected.has(c);
+    updateBar();
+  });
+  ckAll.onchange=()=>{selected=ckAll.checked?new Set(visible):new Set();renderTable(sel.value)};
+  function updateBar(){
+    const n=selected.size;
+    abar.classList.toggle('hidden',n===0);
+    document.getElementById('selN').textContent=n;
+    document.getElementById('selTxt').textContent=n===1?'test seleccionado':'tests seleccionados';
+    const aLink=document.getElementById('aLink');
+    aLink.disabled=n!==1;
+    aLink.title=n!==1?'Selecciona un solo test para vincularlo a un paciente':'';
+    ckAll.checked=n>0&&n===visible.length;
+    ckAll.indeterminate=n>0&&n<visible.length;
+  }
+  document.getElementById('aClear').onclick=()=>{selected.clear();renderTable(sel.value)};
+
+  // ===== Pop-up: vincular a paciente =====
+  const PATIENTS=[['LM','Lucía Martín','lucia.martin@ejemplo.com'],['PR','Pablo Ruiz','pablo.ruiz@ejemplo.com'],['MG','Marta Gil','marta.gil@ejemplo.com'],['JS','Jorge Sanz','jorge.sanz@ejemplo.com'],['SL','Sara López','sara.lopez@ejemplo.com']];
+  let pPick=null;
+  const plist=document.getElementById('plist'), doLink=document.getElementById('doLink');
+  function drawPatients(q=''){
+    const f=PATIENTS.map((p,i)=>[p,i]).filter(([p])=>(p[1]+p[2]).toLowerCase().includes(q.toLowerCase()));
+    plist.innerHTML=f.map(([p,i])=>`<div class="pi ${pPick===i?'on':''}" data-i="${i}"><span class="in">${p[0]}</span><div>${p[1]}<small>${p[2]}</small></div></div>`).join('')||'<p>No se encontró ningún paciente.</p>';
+  }
+  plist.onclick=e=>{const it=e.target.closest('.pi');if(!it)return;pPick=+it.dataset.i;doLink.disabled=false;drawPatients(document.getElementById('pq').value)};
+  document.getElementById('pq').oninput=e=>drawPatients(e.target.value);
+  document.getElementById('aLink').onclick=()=>{
+    pPick=null;doLink.disabled=true;document.getElementById('pq').value='';
+    document.getElementById('linkCode').textContent=[...selected][0];
+    drawPatients();open('ovLink');
+  };
+  doLink.onclick=()=>{
+    const c=[...selected][0], p=PATIENTS[pPick][1];
+    TUBES.splice(TUBES.findIndex(t=>t[0]===c),1); selected.clear();
+    close('ovLink');renderTable(sel.value);toast('Test '+c+' vinculado a '+p);
+  };
+
+  // ===== Pop-up: mover de sede =====
+  const moveTo=document.getElementById('moveTo'), doMove=document.getElementById('doMove');
+  document.getElementById('aMove').onclick=()=>{
+    const codes=[...selected];
+    document.getElementById('moveN').textContent=codes.length===1?'1 test':codes.length+' tests';
+    document.getElementById('moveChips').innerHTML=codes.map(c=>`<span>${c} · ${TUBES.find(t=>t[0]===c)[1]}</span>`).join('');
+    moveTo.value='';doMove.disabled=true;open('ovMove');
+  };
+  moveTo.onchange=()=>doMove.disabled=!moveTo.value;
+  doMove.onclick=()=>{
+    const n=selected.size;
+    TUBES.forEach(t=>{if(selected.has(t[0]))t[1]=moveTo.value});
+    selected.clear();close('ovMove');renderTable(sel.value);
+    toast((n===1?'1 test movido':n+' tests movidos')+' a '+moveTo.value);
+  };
+
+  function open(id){document.getElementById(id).classList.add('show')}
+  function close(id){document.getElementById(id).classList.remove('show')}
+  document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>close(b.dataset.close));
+  document.querySelectorAll('.overlay').forEach(o=>o.onclick=e=>{if(e.target===o)o.classList.remove('show')});
+  function toast(t){const e=document.getElementById('toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',2400)}
+
+  renderTable('all');
+  function render(){
+    const s=sel.value, all=s==='all';
+    renderTable(s);
+    vAll.classList.toggle('hidden',!all); vOne.classList.toggle('hidden',all);
+    if(all) return;
+    const d=DATA[s];
+    document.getElementById('oName').textContent=s;
+    document.getElementById('oTot').textContent=d.tot;
+    document.getElementById('oTypes').innerHTML=d.types.map(t=>`<div class="ty"><small>${t[0]}</small><b>${t[1]}</b></div>`).join('');
+  }
+  sel.onchange=render;
+</script>

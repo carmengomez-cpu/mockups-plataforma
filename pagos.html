@@ -1,0 +1,255 @@
+<title>Mockup detalle de pago</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f0f0ef; --card:#fff; --line:#e3e3e0; --text:#1d1d1b; --muted:#66665f;
+    --accent:#97bdd0; --accent-soft:#e6f0f5; --navy:#2e5f78; --banner:#fbb900;
+    --green:#3f9a70; --green-soft:#e6f4ec; --amber:#a8741c; --amber-soft:#fbefd6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+  button{font:inherit;color:inherit}
+
+  /* ===== Estructura de la plataforma (sin cambios) ===== */
+  .app{display:grid;grid-template-columns:270px 1fr;min-height:100vh}
+  aside{border-right:1px solid var(--line);padding:22px 10px 20px;display:flex;flex-direction:column}
+  .logo{font-size:15px;letter-spacing:.06em;padding:0 2px 28px}
+  .org{font-size:13px;color:#4a4a45;padding:0 10px 16px}
+  .nav a{display:block;padding:11px 14px;border-radius:10px;font-size:15px;color:#3a3a37;margin-bottom:3px;cursor:pointer}
+  .nav a.on{background:#fff;border:1px solid var(--line);color:var(--text);font-weight:500}
+  .cookies{margin-top:auto;font-size:15px;color:#3a3a37;padding:0 14px}
+  .page{display:flex;flex-direction:column;min-width:0}
+  .banner{background:var(--banner);text-align:center;padding:8px;font-size:15px}
+  .banner button{margin-left:12px;border:0;background:#fff;border-radius:999px;padding:4px 14px;font-weight:600}
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 44px;border-bottom:1px solid var(--line)}
+  .crumb{font-size:15px;color:#5a5a55}.crumb b{color:var(--text);font-weight:500}.crumb span{margin:0 10px}
+  .crumb a{cursor:pointer}.crumb a:hover{text-decoration:underline}
+  .user{display:flex;align-items:center;gap:14px;font-size:14px}
+  .sel{border:1px solid var(--line);background:#f5f5f4;border-radius:999px;padding:6px 12px}
+  .who{text-align:right;line-height:1.2;font-size:15px}.who small{display:block;font-size:12px;color:var(--muted)}
+  .av{width:40px;height:40px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-weight:600}
+  .content{padding:28px 44px 20px;flex:1}
+  .pfoot{padding:0 44px 26px;font-size:15px;color:#5a5a55}
+
+  /* ===== Listado de pagos ===== */
+  .head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:22px}
+  h1{margin:0 0 6px;font-size:26px}
+  .sub{color:var(--muted);font-size:16px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:11px 20px;font-weight:600;cursor:pointer}
+  .btn.p{background:var(--accent);border-color:var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:22px}
+  .row{display:grid;grid-template-columns:repeat(4,1fr);align-items:center;padding:16px 0;border-bottom:1px solid var(--line);text-align:center}
+  .row:last-child{border-bottom:0}
+  .row.th{font-size:12px;font-weight:600;letter-spacing:.06em;color:#3a3a37;padding:14px 0}
+  .row:not(.th){cursor:pointer}
+  .row:not(.th):hover{background:#fafaf9}
+  .stk{display:flex;flex-direction:column;align-items:center;gap:5px}
+  .pill{font-size:12px;padding:4px 12px;border-radius:999px;font-weight:500}
+  .pill.pend{background:var(--accent-soft);color:var(--navy);font-weight:600}
+  .pill.ok{background:var(--green-soft);color:var(--green)}
+  .pill.amber{background:var(--amber-soft);color:var(--amber)}
+  .row small{display:block;color:var(--muted);font-size:12px}
+  .lnk{color:var(--navy);font-weight:500;font-size:15px;cursor:pointer}
+  .lnk:hover{text-decoration:underline}
+  /* Listado tal cual el diseño actual */
+  .lrow{display:grid;grid-template-columns:2fr 1fr 2fr 1fr;gap:16px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);font-size:15px}
+  .lrow:last-child{border-bottom:0}
+  .lth{font-size:13px;padding:12px 18px}
+  .lrow .r{text-align:right}
+  .lrow small{display:block;color:var(--muted);font-size:12px}
+  .pill.grey{background:#eef0ec;color:#7a8a76}
+  .pc{color:var(--amber);font-size:13px;margin-top:6px}
+  #list{max-width:1330px}
+
+  /* ===== Detalle del pedido ===== */
+  .back{border:0;background:none;color:var(--navy);font-weight:500;cursor:pointer;padding:0;margin-bottom:12px}
+  .meta{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:15px;flex-wrap:wrap}
+  .pay{margin-top:18px;background:var(--navy);color:#fff;border-radius:20px;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+  .pay .l{display:flex;align-items:center;gap:16px}
+  .pay .ic{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.15);display:grid;place-items:center;font-size:22px}
+  .pay h2{margin:0;font-size:24px;font-weight:700}
+  .pay p{margin:4px 0 0;opacity:.85}
+  .pay .amt{text-align:right}.pay .amt b{font-size:30px;display:block}.pay .amt small{opacity:.8}
+  .payr{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:flex-end}
+  .paybtn{border:0;background:#fff;color:var(--navy);border-radius:999px;padding:15px 30px;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18);transition:transform .1s}
+  .paybtn:hover{transform:translateY(-1px)}
+  .paybtn:disabled{opacity:.7;cursor:wait}
+  .secure{flex-basis:100%;text-align:right;font-size:12px;opacity:.8}
+  .pay.paid{background:var(--green-soft);color:var(--green)}
+  .pay.paid .ic{background:#fff}
+  .dcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 24px;margin-top:16px}
+  .dcard h2{margin:0 0 14px;font-size:17px}
+  .ttl{font-size:11px;letter-spacing:.08em;color:var(--muted);margin:0 0 8px;font-weight:600;text-transform:uppercase}
+  .item{display:flex;justify-content:space-between;align-items:center;background:#fafaf9;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:14px}
+  .item small{display:block;color:var(--muted)}
+  .prep{color:var(--green);font-weight:600;font-size:13px}
+  .two{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:start}
+  .tiles{display:grid;grid-template-columns:1fr;gap:10px}
+  .tile{border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .tile small{color:var(--muted);display:block}
+  .tile em{font-style:normal;font-size:12px;color:var(--muted)}
+  .tile b{font-size:20px}
+  .tile.disc{background:var(--green-soft);border-color:transparent}
+  .tile.disc small,.tile.disc b,.tile.disc em{color:var(--green)}
+  .ln{display:flex;justify-content:space-between;padding:6px 0;color:#3a3a37}
+  .ln.d{color:var(--green);font-weight:500}
+  .ln.sep{border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
+  .ln.tot{border-top:2px solid var(--text);margin-top:8px;padding-top:10px;font-size:17px;font-weight:700;color:var(--text)}
+  .ln .inc{color:var(--green);font-weight:500}
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .fact{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+  .fact .fi{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);display:grid;place-items:center;flex:none}
+  .fact small{display:block;color:var(--muted);font-size:12px}
+  .fact b{font-size:15px}
+  .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+  .ph b{color:var(--navy);font-size:13px}
+  .tl{display:grid;grid-template-columns:repeat(4,1fr);position:relative}
+  .tl::before{content:"";position:absolute;top:8px;left:12.5%;right:12.5%;height:2px;background:#e1e1de}
+  .tl .fill{position:absolute;top:8px;left:12.5%;height:2px;background:var(--navy)}
+  .ev{text-align:center;position:relative;z-index:1}
+  .ev i{display:block;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--navy);margin:0 auto 10px}
+  .ev.now i{background:var(--navy);box-shadow:0 0 0 4px var(--accent-soft)}
+  .ev.pend i{border-color:#d6d6d2}
+  .ev b{display:block;font-size:13px;font-weight:600}
+  .ev.pend b{color:var(--muted);font-weight:500}
+  .ev small{color:var(--muted);font-size:12px}
+  .hidden{display:none!important}
+</style>
+<div class="app">
+  <aside>
+    <div class="logo">⁂ BIOTASMART</div>
+    <div class="org">Clínica Demo</div>
+    <nav class="nav"><a>Inicio</a><a>Pacientes</a><a>Stock de tests</a><a class="on">Pagos</a><a>Ajustes</a></nav>
+    <div class="cookies">🍪 Preferencias de cookies</div>
+  </aside>
+
+  <div class="page">
+    <div class="banner">👁 Estás viendo la plataforma como <b>Clínica Demo</b> (demo@clinica-ejemplo.es) <button>Salir</button></div>
+    <div class="topbar">
+      <div class="crumb" id="crumb"></div>
+      <div class="user">文A <span class="sel">Español ▾</span><span class="sel">Clínica Demo ▾</span><div class="who">Clínica Demo<small>Profesional</small></div><div class="av">CD</div>⇥</div>
+    </div>
+
+    <div class="content">
+      <!-- ===== VISTA LISTADO ===== -->
+      <div id="vList">
+        <div class="head">
+          <div><h1>Mis pagos</h1><div class="sub">Los pedidos de tu clínica, los pendientes primero.</div></div>
+          <button class="btn p">＋ Pedir más tests</button>
+        </div>
+        <div class="card" id="list"></div>
+      </div>
+
+      <!-- ===== VISTA DETALLE ===== -->
+      <div id="vDetail" class="hidden">
+        <button class="back" onclick="showList()">← Volver a Mis pagos</button>
+        <h1>Tu pedido</h1>
+        <div class="meta" id="dMeta"></div>
+
+        <div class="pay" id="dPay"></div>
+
+        <section class="dcard">
+          <h2>Resumen del pedido</h2>
+          <div class="item" id="dItem"></div>
+          <div class="two">
+            <div>
+              <p class="ttl">Precio por test</p>
+              <div class="tiles" id="dTiles"></div>
+            </div>
+            <div>
+              <p class="ttl">Desglose</p>
+              <div id="dLines"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="dcard"><div class="facts" id="dFacts"></div></section>
+
+        <section class="dcard">
+          <div class="ph"><h2 style="margin:0">Envío</h2><b id="dShipSt"></b></div>
+          <div class="tl" id="dTl"></div>
+        </section>
+      </div>
+    </div>
+    <div class="pfoot">Política de cookies</div>
+  </div>
+</div>
+
+<script>
+  const eur=n=>n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+  // Cifras de ejemplo: 1 test a 296,65 € con IVA y un 10 % de descuento (inventado)
+  const ORDERS=[
+    {id:'18/11/2026',tests:1,type:'Microbiota intestinal Avanzado',ship:'Pendiente',shipCls:'amber',paid:false,
+     tarifa:272.41,disc:.10,base:245.17,iva:51.48,total:296.65,prep:'0/1 preparados',
+     sede:'Madrid',sent:'—',done:'—',shipSt:'Pedido confirmado',
+     tl:[['Confirmado','18/11/2026'],['Preparado',null],['Enviado',null],['Entregado',null]]},
+    {id:'17/11/2026',tests:1,type:'Microbiota intestinal Avanzado',ship:'Entregado',shipCls:'ok',paid:false,
+     tarifa:272.41,disc:.10,base:245.17,iva:51.48,total:296.65,prep:'✓ 1/1 preparados',
+     sede:'Madrid',sent:'18/11/2026',done:'20/11/2026',shipSt:'Entregado',
+     tl:[['Confirmado','17/11/2026'],['Preparado','18/11/2026'],['Enviado','18/11/2026'],['Entregado','20/11/2026']]}
+  ];
+  const crumb=document.getElementById('crumb');
+
+  // Listado
+  // Listado: igual que el diseño actual
+  function renderList(){ document.getElementById('list').innerHTML=
+    `<div class="lrow lth"><div>Estado</div><div class="r">Total</div><div>Fecha</div><div></div></div>`+
+    ORDERS.map((o,i)=>`<div class="lrow">
+      <div>${o.paid
+        ? `<span class="pill ok">Pagado</span>`
+        : o.ship==='Entregado'
+        ? `<span class="pill ok">Entregado</span><div class="pc">Pendiente de cobro</div>`
+        : `<span class="pill grey">Pendiente de cobro</span>`}</div>
+      <div class="r">${eur(o.total)}<small>${o.tests} test${o.tests>1?'s':''}</small></div>
+      <div>Solicitado el ${o.id}</div>
+      <div class="r"><a class="lnk" onclick="showDetail(${i})">Ver</a></div></div>`).join(''); }
+
+  function showList(){
+    renderList();
+    document.getElementById('vList').classList.remove('hidden');
+    document.getElementById('vDetail').classList.add('hidden');
+    crumb.innerHTML='Inicio<span>›</span><b>Pagos</b>';
+  }
+  function showDetail(i){
+    const o=ORDERS[i], unitBase=o.base/o.tests, unitIva=o.total/o.tests, save=(o.tarifa-o.base)/o.tests;
+    document.getElementById('vList').classList.add('hidden');
+    document.getElementById('vDetail').classList.remove('hidden');
+    crumb.innerHTML=`Inicio<span>›</span><a onclick="showList()">Pagos</a><span>›</span><b>Pedido del ${o.id}</b>`;
+    document.getElementById('dMeta').innerHTML=`<span class="pill ${o.shipCls}">Envío: ${o.ship}</span> Clínica Demo · Pedido emitido el ${o.id}`;
+    const pay=document.getElementById('dPay');
+    pay.classList.toggle('paid',o.paid);
+    pay.innerHTML=o.paid
+      ? `<div class="l"><div class="ic">✅</div><div><h2>Pagado</h2><p>Gracias, el pago está registrado.</p></div></div><div class="amt"><b>${eur(o.total)}</b><small>IVA incluido</small></div>`
+      : `<div class="l"><div class="ic">💳</div><div><h2>Pendiente de pago</h2><p>La factura llegará con la entrega.</p></div></div>
+         <div class="payr"><div class="amt"><b>${eur(o.total)}</b><small>IVA incluido</small></div>
+         <button class="paybtn" id="payBtn" onclick="payNow(${i})">Pagar ${eur(o.total)} →</button>
+         <span class="secure">🔒 Pago seguro con tarjeta</span></div>`;
+    document.getElementById('dItem').innerHTML=`<div><b>${o.tests} test${o.tests>1?'s':''} · ${o.type}</b><small>Envío Paq24 a tu consulta incluido</small></div><span class="prep">${o.prep}</span>`;
+    document.getElementById('dTiles').innerHTML=`
+      <div class="tile"><div><small>Sin IVA</small><em>con el descuento aplicado</em></div><b>${eur(unitBase)}</b></div>
+      <div class="tile"><div><small>Con IVA (21 %)</small><em>lo que pagas por cada test</em></div><b>${eur(unitIva)}</b></div>
+      <div class="tile disc"><div><small>Descuento por tu pedido</small><em>ahorras ${eur(save)} por test</em></div><b>−${Math.round(o.disc*100)} %</b></div>`;
+    document.getElementById('dLines').innerHTML=`
+      <div class="ln"><span>${o.tests} × ${eur(o.tarifa/o.tests)} (tarifa)</span><span>${eur(o.tarifa)}</span></div>
+      <div class="ln d"><span>Descuento por pedido (${Math.round(o.disc*100)} %)</span><span>−${eur(o.tarifa-o.base)}</span></div>
+      <div class="ln sep"><span>Base imponible</span><span>${eur(o.base)}</span></div>
+      <div class="ln"><span>IVA (21 %)</span><span>${eur(o.iva)}</span></div>
+      <div class="ln"><span>Envío Paq24</span><span class="inc">Incluido</span></div>
+      <div class="ln tot"><span>Total</span><span>${eur(o.total)}</span></div>`;
+    document.getElementById('dFacts').innerHTML=`
+      <div class="fact"><span class="fi">📍</span><div><small>Sede</small><b>${o.sede}</b></div></div>
+      <div class="fact"><span class="fi">📤</span><div><small>Enviada</small><b>${o.sent}</b></div></div>
+      <div class="fact"><span class="fi">✅</span><div><small>Completada</small><b>${o.done}</b></div></div>`;
+    document.getElementById('dShipSt').textContent=o.shipSt;
+    const last=o.tl.map(e=>!!e[1]).lastIndexOf(true);
+    document.getElementById('dTl').innerHTML=`<span class="fill" style="width:${last/3*75}%"></span>`+
+      o.tl.map((e,k)=>`<div class="ev ${!e[1]?'pend':''} ${k===last?'now':''}"><i></i><b>${e[0]}</b><small>${e[1]||'Pendiente'}</small></div>`).join('');
+  }
+  // Simulación del pago (en la plataforma real abriría la pasarela de pago)
+  function payNow(i){
+    const b=document.getElementById('payBtn');
+    b.disabled=true; b.textContent='Abriendo pago seguro…';
+    setTimeout(()=>{ORDERS[i].paid=true;showDetail(i)},1200);
+  }
+  showList();
+</script>
