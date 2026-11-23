@@ -134,6 +134,9 @@
   .mhead{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
   .xbtn{border:0;background:#f3f3f1;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px}
   .stock-n{font-size:13px;color:var(--muted);margin:0 0 14px}
+  .tsearch{width:100%;height:38px;border-radius:999px;border:1px solid var(--line);background:#f8f8f6;padding:0 14px;font:inherit;font-size:13px;margin-bottom:10px}
+  .tsearch:focus{outline:2px solid var(--accent);background:#fff}
+  .tnone{color:var(--muted);font-size:13px;text-align:center;margin:0 0 16px}
   .tlist{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto;margin-bottom:18px}
   .titem{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:14px;padding:11px 14px;cursor:pointer}
   .titem:hover{border-color:var(--accent)}
@@ -287,7 +290,9 @@
   <div class="modal lg">
     <div class="mhead"><h3 id="st1">Vincular nuevo test a Lucía Martín</h3><button class="xbtn" onclick="closeM('ovStock')" aria-label="Cerrar">✕</button></div>
     <p class="stock-n">Tienes <b>5 tests</b> en stock en la sede Madrid. Elige cuál quieres vincular.</p>
+    <input id="tq" class="tsearch" type="search" placeholder="🔍 Buscar por número de test" aria-label="Buscar test por número">
     <div class="tlist" id="tlist"></div>
+    <p class="tnone" id="tnone" hidden>Ningún test coincide con la búsqueda.</p>
     <div class="mact">
       <button class="btn" onclick="closeM('ovStock')">Cancelar</button>
       <button class="btn p" id="doLink" disabled>Vincular test</button>
@@ -408,9 +413,16 @@
     tlist.querySelectorAll('.titem').forEach((el,i)=>el.classList.toggle('on',i===picked));
     doLink.disabled=false;
   });
+  const tq=document.getElementById('tq');
+  tq.addEventListener('input',()=>{
+    const q=tq.value.trim().toLowerCase().replace('#','');
+    let shown=0;
+    tlist.querySelectorAll('.titem').forEach(el=>{const ok=el.textContent.toLowerCase().replace('#','').includes(q);el.hidden=!ok;if(ok)shown++;});
+    document.getElementById('tnone').hidden=shown>0;
+  });
   doLink.onclick=()=>{closeM('ovStock');toast('Test '+stockTests[picked][0]+' vinculado a Lucía Martín')};
   function openLink(){
-    if(hasStock){picked=null;doLink.disabled=true;tlist.querySelectorAll('input').forEach(i=>i.checked=false);tlist.querySelectorAll('.titem').forEach(el=>el.classList.remove('on'));document.getElementById('ovStock').classList.add('show')}
+    if(hasStock){picked=null;tq.value='';tlist.querySelectorAll('.titem').forEach(el=>el.hidden=false);document.getElementById('tnone').hidden=true;doLink.disabled=true;tlist.querySelectorAll('input').forEach(i=>i.checked=false);tlist.querySelectorAll('.titem').forEach(el=>el.classList.remove('on'));document.getElementById('ovStock').classList.add('show')}
     else document.getElementById('ovNo').classList.add('show');
   }
   function closeM(id){document.getElementById(id).classList.remove('show')}
