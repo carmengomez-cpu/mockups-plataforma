@@ -95,8 +95,12 @@
   .tl.partial::before{background:#e1e1de}
   .ev{z-index:1}
   .tag-ok.run{background:#fbefd6;color:#b9852a}
-  .tl{display:grid;grid-template-columns:repeat(5,1fr);position:relative}
-  .tl::before{content:"";position:absolute;top:8px;left:10%;right:10%;height:2px;background:var(--navy)}
+  .tl{display:grid;grid-template-columns:repeat(5,1fr);position:relative;--edge:10%}
+  .tl::before{content:"";position:absolute;top:8px;left:var(--edge);right:var(--edge);height:2px;background:var(--navy)}
+  .ev em{display:block;font-style:normal;font-size:11px;color:var(--navy);margin-top:2px}
+  .modo{font-size:12px;color:var(--muted);margin:-8px 0 16px}
+  #topState.run,.profile .status.run{color:#a8741c}
+  .profile .status.run{background:#fbefd6}
   .ev{text-align:center;position:relative}
   .ev i{display:block;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--navy);margin:0 auto 10px}
   .ev.last i{background:var(--navy);box-shadow:0 0 0 4px var(--accent-soft)}
@@ -208,21 +212,21 @@
       <p class="ttl" style="margin-top:10px">Contacto</p>
       <div class="field"><div class="ic">✉</div><div><small>Email</small><span>lucia.martin@ejemplo.com</span></div></div>
       <div class="field"><div class="ic">☎</div><div><small>Teléfono</small><span class="empty">Sin teléfono</span></div></div>
-      <div class="field"><div class="ic">⌂</div><div><small>Dirección</small><span class="empty">Sin dirección</span></div></div>
+      <div class="field"><div class="ic">⌂</div><div><small>Dirección</small><span>C/ Ejemplo 8, 2ºB · 28010 Madrid</span></div></div>
+      <div class="field"><div class="ic">📦</div><div><small>Recogida de la muestra</small><span id="recogida"></span></div></div>
     </div>
   </aside>
 
   <!-- ===== DERECHA ===== -->
   <section class="right">
+    <!-- Proceso del test: misma línea temporal que en Historial, siempre del test seleccionado -->
     <div class="card progress">
-      <div class="ph"><span class="tname">Microbiota intestinal · Proceso del test</span><b>Informe listo · sin ver</b></div>
-      <div class="steps">
-        <div class="st"><i>✓</i><b>Tubo asignado</b><small>—</small></div>
-        <div class="st"><i>✓</i><b>Cuestionario</b><small>24 sept</small></div>
-        <div class="st"><i>✓</i><b>Recogida</b><small>25 sept</small></div>
-        <div class="st"><i>✓</i><b>Laboratorio</b><small>07 oct</small></div>
-        <div class="st"><i>✓</i><b>Informe</b><small>20 oct</small></div>
+      <div class="ph">
+        <span class="tname"><span id="topName">Microbiota intestinal</span> · <span id="topCode"></span></span>
+        <b id="topState"></b>
       </div>
+      <div class="modo" id="topModo"></div>
+      <div class="tl" id="tlTop"></div>
     </div>
 
     <div class="tabsbar">
@@ -327,29 +331,58 @@
   });
   document.getElementById('cancel').onclick=()=>{sel.value=current;ov.classList.remove('show')};
   document.getElementById('confirm').onclick=()=>{current=sel.value;ov.classList.remove('show');toast('Paciente movido a '+current)};
-  // Historial: varios tests
+  // ===== Estados del test (F12) =====
+  // Online / híbrido sin stock: Sin tubo → Pendiente de pago → Envío del test → Cuestionario enviado → Recogida solicitada → Procesando → Informe listo
+  // Presencial con stock (el test se entrega y se cobra en la clínica): Sin tubo → Cuestionario enviado → Recogida solicitada → Procesando → Informe listo
+  const FLOW_ONLINE=['Sin tubo','Pendiente de pago','Envío del test','Cuestionario enviado','Recogida solicitada','Procesando','Informe listo'];
+  const FLOW_STOCK=['Sin tubo','Cuestionario enviado','Recogida solicitada','Procesando','Informe listo'];
   const TESTS=[
-    {code:'#999001002824',type:'Microbiota intestinal',date:'Asignado el 17/08/2026',tag:'Informe listo',done:true,av:'Todavía no se ha enviado ningún aviso.',
-     ev:[['Tubo asignado','17/08/2026'],['Cuestionario recibido','24/09/2026'],['Recogida solicitada','25/09/2026'],['En el laboratorio','07/10/2026'],['Informe listo','20/10/2026']]},
-    {code:'#999001007140',type:'Microbiota intestinal (repetición)',date:'Asignado el 05/11/2026',tag:'En curso',done:false,av:'Recordatorio de cuestionario enviado por email el 08/11/2026.',
-     ev:[['Tubo asignado','05/11/2026'],['Cuestionario recibido','12/11/2026'],['Recogida solicitada',null],['En el laboratorio',null],['Informe listo',null]]}
+    {code:'#999001002824',type:'Microbiota intestinal',modo:'stock',recogida:'En el domicilio del paciente',
+     date:'Entregado en la clínica el 17/09/2026',done:true,state:'Informe listo · sin ver',av:'Aviso de informe listo enviado por email el 20/10/2026.',
+     dates:{'Sin tubo':'15/09/2026','Cuestionario enviado':'17/09/2026','Recogida solicitada':'25/09/2026','Procesando':'07/10/2026','Informe listo':'20/10/2026'}},
+    {code:'#999001007140',type:'Microbiota intestinal (repetición)',modo:'online',recogida:'En el domicilio del paciente',
+     date:'Pagado online el 03/11/2026',done:false,state:'Cuestionario enviado',av:'Recordatorio de cuestionario enviado por email el 08/11/2026.',
+     dates:{'Sin tubo':'01/11/2026','Pendiente de pago':'01/11/2026','Envío del test':'03/11/2026','Cuestionario enviado':'05/11/2026'}}
   ];
+  const MODO_TXT={stock:'🏥 Presencial · test del stock de la clínica (se entrega y se cobra en la clínica, sin «Pendiente de pago» ni «Envío del test»)',
+                  online:'🌐 Online · el paciente paga con el link y le enviamos el test a casa'};
+  // Dibuja la línea temporal del test en el contenedor indicado (la de arriba y la de Historial usan esta misma función)
+  function drawTimeline(el,t){
+    const flow=t.modo==='stock'?FLOW_STOCK:FLOW_ONLINE, n=flow.length;
+    const lastDone=flow.map(s=>!!t.dates[s]).lastIndexOf(true);
+    const edge=50/n, span=100-100/n, fillW=lastDone<=0?0:(lastDone/(n-1))*span;
+    el.style.gridTemplateColumns=`repeat(${n},1fr)`;
+    el.style.setProperty('--edge',edge+'%');
+    el.classList.toggle('partial',!t.done);
+    el.innerHTML=(t.done?'':`<span class="fill" style="left:${edge}%;width:${fillW}%"></span>`)+flow.map((s,k)=>{
+      const d=t.dates[s], extra=(s==='Recogida solicitada'&&d)?`<em>${t.recogida.replace('En el ','').replace('En la ','')}</em>`:'';
+      return `<div class="ev ${!d?'pend':''} ${k===lastDone?'last':''}"><i></i><b>${s}</b><small>${d||'Pendiente'}</small>${extra}</div>`;
+    }).join('');
+  }
   const testSel=document.getElementById('testSel'), tl=document.getElementById('tl');
-  testSel.innerHTML=TESTS.map((t,i)=>`<option value="${i}">Test ${t.code} · ${t.tag}</option>`).join('');
+  testSel.innerHTML=TESTS.map((t,i)=>`<option value="${i}">Test ${t.code} · ${t.state}</option>`).join('');
   function renderTest(i){
-    const t=TESTS[i], lastDone=t.ev.map(e=>!!e[1]).lastIndexOf(true), n=t.ev.length;
-    tl.classList.toggle('partial',!t.done);
-    const fillW=lastDone<=0?0:(lastDone/(n-1))*80;
-    tl.innerHTML=(t.done?'':`<span class="fill" style="width:${fillW}%"></span>`)+t.ev.map((e,k)=>
-      `<div class="ev ${!e[1]?'pend':''} ${k===lastDone?'last':''}"><i></i><b>${e[0]}</b><small>${e[1]||'Pendiente'}</small></div>`).join('');
+    const t=TESTS[i];
+    // Historial
+    drawTimeline(tl,t);
     document.getElementById('tcCode').textContent=t.code;
     document.getElementById('tcType').textContent=t.type;
     document.getElementById('tcDate').textContent=t.date;
-    const tag=document.getElementById('tcTag'); tag.textContent=t.tag; tag.classList.toggle('run',!t.done);
+    const tag=document.getElementById('tcTag'); tag.textContent=t.state; tag.classList.toggle('run',!t.done);
     document.getElementById('tcAv').textContent=t.av;
+    // Proceso del test (arriba): el mismo test y la misma línea
+    drawTimeline(document.getElementById('tlTop'),t);
+    document.getElementById('topName').textContent=t.type;
+    document.getElementById('topCode').textContent=t.code;
+    const st=document.getElementById('topState'); st.textContent=t.state; st.classList.toggle('run',!t.done);
+    document.getElementById('topModo').textContent=MODO_TXT[t.modo];
+    // Perfil: número y estado del test que se está viendo, y dónde se recoge la muestra
+    document.querySelector('.profile .code').textContent=t.code;
+    const pill=document.querySelector('.profile .status'); pill.textContent='● '+t.state; pill.classList.toggle('run',!t.done);
+    document.getElementById('recogida').textContent=t.recogida;
   }
   testSel.onchange=()=>renderTest(+testSel.value);
-  testSel.value=1; renderTest(1);
+  testSel.value=0; renderTest(0);
 
   // Pestañas
   const tabs=document.querySelectorAll('[data-tab]');
