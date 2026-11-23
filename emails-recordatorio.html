@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup emails de recogida</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f0f0ef; --card:#fff; --line:#e3e3e0; --text:#1d1d1b; --muted:#66665f;
+    --accent:#97bdd0; --accent-soft:#e6f0f5; --navy:#2e5f78; --green:#3f9a70; --green-soft:#e6f4ec;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+  main{max-width:1400px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+  h1{margin:0 0 6px;font-size:24px}
+  .sub{color:var(--muted);margin:0 0 20px;max-width:760px;line-height:1.5}
+  .flow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px;font-size:13px}
+  .flow span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+  .flow b{color:var(--navy)}
+  .ctrls{display:flex;gap:18px;flex-wrap:wrap;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 16px;margin-bottom:22px}
+  .ctrls label{font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+  .seg{display:inline-flex;background:#f3f3f1;border-radius:999px;padding:3px;margin-left:8px}
+  .seg button{border:0;background:transparent;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer;color:#3a3a37}
+  .seg button.on{background:var(--accent);font-weight:600;color:var(--text)}
+  .opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+  .opt{display:flex;flex-direction:column;gap:12px;min-width:0}
+  .opt h2{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}
+  .opt h2 .tag{font-size:11px;font-weight:600;background:var(--accent-soft);color:var(--navy);padding:3px 8px;border-radius:999px}
+  .opt p.why{margin:-6px 0 0;color:var(--muted);font-size:12px}
+  .step{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-top:4px}
+  .mail{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .mh{padding:10px 14px;border-bottom:1px solid var(--line);background:#fafaf9;font-size:12px;color:var(--muted);line-height:1.6}
+  .mh b{color:var(--text);font-weight:600}
+  .mb{padding:16px;line-height:1.55;font-size:14px}
+  .mb p{margin:0 0 10px}
+  .punto{border:1px solid var(--line);background:#f8f8f6;border-radius:10px;padding:10px 12px;margin:10px 0}
+  .punto small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+  .punto b{display:block}
+  .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .btns span{border-radius:999px;padding:9px 14px;font-weight:600;font-size:13px}
+  .yes{background:var(--navy);color:#fff}
+  .no{background:#fff;border:1px solid var(--line)}
+  .sig{color:var(--muted);font-size:12px;margin-top:12px}
+  ol{margin:6px 0 10px;padding-left:18px}
+  .foot{margin-top:24px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 18px;font-size:13px;line-height:1.6}
+  .foot b{color:var(--navy)}
+  @media (max-width:1000px){.opts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Emails de entrega de la muestra (F13)</h1>
+  <p class="sub">Tres propuestas para votar. En cada una hay dos emails que salen a nombre de la clínica: el primero en cuanto el paciente termina el cuestionario, y el segundo, una pregunta de confirmación, cuando se cumple el plazo de entrega.</p>
+
+  <div class="flow"><span><b>1.</b> El paciente termina el cuestionario</span>→<span><b>Email 1</b> · «No olvides entregar tu muestra»</span>→<span>Pasa el plazo</span>→<span><b>Email 2</b> · «¿Has podido entregarla?» Sí / No</span>→<span>La respuesta se ve en la ficha</span></div>
+
+  <div class="ctrls">
+    <div><label>Punto de recogida</label>
+      <span class="seg"><button class="on" data-punto="clinica">Clínica</button><button data-punto="domicilio">Domicilio</button></span></div>
+    <div><label>Plazo de entrega</label>
+      <span class="seg"><button data-plazo="24">24 h</button><button class="on" data-plazo="48">48 h</button></span></div>
+  </div>
+
+  <div class="opts" id="opts"></div>
+
+  <div class="foot">
+    <b>Datos que cambian en cada email:</b> nombre del paciente, nombre y email de la clínica, plazo de entrega y punto de recogida. Si la recogida es en la <b>clínica</b>, sale el nombre y la dirección de la clínica; si es en el <b>domicilio</b>, sale la dirección que se puso en el alta del paciente.
+    Todos los datos son de ejemplo.
+  </div>
+</main>
+<script>
+  const P={nombre:'Lucía', clinica:'Clínica Demo', mail:'hola@clinica-demo.es',
+           dirClinica:'Calle Santa Ana, 12 · 28001 Madrid', dirCasa:'C/ Ejemplo 8, 2ºB · 28010 Madrid'};
+  let punto='clinica', plazo=48;
+
+  function puntoBox(){
+    return punto==='clinica'
+      ? `<div class="punto"><small>Dónde entregarla</small><b>${P.clinica}</b>${P.dirClinica}</div>`
+      : `<div class="punto"><small>Dónde la recogemos</small><b>En tu domicilio</b>${P.dirCasa}</div>`;
+  }
+  const donde=()=>punto==='clinica'?`en ${P.clinica}`:'en tu domicilio';
+  const accion=()=>punto==='clinica'?'entregar tu muestra':'tener tu muestra lista para el mensajero';
+  const head=(asunto)=>`<div class="mh">De: <b>${P.clinica}</b> &lt;${P.mail}&gt;<br>Para: ${P.nombre} Martín<br>Asunto: <b>${asunto}</b></div>`;
+  const sig=`<div class="sig">Un saludo,<br>${P.clinica}</div>`;
+
+  const OPCIONES=[
+    {id:'A', nombre:'Corta y cercana', why:'Dos frases y el punto de entrega bien visible.',
+     e1:()=>head('No olvides entregar tu muestra')+`<div class="mb">
+        <p>Hola ${P.nombre}:</p>
+        <p>¡Gracias por completar el cuestionario! Ya solo falta un paso: recuerda ${accion()} en las próximas <b>${plazo} horas</b>.</p>
+        ${puntoBox()}${sig}</div>`,
+     e2:()=>head('¿Has podido entregar tu muestra?')+`<div class="mb">
+        <p>Hola ${P.nombre}:</p>
+        <p>¿Has podido entregar tu muestra ${donde()}?</p>
+        ${puntoBox()}
+        <div class="btns"><span class="yes">Sí, ya la he entregado</span><span class="no">Todavía no</span></div>${sig}</div>`},
+    {id:'B', nombre:'Paso a paso', why:'Recuerda cómo preparar la muestra antes de entregarla.',
+     e1:()=>head('Tu muestra está lista para entregar')+`<div class="mb">
+        <p>Hola ${P.nombre}:</p>
+        <p>Hemos recibido tu cuestionario. Para terminar:</p>
+        <ol><li>Cierra bien el tubo.</li><li>Guárdalo en el sobre del kit.</li><li>${punto==='clinica'?'Llévalo a la clínica':'Tenlo preparado para el mensajero'} en las próximas <b>${plazo} horas</b>.</li></ol>
+        ${puntoBox()}${sig}</div>`,
+     e2:()=>head('Recordatorio: entrega de tu muestra')+`<div class="mb">
+        <p>Hola ${P.nombre}:</p>
+        <p>Han pasado ${plazo} horas desde que completaste el cuestionario. ¿Has podido entregar tu muestra ${donde()}?</p>
+        ${puntoBox()}
+        <div class="btns"><span class="yes">Sí, entregada</span><span class="no">No, necesito ayuda</span></div>${sig}</div>`},
+    {id:'C', nombre:'Con fecha límite', why:'En vez de «48 horas», el día exacto.',
+     e1:()=>head('Recogida de tu muestra solicitada')+`<div class="mb">
+        <p>Hola ${P.nombre}:</p>
+        <p>Ya hemos solicitado la recogida de tu muestra. Para que llegue al laboratorio en buen estado, ${punto==='clinica'?'entrégala':'tenla preparada'} antes del <b>${plazo===48?'jueves 27 de noviembre':'miércoles 26 de noviembre'}</b>.</p>
+        ${puntoBox()}${sig}</div>`,
+     e2:()=>head('Confirma la entrega de tu muestra')+`<div class="mb">
+        <p>Hola ${P.nombre}:</p>
+        <p>Hoy terminaba el plazo para entregar tu muestra ${donde()}. ¿Nos confirmas si ya está entregada?</p>
+        ${puntoBox()}
+        <div class="btns"><span class="yes">Sí</span><span class="no">No</span></div>${sig}</div>`}
+  ];
+
+  function render(){
+    document.getElementById('opts').innerHTML=OPCIONES.map(o=>`
+      <section class="opt">
+        <h2><span class="tag">Opción ${o.id}</span>${o.nombre}</h2>
+        <p class="why">${o.why}</p>
+        <div class="step">Email 1 · al terminar el cuestionario</div>
+        <div class="mail">${o.e1()}</div>
+        <div class="step">Email 2 · al cumplirse el plazo (${plazo} h)</div>
+        <div class="mail">${o.e2()}</div>
+      </section>`).join('');
+  }
+  document.querySelectorAll('[data-punto]').forEach(b=>b.onclick=()=>{punto=b.dataset.punto;document.querySelectorAll('[data-punto]').forEach(x=>x.classList.toggle('on',x===b));render();});
+  document.querySelectorAll('[data-plazo]').forEach(b=>b.onclick=()=>{plazo=+b.dataset.plazo;document.querySelectorAll('[data-plazo]').forEach(x=>x.classList.toggle('on',x===b));render();});
+  render();
+</script>
+</body>
+</html>

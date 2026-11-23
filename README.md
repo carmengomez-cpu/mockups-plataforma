@@ -12,3 +12,4 @@ Descarga el repo y abre cualquier `.html` en el navegador.
 | Pagos | [pagos.html](pagos.html) |
 | Stock de tests | [stock-tests.html](stock-tests.html) |
 | Estados vacíos | [vacios/](vacios/index.html) |
+| Emails de entrega de la muestra (F13) | [emails-recordatorio.html](emails-recordatorio.html) |
