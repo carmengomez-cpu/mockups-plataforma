@@ -237,7 +237,6 @@
       </div>
       <div class="modo" id="topModo"></div>
       <div class="tl" id="tlTop"></div>
-      <div class="topav">🔔 Último aviso: <b id="topAv"></b></div>
     </div>
 
     <div class="tabsbar">
@@ -373,7 +372,6 @@
   }
   function renderTest(i){
     const t=TESTS[i]; curTest=i;
-    document.getElementById('topAv').textContent=t.av;
     // Proceso del test (arriba)
     drawTimeline(document.getElementById('tlTop'),t);
     document.getElementById('topName').textContent=t.type;
