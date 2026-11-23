@@ -1,3 +1,6 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mockup alta de paciente</title>
 <meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -7,6 +10,10 @@
     --accent:#97bdd0; --accent-soft:#e6f0f5; --navy:#2e5f78; --req:#c0392b; --banner:#fbb900;
   }
   *{box-sizing:border-box}
+  .notif{display:flex;gap:12px;align-items:center;border:1.5px solid var(--navy);background:var(--accent-soft);border-radius:14px;padding:10px 14px}
+  .notif .ni{width:34px;height:34px;border-radius:10px;background:#fff;display:grid;place-items:center;flex:none}
+  .notif b{display:block;color:var(--navy);font-size:14px}
+  .notif small{color:var(--muted);font-size:12px}
   html,body{height:100%}
   body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
 
@@ -100,12 +107,10 @@
               <div><label>Email <span class="req">*</span></label><input type="email" required></div>
               <div><label>Teléfono <span class="req">*</span></label><input type="tel" required placeholder="+34 600 000 000"></div>
             </div>
-            <p class="sec-title mt">Notificaciones <span class="req">*</span></p>
-            <label style="font-weight:400;color:var(--muted)">Canal por el que recibirá el código QR y los avisos</label>
-            <div class="opts three">
-              <button type="button" class="opt on" data-ch>💬 WhatsApp</button>
-              <button type="button" class="opt" data-ch>✉️ Email</button>
-              <button type="button" class="opt" data-ch>📱 SMS</button>
+            <p class="sec-title mt">Notificaciones</p>
+            <div class="notif">
+              <span class="ni">✉️</span>
+              <div><b>Por email</b><small>Le enviaremos el código QR y los avisos del test al email indicado.</small></div>
             </div>
           </section>
 
@@ -155,6 +160,4 @@
     document.getElementById('domicilio').classList.toggle('hidden',!h);
     ok.required=!h; home.forEach(i=>i.required=h);
   });
-  const ch=document.querySelectorAll('[data-ch]');
-  ch.forEach(b=>b.onclick=()=>ch.forEach(x=>x.classList.toggle('on',x===b)));
 </script>
