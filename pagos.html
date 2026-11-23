@@ -144,6 +144,41 @@
   .ev.pend b{color:var(--muted);font-weight:500}
   .ev small{color:var(--muted);font-size:12px}
   .hidden{display:none!important}
+
+  /* ===== Desglose con el mismo formato que la factura ===== */
+  .bkwrap{overflow-x:auto}
+  .bk{width:100%;border-collapse:collapse;min-width:560px}
+  .bk th{font-size:11px;letter-spacing:.08em;color:var(--muted);font-weight:500;text-transform:uppercase;text-align:right;padding:0 0 10px 16px;border-bottom:1.5px solid var(--text);white-space:nowrap}
+  .bk td{text-align:right;padding:14px 0 14px 16px;border-bottom:1px solid var(--line);vertical-align:top;font-size:15px;white-space:nowrap}
+  .bk th:first-child,.bk td:first-child{text-align:left;padding-left:0;white-space:normal}
+  .bk td b{font-weight:600}
+  .bk td small{display:block;color:var(--muted);font-size:12px;line-height:1.45;margin-top:3px;max-width:360px}
+  .bk .pr{display:inline-block;margin-top:6px;font-size:12px;font-weight:600;color:var(--muted)}
+  .bk .pr.ok{color:var(--green)}
+  .bkfoot{display:grid;grid-template-columns:1fr minmax(260px,340px);gap:28px;margin-top:16px;align-items:start}
+  .bnote{font-size:12px;color:var(--muted);line-height:1.55}
+  .bnote b{color:var(--text);font-weight:600}
+  .sums .row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);color:var(--muted);font-size:14px}
+  .sums .row span:last-child{color:var(--text)}
+  .totbox{margin-top:12px;background:var(--accent-soft);border:1px solid #cfe0ea;border-radius:14px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+  .totbox span{font-size:12px;letter-spacing:.1em;font-weight:600}
+  .totbox b{font-size:26px}
+  @media (max-width:760px){.bkfoot{grid-template-columns:1fr}}
+
+  /* Factura (pop-up) con el formato real */
+  .ov{overflow:auto}
+  .inv{max-width:780px;max-height:92vh;overflow:auto;padding:28px 32px}
+  .ih{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+  .ih .lg{font-size:17px;letter-spacing:.06em}
+  .ih .lg small{display:block;letter-spacing:0;font-size:11px;color:var(--muted);margin-top:6px;max-width:220px;line-height:1.4}
+  .ih .num{text-align:right}
+  .ih .num small{font-size:11px;letter-spacing:.14em;color:var(--accent)}
+  .ih .num b{display:block;font-size:26px}
+  .imeta{display:flex;justify-content:flex-end;gap:28px;padding:12px 0;border-bottom:1px solid var(--line);text-align:right}
+  .imeta small,.iparty small{display:block;font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+  .iparty{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:16px 0 20px}
+  .iparty small{color:var(--accent)}
+  .iparty p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
 </style>
 <div class="app">
   <aside>
@@ -190,17 +225,7 @@
 
         <section class="dcard">
           <h2>Resumen del pedido</h2>
-          <div class="item" id="dItem"></div>
-          <div class="two">
-            <div>
-              <p class="ttl">Precio por test</p>
-              <div class="tiles" id="dTiles"></div>
-            </div>
-            <div>
-              <p class="ttl">Desglose</p>
-              <div id="dLines"></div>
-            </div>
-          </div>
+          <div id="dBreak"></div>
         </section>
 
         <section class="dcard"><div class="facts" id="dFacts"></div></section>
@@ -218,9 +243,16 @@
 <!-- Factura (solo pedidos pagados) -->
 <div class="ov" id="invOv" role="dialog" aria-modal="true" aria-labelledby="invT">
   <div class="inv">
-    <div class="inv-h"><div><b id="invT">Factura</b><small id="invNum"></small></div><small id="invDate"></small></div>
-    <div class="muted" style="font-size:13px">Biotasmart → <b style="color:var(--text)">Clínica Demo</b></div>
-    <table id="invTable"></table>
+    <div class="ih">
+      <div class="lg">⁂ BIOTASMART<small>Interpretación avanzada de microbiota para profesionales sanitarios.</small></div>
+      <div class="num"><small id="invT">FACTURA</small><b id="invNum"></b></div>
+    </div>
+    <div class="imeta" id="invMeta"></div>
+    <div class="iparty">
+      <div><small>Facturar a</small><b>Clínica Demo</b><p>Calle Santa Ana, 12 · 28001 Madrid, España<br>NIF B00000000<br>facturacion@clinica-ejemplo.es</p></div>
+      <div><small>Emitida por</small><b>Biotasmart</b><p>Dirección fiscal de Biotasmart<br>NIF de Biotasmart<br>hola@biotasmart.com</p></div>
+    </div>
+    <div id="invBreak"></div>
     <div class="inv-a">
       <button class="btn" onclick="closeInv()">Cerrar</button>
       <button class="btn p" onclick="toast('Descargando factura en PDF…')">⤓ Descargar PDF</button>
@@ -230,21 +262,45 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const eur=n=>n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
-  // Cifras de ejemplo: 296,65 € por test con IVA y un 10 % de descuento (inventado)
+  const eur=n=>{const [e,d]=Math.abs(n).toFixed(2).split('.');return (n<0?'−':'')+e.replace(/\B(?=(\d{3})+(?!\d))/g,'.')+','+d+' €';};
+  // Cifras de ejemplo (inventadas): precio por test sin IVA y un 10 % de descuento de la clínica
   const T=v=>Math.round(v*100)/100;
-  function mk(id,tests,ship,shipCls,paidOn,sent,done,shipSt,tl){
-    return {id,tests,type:'Microbiota intestinal Avanzado',ship,shipCls,paid:!!paidOn,paidOn,
-      tarifa:T(272.41*tests),disc:.10,base:T(245.17*tests),iva:T(51.48*tests),total:T(296.65*tests),
-      prep:ship==='Entregado'?`✓ ${tests}/${tests} preparados`:`0/${tests} preparados`,
+  const PROD={
+    nut:['Test avanzado intestinal','Enfoque: Nutrición. Análisis avanzado de microbiota intestinal con recomendaciones de alimentos, prebióticos y probióticos.',225.00],
+    muj:['Test avanzado intestinal','Enfoque: Mujer. Análisis avanzado de microbiota intestinal con recomendaciones adaptadas.',225.00],
+    vag:['Test avanzado vaginal','Análisis avanzado de microbiota vaginal.',168.00]
+  };
+  const DISC=.10;
+  function mk(id,items,ship,shipCls,paidOn,sent,done,shipSt,tl){
+    const lines=items.map(([k,q])=>{const [name,desc,pu]=PROD[k];return {name,desc,q,pu,imp:T(q*pu*(1-DISC))};});
+    const tests=lines.reduce((s,l)=>s+l.q,0), base=T(lines.reduce((s,l)=>s+l.imp,0)), iva=T(base*.21);
+    return {id,lines,tests,ship,shipCls,paid:!!paidOn,paidOn,base,iva,total:T(base+iva),
       sede:'Madrid',sent,done,shipSt,tl};
   }
+  // Desglose: mismo formato en el detalle del pedido y en la factura
+  function breakdown(o){
+    const done=o.ship==='Entregado';
+    return `<div class="bkwrap"><table class="bk">
+      <tr><th>Descripción</th><th>Cant.</th><th>Precio/ud</th><th>Dto.</th><th>Importe</th></tr>
+      ${o.lines.map(l=>`<tr><td><b>${l.name}</b><small>${l.desc} Precio unitario sin IVA.</small><span class="pr ${done?'ok':''}">${done?'✓ ':''}${done?l.q:0}/${l.q} preparados</span></td>
+        <td>${l.q}</td><td>${eur(l.pu)}</td><td>−${Math.round(DISC*100)} %</td><td>${eur(l.imp)}</td></tr>`).join('')}
+    </table></div>
+    <div class="bkfoot">
+      <div class="bnote"><b>Nota:</b> pedido para la sede <b>${o.sede}</b> · ${o.tests} test${o.tests>1?'s':''} en total. Envío Paq24 a tu consulta <b>incluido</b>.<br>
+        Precio unitario sin IVA. El descuento de tu clínica (−${Math.round(DISC*100)} %) se aplica en cada línea.</div>
+      <div class="sums">
+        <div class="row"><span>Base imponible</span><span>${eur(o.base)}</span></div>
+        <div class="row"><span>IVA (21 %)</span><span>${eur(o.iva)}</span></div>
+        <div class="totbox"><span>TOTAL</span><b>${eur(o.total)}</b></div>
+      </div>
+    </div>`;
+  }
   const ORDERS=[
-    mk('18/11/2026',1,'Pendiente','amber',null,'—','—','Pedido confirmado',[['Confirmado','18/11/2026'],['Preparado',null],['Enviado',null],['Entregado',null]]),
-    mk('17/11/2026',1,'Entregado','ok',null,'18/11/2026','20/11/2026','Entregado',[['Confirmado','17/11/2026'],['Preparado','18/11/2026'],['Enviado','18/11/2026'],['Entregado','20/11/2026']]),
-    mk('02/11/2026',3,'Entregado','ok','03/11/2026','04/11/2026','06/11/2026','Entregado',[['Confirmado','02/11/2026'],['Preparado','03/11/2026'],['Enviado','04/11/2026'],['Entregado','06/11/2026']]),
-    mk('20/10/2026',5,'Entregado','ok','21/10/2026','22/10/2026','24/10/2026','Entregado',[['Confirmado','20/10/2026'],['Preparado','21/10/2026'],['Enviado','22/10/2026'],['Entregado','24/10/2026']]),
-    mk('28/09/2026',2,'Entregado','ok','30/09/2026','01/10/2026','03/10/2026','Entregado',[['Confirmado','28/09/2026'],['Preparado','30/09/2026'],['Enviado','01/10/2026'],['Entregado','03/10/2026']])
+    mk('18/11/2026',[['nut',4],['muj',2],['vag',1]],'Pendiente','amber',null,'—','—','Pedido confirmado',[['Confirmado','18/11/2026'],['Preparado',null],['Enviado',null],['Entregado',null]]),
+    mk('17/11/2026',[['nut',2]],'Entregado','ok',null,'18/11/2026','20/11/2026','Entregado',[['Confirmado','17/11/2026'],['Preparado','18/11/2026'],['Enviado','18/11/2026'],['Entregado','20/11/2026']]),
+    mk('02/11/2026',[['nut',2],['vag',1]],'Entregado','ok','03/11/2026','04/11/2026','06/11/2026','Entregado',[['Confirmado','02/11/2026'],['Preparado','03/11/2026'],['Enviado','04/11/2026'],['Entregado','06/11/2026']]),
+    mk('20/10/2026',[['nut',3],['muj',2]],'Entregado','ok','21/10/2026','22/10/2026','24/10/2026','Entregado',[['Confirmado','20/10/2026'],['Preparado','21/10/2026'],['Enviado','22/10/2026'],['Entregado','24/10/2026']]),
+    mk('28/09/2026',[['vag',2]],'Entregado','ok','30/09/2026','01/10/2026','03/10/2026','Entregado',[['Confirmado','28/09/2026'],['Preparado','30/09/2026'],['Enviado','01/10/2026'],['Entregado','03/10/2026']])
   ];
   const crumb=document.getElementById('crumb');
   const iso=d=>d?d.split('/').reverse().join('-'):'';   // dd/mm/aaaa → aaaa-mm-dd (para ordenar y filtrar)
@@ -302,15 +358,9 @@
   let curOrder=0;
   function openInv(){
     const o=ORDERS[curOrder];
-    document.getElementById('invNum').textContent='Nº F-2026-'+String(1040+curOrder).padStart(4,'0');
-    document.getElementById('invDate').textContent='Fecha: '+o.paidOn;
-    document.getElementById('invTable').innerHTML=`
-      <tr><td>${o.tests} × Test ${o.type}</td><td>${eur(o.tarifa)}</td></tr>
-      <tr><td>Descuento por pedido (${Math.round(o.disc*100)} %)</td><td>−${eur(T(o.tarifa-o.base))}</td></tr>
-      <tr><td>Base imponible</td><td>${eur(o.base)}</td></tr>
-      <tr><td>IVA (21 %)</td><td>${eur(o.iva)}</td></tr>
-      <tr><td>Envío Paq24</td><td>Incluido</td></tr>
-      <tr class="t"><td>Total pagado</td><td>${eur(o.total)}</td></tr>`;
+    document.getElementById('invNum').textContent='BTS-2026-'+String(40+curOrder).padStart(4,'0');
+    document.getElementById('invMeta').innerHTML=`<div><small>Emisión</small>${o.paidOn}</div><div><small>Pedido</small>${o.id}</div><div><small>Forma de pago</small>Tarjeta</div>`;
+    document.getElementById('invBreak').innerHTML=breakdown(o).replace(/<span class="pr[^"]*">[^<]*<\/span>/g,'');
     document.getElementById('invOv').classList.add('show');
   }
   function closeInv(){document.getElementById('invOv').classList.remove('show');}
@@ -318,7 +368,7 @@
   function toast(t){const e=document.getElementById('toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',2200);}
 
   function showDetail(i){
-    const o=ORDERS[i], unitBase=o.base/o.tests, unitIva=o.total/o.tests, save=(o.tarifa-o.base)/o.tests;
+    const o=ORDERS[i];
     curOrder=i;
     document.getElementById('invBtn').hidden=!o.paid;
     document.getElementById('vList').classList.add('hidden');
@@ -333,18 +383,7 @@
          <div class="payr"><div class="amt"><b>${eur(o.total)}</b><small>IVA incluido</small></div>
          <button class="paybtn" id="payBtn" onclick="payNow(${i})">Pagar ${eur(o.total)} →</button>
          <span class="secure">🔒 Pago seguro con tarjeta</span></div>`;
-    document.getElementById('dItem').innerHTML=`<div><b>${o.tests} test${o.tests>1?'s':''} · ${o.type}</b><small>Envío Paq24 a tu consulta incluido</small></div><span class="prep">${o.prep}</span>`;
-    document.getElementById('dTiles').innerHTML=`
-      <div class="tile"><div><small>Sin IVA</small><em>con el descuento aplicado</em></div><b>${eur(unitBase)}</b></div>
-      <div class="tile"><div><small>Con IVA (21 %)</small><em>lo que pagas por cada test</em></div><b>${eur(unitIva)}</b></div>
-      <div class="tile disc"><div><small>Descuento por tu pedido</small><em>ahorras ${eur(save)} por test</em></div><b>−${Math.round(o.disc*100)} %</b></div>`;
-    document.getElementById('dLines').innerHTML=`
-      <div class="ln"><span>${o.tests} × ${eur(o.tarifa/o.tests)} (tarifa)</span><span>${eur(o.tarifa)}</span></div>
-      <div class="ln d"><span>Descuento por pedido (${Math.round(o.disc*100)} %)</span><span>−${eur(o.tarifa-o.base)}</span></div>
-      <div class="ln sep"><span>Base imponible</span><span>${eur(o.base)}</span></div>
-      <div class="ln"><span>IVA (21 %)</span><span>${eur(o.iva)}</span></div>
-      <div class="ln"><span>Envío Paq24</span><span class="inc">Incluido</span></div>
-      <div class="ln tot"><span>Total</span><span>${eur(o.total)}</span></div>`;
+    document.getElementById('dBreak').innerHTML=breakdown(o);
     document.getElementById('dFacts').innerHTML=`
       <div class="fact"><span class="fi">📍</span><div><small>Sede</small><b>${o.sede}</b></div></div>
       <div class="fact"><span class="fi">📤</span><div><small>Enviada</small><b>${o.sent}</b></div></div>
