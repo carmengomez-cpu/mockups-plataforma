@@ -359,10 +359,11 @@
       return `<div class="ev ${!d?'pend':''} ${k===lastDone?'last':''}"><i></i><b>${s}</b><small>${d||'Pendiente'}</small>${extra}</div>`;
     }).join('');
   }
-  // Selector de test bajo el nombre: del más reciente al más antiguo, con la fecha del informe o «pendiente»
+  // Selector de test bajo el nombre: del más reciente al más antiguo.
+  // Con informe: solo el número. Sin informe: número + «Informe pendiente».
   const ORDER=[1,0];
   const testSel=document.getElementById('testSel');
-  testSel.innerHTML=ORDER.map(i=>{const t=TESTS[i];return `<option value="${i}">${t.code} · Informe ${t.dates['Informe listo']||'pendiente'}</option>`}).join('');
+  testSel.innerHTML=ORDER.map(i=>{const t=TESTS[i];return `<option value="${i}">${t.code}${t.dates['Informe listo']?'':' · Informe pendiente'}</option>`}).join('');
   let curTest=0, curTab='informe';
   function showPanels(){
     const done=TESTS[curTest].done;
