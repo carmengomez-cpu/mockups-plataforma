@@ -28,6 +28,11 @@
   .big-av{width:76px;height:76px;border-radius:50%;background:var(--accent-soft);color:var(--navy);display:grid;place-items:center;font-size:26px;font-weight:600;margin:0 auto 10px}
   .profile h1{font-size:21px;margin:0 0 2px}
   .code{color:var(--muted);font-size:13px}
+  .codewrap{display:inline-block;margin-top:2px}
+  .codesel{border:1px solid var(--line);background:#f8f8f6;border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;color:#3a3a37;cursor:pointer;max-width:100%}
+  .codesel:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .topav{margin-top:14px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+  .topav b{color:var(--text);font-weight:500}
   .status{display:inline-block;margin-top:8px;background:var(--green-soft);color:var(--green);font-size:12px;font-weight:500;padding:4px 12px;border-radius:999px}
   .btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-weight:500;cursor:pointer}
   .btn.p{background:var(--accent);border-color:var(--accent)}
@@ -169,7 +174,9 @@
     <button class="edit-ic" title="Editar paciente" aria-label="Editar paciente">✎</button>
     <div class="big-av">LM</div>
     <h1>Lucía Martín</h1>
-    <div class="code">#999001002824</div>
+    <label class="codewrap" title="Cambiar de test">
+      <select id="testSel" class="codesel" aria-label="Elegir test"></select>
+    </label>
     <div class="status">● Informe listo · sin ver</div>
     <button class="btn p wide" onclick="openLink()">＋ Vincular nuevo test</button>
 
@@ -227,34 +234,22 @@
       </div>
       <div class="modo" id="topModo"></div>
       <div class="tl" id="tlTop"></div>
+      <div class="topav">🔔 Último aviso: <b id="topAv"></b></div>
     </div>
 
     <div class="tabsbar">
       <div class="tabs" role="tablist">
-        <a class="on" data-tab="informe">Informe</a><a data-tab="microbiota">Microbiota</a><a data-tab="cuestionario">Cuestionario</a><a data-tab="notas">Notas</a><a data-tab="historial">Historial (2)</a>
+        <a class="on" data-tab="informe">Informe</a><a data-tab="microbiota">Microbiota</a><a data-tab="cuestionario">Cuestionario</a><a data-tab="notas">Notas</a>
       </div>
       <div class="tools" id="tools"><button class="btn">Modo consulta</button><button class="btn">⤓ Descargar PDF</button><button class="btn p">➤ Enviarme el PDF por correo</button></div>
     </div>
 
-    <!-- ===== Panel HISTORIAL ===== -->
-    <div class="panel hidden" id="p-historial">
-      <div class="card hist">
-        <div class="hh">
-          <p class="ttl" style="margin:0">Línea temporal</p>
-          <select id="testSel" class="tsel" aria-label="Elegir test"></select>
-        </div>
-        <div class="tl" id="tl"></div>
-      </div>
-
-      <p class="ttl" style="margin:18px 0 8px">Test seleccionado</p>
-      <div class="card testc">
-        <div class="tr">
-          <div><b id="tcCode"></b> · <span id="tcType"></span><br><small id="tcDate"></small></div>
-          <span class="tag-ok" id="tcTag"></span>
-        </div>
-        <div class="avisos"><small>Avisos</small><span id="tcAv"></span></div>
-      </div>
-    </div>
+    <!-- ===== Informe pendiente (test que todavía no tiene informe) ===== -->
+    <div class="panel hidden" id="p-pend"><div class="card" style="padding:40px;text-align:center">
+      <div style="font-size:26px;margin-bottom:8px">🧪</div>
+      <b style="font-size:16px">Informe pendiente</b>
+      <p style="color:var(--muted);margin:6px 0 0">Este test todavía está en proceso. El informe aparecerá aquí cuando esté listo.</p>
+    </div></div>
 
     <!-- ===== Panel genérico (Microbiota / Cuestionario / Notas) ===== -->
     <div class="panel hidden" id="p-otro"><div class="card" style="padding:40px;text-align:center;color:var(--muted)" id="otro-txt"></div></div>
@@ -359,42 +354,43 @@
       return `<div class="ev ${!d?'pend':''} ${k===lastDone?'last':''}"><i></i><b>${s}</b><small>${d||'Pendiente'}</small>${extra}</div>`;
     }).join('');
   }
-  const testSel=document.getElementById('testSel'), tl=document.getElementById('tl');
-  testSel.innerHTML=TESTS.map((t,i)=>`<option value="${i}">Test ${t.code} · ${t.state}</option>`).join('');
+  // Selector de test bajo el nombre: del más reciente al más antiguo, con la fecha del informe o «pendiente»
+  const ORDER=[1,0];
+  const testSel=document.getElementById('testSel');
+  testSel.innerHTML=ORDER.map(i=>{const t=TESTS[i];return `<option value="${i}">${t.code} · Informe ${t.dates['Informe listo']||'pendiente'}</option>`}).join('');
+  let curTest=0, curTab='informe';
+  function showPanels(){
+    const done=TESTS[curTest].done;
+    document.getElementById('p-informe').classList.toggle('hidden',curTab!=='informe'||!done);
+    document.getElementById('p-pend').classList.toggle('hidden',curTab!=='informe'||done);
+    document.getElementById('tools').style.visibility=(curTab==='informe'&&done)?'visible':'hidden';
+  }
   function renderTest(i){
-    const t=TESTS[i];
-    // Historial
-    drawTimeline(tl,t);
-    document.getElementById('tcCode').textContent=t.code;
-    document.getElementById('tcType').textContent=t.type;
-    document.getElementById('tcDate').textContent=t.date;
-    const tag=document.getElementById('tcTag'); tag.textContent=t.state; tag.classList.toggle('run',!t.done);
-    document.getElementById('tcAv').textContent=t.av;
-    // Proceso del test (arriba): el mismo test y la misma línea
+    const t=TESTS[i]; curTest=i;
+    document.getElementById('topAv').textContent=t.av;
+    // Proceso del test (arriba)
     drawTimeline(document.getElementById('tlTop'),t);
     document.getElementById('topName').textContent=t.type;
     document.getElementById('topCode').textContent=t.code;
     const st=document.getElementById('topState'); st.textContent=t.state; st.classList.toggle('run',!t.done);
     document.getElementById('topModo').textContent=MODO_TXT[t.modo];
-    // Perfil: número y estado del test que se está viendo, y dónde se recoge la muestra
-    document.querySelector('.profile .code').textContent=t.code;
+    // Perfil: estado del test que se está viendo y dónde se recoge la muestra
     const pill=document.querySelector('.profile .status'); pill.textContent='● '+t.state; pill.classList.toggle('run',!t.done);
     document.getElementById('recogida').textContent=t.recogida;
+    showPanels();
   }
   testSel.onchange=()=>renderTest(+testSel.value);
-  testSel.value=0; renderTest(0);
+  testSel.value=1; renderTest(1);
 
   // Pestañas
   const tabs=document.querySelectorAll('[data-tab]');
   tabs.forEach(t=>t.onclick=()=>{
     tabs.forEach(x=>x.classList.toggle('on',x===t));
-    const k=t.dataset.tab;
-    document.getElementById('p-informe').classList.toggle('hidden',k!=='informe');
-    document.getElementById('p-historial').classList.toggle('hidden',k!=='historial');
-    const other=!['informe','historial'].includes(k);
+    const k=t.dataset.tab; curTab=k;
+    const other=k!=='informe';
     document.getElementById('p-otro').classList.toggle('hidden',!other);
-    if(other) document.getElementById('otro-txt').textContent='Contenido de '+t.textContent+' (no incluido en la maqueta)';
-    document.getElementById('tools').style.visibility=k==='informe'?'visible':'hidden';
+    if(other) document.getElementById('otro-txt').textContent='Contenido de '+t.textContent+' del test '+TESTS[curTest].code+' (no incluido en la maqueta)';
+    showPanels();
   });
 
   // ===== Vincular nuevo test =====
