@@ -206,6 +206,18 @@
   .btn.red{background:var(--red);color:#fff}
   .dfoot{margin-top:22px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.55}
   .dnum{font-size:13px;color:var(--muted);font-weight:400;margin-left:8px}
+  /* Resumen sencillo del pedido (el detalle completo está en la factura) */
+  .sl{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+  .sl .q{display:inline-grid;place-items:center;min-width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--navy);font-weight:700;margin-right:12px}
+  .sl .n{display:flex;align-items:center}
+  .sl small{color:var(--muted);margin-left:6px}
+  .sl .pr2{font-size:12px;color:var(--muted);margin-left:12px}
+  .sl .pr2.ok{color:var(--green)}
+  .stot{display:flex;justify-content:space-between;align-items:baseline;padding-top:14px}
+  .stot b{font-size:22px}
+  .stot small{display:block;color:var(--muted);font-size:12px;text-align:right;margin-top:2px}
+  .sfoot{margin-top:12px;color:var(--muted);font-size:13px}
+  .sfoot a{color:var(--navy);font-weight:600;cursor:pointer}
   .ov{overflow:auto}
   .inv{max-width:880px;max-height:94vh;overflow:auto;padding:32px 36px}
   @media (max-width:760px){.bkfoot,.parties{grid-template-columns:1fr}.dmeta{grid-template-columns:repeat(2,auto)}}
@@ -318,6 +330,16 @@
       sede:'Madrid',sent,done,shipSt,tl};
   }
   // Bloques del documento: los usan igual la factura y el resumen del pedido
+  // Vista sencilla del pedido: qué tests, cuántos y el total. Todo el detalle va en la factura.
+  function simpleSummary(o){
+    const done=o.ship==='Entregado';
+    const rows=o.lines.map(l=>`<div class="sl"><span class="n"><span class="q">${l.q}</span>${l.name.replace('Test avanzado de microbiota','Test')}${l.enf?`<small>· ${l.enf}</small>`:''}
+        ${o.cancelled?'':`<span class="pr2 ${done?'ok':''}">${done?'✓ ':''}${done?l.q:0}/${l.q} preparados</span>`}</span><span>${eur(T(l.imp*1.21))}</span></div>`).join('');
+    const foot=o.cancelled?`Solicitud cancelada el ${o.cancelled} · no se ha cobrado.`
+      :o.paid?`Envío Paq24 incluido. Todo el detalle (precios sin IVA, descuento, datos fiscales) está en la <a onclick="openInv()">factura</a>.`
+      :`Envío Paq24 incluido. La factura con todo el detalle estará disponible cuando pagues el pedido.`;
+    return `${rows}<div class="stot"><span>Total</span><div><b>${eur(o.total)}</b><small>IVA incluido · ${o.tests} test${o.tests>1?'s':''}</small></div></div><p class="sfoot">${foot}</p>`;
+  }
   function parties(o){
     return `<div class="parties">
       <div class="party"><span class="lbl">Emitida por</span><b>${EMISOR.name}</b><p>${EMISOR.brand}<br>${EMISOR.addr}<br>NIF ${EMISOR.nif}<br>${EMISOR.mail}</p></div>
@@ -465,7 +487,7 @@
          <button class="paybtn" id="payBtn" onclick="payNow(${i})">Pagar ${eur(o.total)} →</button>
          <span class="secure">🔒 Pago seguro con tarjeta</span></div>`;
     document.getElementById('dNum').textContent=o.num;
-    document.getElementById('dBreak').innerHTML=`<div class="doc">${parties(o)}${lines(o,true)}${totals(o)}</div>`;
+    document.getElementById('dBreak').innerHTML=simpleSummary(o);
     document.getElementById('dFacts').innerHTML=`
       <div class="fact"><span class="fi">📍</span><div><small>Sede</small><b>${o.sede}</b></div></div>
       <div class="fact"><span class="fi">📤</span><div><small>Enviada</small><b>${o.sent}</b></div></div>
