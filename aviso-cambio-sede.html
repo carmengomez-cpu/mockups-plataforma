@@ -1,0 +1,231 @@
+<title>Mockup aviso cambio de sede</title>
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f0f0ef; --card:#fff; --line:#e3e3e0; --text:#1d1d1b; --muted:#66665f;
+    --accent:#97bdd0; --accent-soft:#e6f0f5; --navy:#2e5f78; --banner:#fbb900;
+    --green:#3f9a70; --green-soft:#e6f4ec; --amber:#a8741c; --amber-soft:#fbefd6; --red:#c0392b; --red-soft:#fbe9e7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+  button,select{font:inherit;color:inherit}
+
+  /* ===== Estructura de la plataforma ===== */
+  .app{display:grid;grid-template-columns:270px 1fr;min-height:100vh}
+  aside{border-right:1px solid var(--line);padding:22px 10px 20px;display:flex;flex-direction:column}
+  .logo{font-size:15px;letter-spacing:.06em;padding:0 2px 28px}
+  .org{font-size:13px;color:#4a4a45;padding:0 10px 16px}
+  .nav a{display:block;padding:11px 14px;border-radius:10px;font-size:15px;color:#3a3a37;margin-bottom:3px}
+  .nav a.on{background:#fff;border:1px solid var(--line);color:var(--text);font-weight:500}
+  .cookies{margin-top:auto;font-size:15px;color:#3a3a37;padding:0 14px}
+  .page{display:flex;flex-direction:column;min-width:0}
+  .banner{background:var(--banner);text-align:center;padding:8px;font-size:15px}
+  .banner button{margin-left:12px;border:0;background:#fff;border-radius:999px;padding:4px 14px;font-weight:600}
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 44px;border-bottom:1px solid var(--line)}
+  .crumb{font-size:15px;color:#5a5a55}.crumb b{color:var(--text);font-weight:500}.crumb span{margin:0 10px}
+  .user{display:flex;align-items:center;gap:14px;font-size:14px}
+  .sel{border:1px solid var(--line);background:#f5f5f4;border-radius:999px;padding:6px 12px}
+  .who{text-align:right;line-height:1.2;font-size:15px}.who small{display:block;font-size:12px;color:var(--muted)}
+  .av{width:40px;height:40px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-weight:600}
+  .content{padding:28px 44px 20px;flex:1}
+
+  /* ===== Ficha (simplificada) ===== */
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:start}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px 24px}
+  .pav{width:64px;height:64px;border-radius:50%;background:var(--accent-soft);color:var(--navy);display:grid;place-items:center;font-weight:700;font-size:22px;margin-bottom:12px}
+  .pname{font-size:21px;font-weight:700;margin:0}
+  .pcode{color:var(--muted);margin:4px 0 14px}
+  .lbl{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:14px 0 6px}
+  select.sede{width:100%;height:42px;border-radius:999px;border:1px solid var(--line);background:#f3f3f2;padding:0 16px;cursor:pointer}
+  .kv{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);gap:10px}
+  .kv span:first-child{color:var(--muted)}
+  .pickup{border-radius:14px;padding:12px 14px;background:#fafaf9;border:1px solid var(--line);margin-top:6px}
+  .pickup b{display:block}
+  .pickup small{color:var(--muted)}
+  .pickup.changed{background:var(--green-soft);border-color:#bfe3cf}
+  .pickup.changed small{color:var(--green)}
+  .pickup.warn{background:var(--amber-soft);border-color:#f0d9a8}
+  .pickup.warn small{color:var(--amber)}
+  h2{margin:0 0 16px;font-size:17px}
+  .tl{display:grid;grid-template-columns:repeat(5,1fr);position:relative}
+  .tl::before{content:"";position:absolute;top:8px;left:10%;right:10%;height:2px;background:#e1e1de}
+  .tl .fill{position:absolute;top:8px;left:10%;width:40%;height:2px;background:var(--navy)}
+  .ev{text-align:center;position:relative;z-index:1}
+  .ev i{display:block;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--navy);margin:0 auto 10px}
+  .ev.now i{background:var(--navy);box-shadow:0 0 0 4px var(--accent-soft)}
+  .ev.pend i{border-color:#d6d6d2}
+  .ev b{display:block;font-size:13px}
+  .ev.pend b{color:var(--muted);font-weight:500}
+  .ev small{color:var(--muted);font-size:12px}
+  .hint{margin-top:18px;color:var(--muted);font-size:13px;line-height:1.5}
+
+  /* ===== Pop-ups ===== */
+  .ov{position:fixed;inset:0;background:rgba(20,30,35,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+  .ov.show{display:flex}
+  .dlg{background:#fff;border-radius:20px;max-width:520px;width:100%;padding:26px 28px;box-shadow:0 20px 50px rgba(0,0,0,.2)}
+  .dlg h3{margin:0 0 8px;font-size:20px}
+  .dlg p{margin:0 0 12px;color:#3a3a37;line-height:1.55}
+  .move{display:flex;align-items:center;gap:10px;margin:6px 0 16px;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:600;background:#f5f5f4}
+  .chip.new{background:var(--accent-soft);border-color:var(--accent);color:var(--navy)}
+  .acts{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:11px 20px;font-weight:600;cursor:pointer}
+  .btn.p{background:var(--navy);border-color:var(--navy);color:#fff}
+  .help{display:flex;gap:12px;align-items:flex-start;background:var(--amber-soft);border:1px solid #f0d9a8;border-radius:14px;padding:12px 14px;margin-bottom:16px}
+  .help[hidden]{display:none}
+  .help .ic{font-size:22px;line-height:1}
+  .help b{display:block;color:var(--amber);margin-bottom:2px}
+  .help span{color:#5a4515;font-size:13px;line-height:1.5}
+  .opt{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:10px;cursor:pointer}
+  .opt:hover{border-color:var(--accent)}
+  .opt.on{border-color:var(--navy);background:var(--accent-soft)}
+  .opt input{margin-top:3px;accent-color:var(--navy)}
+  .opt b{display:block}
+  .opt small{color:var(--muted);line-height:1.45}
+  .tag{display:inline-block;font-size:11px;font-weight:600;color:var(--green);background:var(--green-soft);border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:1px}
+  .note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1d1d1b;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;display:none;z-index:30}
+
+  /* ===== Barra de demo (no es parte del producto) ===== */
+  .demo{position:fixed;right:16px;bottom:16px;background:#1d1d1b;color:#fff;border-radius:16px;padding:12px 14px;font-size:12px;z-index:15;max-width:280px}
+  .demo b{display:block;margin-bottom:6px}
+  .demo label{display:flex;gap:6px;align-items:center;margin-top:4px;cursor:pointer}
+  .demo button{margin-top:8px;border:0;border-radius:999px;padding:5px 12px;background:#fff;color:#1d1d1b;font-weight:600;cursor:pointer}
+  @media (max-width:900px){.app{grid-template-columns:1fr}aside{display:none}.grid{grid-template-columns:1fr}.content,.topbar{padding-left:16px;padding-right:16px}}
+</style>
+
+<div class="app">
+  <aside>
+    <div class="logo">⁂ BIOTASMART</div>
+    <div class="org">Clínica Demo</div>
+    <nav class="nav"><a>Inicio</a><a class="on">Pacientes</a><a>Stock de tests</a><a>Pedidos</a><a>Ajustes</a></nav>
+    <div class="cookies">🍪 Preferencias de cookies</div>
+  </aside>
+  <div class="page">
+    <div class="banner">👁 Estás viendo la plataforma como <b>Clínica Demo</b> (demo@clinica-ejemplo.es) <button>Salir</button></div>
+    <div class="topbar">
+      <div class="crumb">Inicio<span>›</span>Pacientes<span>›</span><b>Lucía Martín</b></div>
+      <div class="user">文A <span class="sel">Español ▾</span><div class="who">Clínica Demo<small>Profesional</small></div><div class="av">CD</div></div>
+    </div>
+    <div class="content">
+      <div class="grid">
+        <section class="card">
+          <div class="pav">LM</div>
+          <p class="pname">Lucía Martín</p>
+          <p class="pcode">#999001002824 · Recogida solicitada</p>
+          <span class="lbl">Sede</span>
+          <select class="sede" id="sede" aria-label="Sede del paciente">
+            <option>Mallorca</option><option>Madrid</option><option>Valencia</option>
+          </select>
+          <span class="lbl">Recogida de la muestra</span>
+          <div class="pickup" id="pickup"></div>
+          <span class="lbl">Contacto</span>
+          <div class="kv"><span>Email</span><span>lucia.martin@ejemplo.es</span></div>
+          <div class="kv"><span>Teléfono</span><span>+34 600 000 000</span></div>
+        </section>
+        <section class="card">
+          <h2>Proceso del test</h2>
+          <div class="tl"><span class="fill"></span>
+            <div class="ev"><i></i><b>Sin tubo</b><small>02/11/2026</small></div>
+            <div class="ev"><i></i><b>Cuestionario enviado</b><small>05/11/2026</small></div>
+            <div class="ev now"><i></i><b>Recogida solicitada</b><small id="tlPickup">20/11/2026</small></div>
+            <div class="ev pend"><i></i><b>Procesando</b><small>Pendiente</small></div>
+            <div class="ev pend"><i></i><b>Informe listo</b><small>Pendiente</small></div>
+          </div>
+          <p class="hint">Prueba: cambia la <b>Sede</b> de la paciente a <b>Madrid</b> en la columna de la izquierda. Primero sale la confirmación del cambio de sede (F10) y después el aviso de la recogida (F19).</p>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Paso 1: confirmar cambio de sede (F10) -->
+<div class="ov" id="ovMove" role="dialog" aria-modal="true" aria-labelledby="mvT">
+  <div class="dlg">
+    <h3 id="mvT">¿Cambiar de sede a esta paciente?</h3>
+    <div class="move"><span class="chip" id="mvFrom"></span>→<span class="chip new" id="mvTo"></span></div>
+    <p>Lucía Martín pasará a la sede nueva.</p>
+    <div class="acts"><button class="btn" onclick="cancelMove()">Cancelar</button><button class="btn p" onclick="confirmMove()">Sí, cambiar de sede</button></div>
+  </div>
+</div>
+
+<!-- Paso 2: aviso de la recogida (F19) -->
+<div class="ov" id="ovPick" role="dialog" aria-modal="true" aria-labelledby="pkT">
+  <div class="dlg">
+    <h3 id="pkT">Ayúdanos con esto</h3>
+    <p>Has movido a <b>Lucía Martín</b> a la sede <b class="to"></b>, pero su recogida estaba solicitada en <b class="from"></b>. ¿Qué quieres hacer?</p>
+    <div class="help" id="pkAccepted" hidden>
+      <span class="ic">⚠️</span>
+      <div><b>La recogida en <span class="from"></span> ya está confirmada con la empresa de transporte</b>
+      <span>No podemos cambiarla desde aquí. Si eliges recogerla en <span class="to"></span>, avisaremos al equipo de Biotasmart para que la cambie.</span></div>
+    </div>
+    <label class="opt on"><input type="radio" name="pk" value="new" checked>
+      <div><b>Solicitar la recogida en <span class="to"></span> <span class="tag">Recomendado</span></b>
+      <small id="pkNewTxt"></small></div></label>
+    <label class="opt"><input type="radio" name="pk" value="keep">
+      <div><b>Mantener la recogida en <span class="from"></span></b>
+      <small>La paciente cambia de sede, pero el mensajero sigue recogiendo la muestra en <span class="from"></span> (por ejemplo, si la muestra ya está allí).</small></div></label>
+    <div class="acts"><button class="btn" onclick="backPick()">Volver</button><button class="btn p" onclick="donePick()">Confirmar</button></div>
+    <p class="note">Esta elección solo afecta a la recogida de este test. Los próximos tests de la paciente se recogerán ya en su sede nueva.</p>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- Barra de demo: no forma parte del producto -->
+<div class="demo">
+  <b>Simular (solo mockup)</b>
+  <label><input type="radio" name="pl" value="draft" checked> Recogida en borrador en Packlink</label>
+  <label><input type="radio" name="pl" value="accepted"> Recogida ya aceptada en Packlink</label>
+  <button onclick="resetDemo()">Reiniciar</button>
+</div>
+
+<script>
+  const ADDR={Mallorca:'Avenida de ejemplo, 10 · 07001 Palma',Madrid:'Calle Santa Ana, 12 · 28001 Madrid',Valencia:'Calle de ejemplo, 5 · 46001 Valencia'};
+  let sede='Mallorca', pickupAt='Mallorca', pickupNote='Solicitada el 20/11/2026', pendingTo=null, pickupCls='';
+  const $=id=>document.getElementById(id);
+  const accepted=()=>document.querySelector('input[name="pl"]:checked').value==='accepted';
+  function renderPickup(){
+    $('pickup').className='pickup '+pickupCls;
+    $('pickup').innerHTML=`<b>📍 Sede ${pickupAt}</b><small>${ADDR[pickupAt]}<br>${pickupNote}</small>`;
+  }
+  $('sede').addEventListener('change',e=>{
+    pendingTo=e.target.value;
+    if(pendingTo===sede) return;
+    $('mvFrom').textContent=sede; $('mvTo').textContent=pendingTo;
+    $('ovMove').classList.add('show');
+  });
+  function cancelMove(){ $('sede').value=sede; $('ovMove').classList.remove('show'); }
+  function confirmMove(){
+    $('ovMove').classList.remove('show');
+    // El aviso solo sale si el test está en «Recogida solicitada», la recogida es en la sede y cambia de sede
+    if(pickupAt!==pendingTo){ openPick(); } else { sede=pendingTo; toast('Paciente movida a '+sede); }
+  }
+  function openPick(){
+    document.querySelectorAll('#ovPick .from').forEach(x=>x.textContent=pickupAt);
+    document.querySelectorAll('#ovPick .to').forEach(x=>x.textContent=pendingTo);
+    $('pkAccepted').hidden=!accepted();
+    $('pkNewTxt').textContent=accepted()
+      ? `Avisamos al equipo de Biotasmart para que cambie la recogida a ${ADDR[pendingTo]}.`
+      : `Anulamos la recogida en ${pickupAt} y pedimos una nueva en ${ADDR[pendingTo]}.`;
+    document.querySelector('input[name="pk"][value="new"]').checked=true; syncOpts();
+    $('ovPick').classList.add('show');
+  }
+  document.querySelectorAll('input[name="pk"]').forEach(r=>r.addEventListener('change',syncOpts));
+  function syncOpts(){ document.querySelectorAll('#ovPick .opt').forEach(o=>o.classList.toggle('on',o.querySelector('input').checked)); }
+  function backPick(){ $('ovPick').classList.remove('show'); $('ovMove').classList.add('show'); }
+  function donePick(){
+    const v=document.querySelector('input[name="pk"]:checked').value, t=new Date(), d=[t.getDate(),t.getMonth()+1,t.getFullYear()].map(n=>String(n).padStart(2,'0')).join('/');
+    sede=pendingTo;
+    if(v==='new'){
+      pickupAt=pendingTo;
+      if(accepted()){ pickupCls='warn'; pickupNote='Cambio pendiente: el equipo de Biotasmart está cambiando la recogida'; toast('Avisamos al equipo para cambiar la recogida a '+sede); }
+      else { pickupCls='changed'; pickupNote='Nueva recogida solicitada el '+d; $('tlPickup').textContent=d; toast('Recogida solicitada en '+sede); }
+    } else { pickupCls=''; pickupNote='Se mantiene la recogida en '+pickupAt+' · solicitada el 20/11/2026'; toast('Paciente movida a '+sede+' · la recogida sigue en '+pickupAt); }
+    $('ovPick').classList.remove('show'); renderPickup();
+  }
+  function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',2600);}
+  function resetDemo(){ sede='Mallorca'; pickupAt='Mallorca'; pickupCls=''; pickupNote='Solicitada el 20/11/2026'; $('sede').value='Mallorca'; $('tlPickup').textContent='20/11/2026'; renderPickup(); }
+  renderPickup();
+</script>
