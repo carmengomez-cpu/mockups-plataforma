@@ -330,6 +330,28 @@
       sede:'Madrid',sent,done,shipSt,tl};
   }
   // Bloques del documento: los usan igual la factura y el resumen del pedido
+  // Resumen del pedido con el diseño de antes: tests del pedido, precio por test y desglose.
+  // Datos fiscales, referencias y qué incluye cada test van solo en la factura.
+  function classicSummary(o){
+    const done=o.ship==='Entregado', pct=Math.round(DISC*100), short=n=>n.replace('Test avanzado de microbiota ','Microbiota ')+' Avanzado';
+    const items=o.lines.map(l=>`<div class="item"><div><b>${l.q} test${l.q>1?'s':''} · ${short(l.name)}${l.enf?' · '+l.enf:''}</b><small>Envío Paq24 a tu consulta incluido</small></div>
+      ${o.cancelled?'':`<span class="prep" style="${done?'':'color:var(--muted)'}">${done?`✓ ${l.q}/${l.q}`:`0/${l.q}`} preparados</span>`}</div>`).join('');
+    const seen={}, tiles=o.lines.filter(l=>{const k=l.name+l.pu; if(seen[k]) return false; seen[k]=1; return true;}).map(l=>{
+      const net=T(l.pu*(1-DISC)); return `<div class="tile"><div><small>${short(l.name)}</small><em>sin IVA ${eur(net)} · con descuento</em></div><b>${eur(T(net*1.21))}</b></div>`;}).join('');
+    const save=T(o.gross-o.base);
+    return `${items}<div class="two">
+      <div><p class="ttl">Precio por test (con IVA)</p><div class="tiles">${tiles}
+        <div class="tile disc"><div><small>Descuento por tu pedido</small><em>ahorras ${eur(save)} (sin IVA) en este pedido</em></div><b>−${pct} %</b></div></div></div>
+      <div><p class="ttl">Desglose</p>
+        ${o.lines.map(l=>`<div class="ln"><span>${l.q} × ${eur(l.pu)} (tarifa)</span><span>${eur(T(l.q*l.pu))}</span></div>`).join('')}
+        <div class="ln d"><span>Descuento por pedido (${pct} %)</span><span>−${eur(save)}</span></div>
+        <div class="ln sep"><span>Base imponible</span><span>${eur(o.base)}</span></div>
+        <div class="ln"><span>IVA (21 %)</span><span>${eur(o.iva)}</span></div>
+        <div class="ln"><span>Envío Paq24</span><span class="inc">Incluido</span></div>
+        <div class="ln tot"><span>Total</span><span>${eur(o.total)}</span></div>
+        ${o.cancelled?`<p class="sfoot" style="color:var(--red)">Solicitud cancelada el ${o.cancelled} · no se ha cobrado.</p>`:''}
+      </div></div>`;
+  }
   // Vista sencilla del pedido: qué tests, cuántos y el total. Todo el detalle va en la factura.
   function simpleSummary(o){
     const done=o.ship==='Entregado';
@@ -487,7 +509,7 @@
          <button class="paybtn" id="payBtn" onclick="payNow(${i})">Pagar ${eur(o.total)} →</button>
          <span class="secure">🔒 Pago seguro con tarjeta</span></div>`;
     document.getElementById('dNum').textContent=o.num;
-    document.getElementById('dBreak').innerHTML=simpleSummary(o);
+    document.getElementById('dBreak').innerHTML=classicSummary(o);
     document.getElementById('dFacts').innerHTML=`
       <div class="fact"><span class="fi">📍</span><div><small>Sede</small><b>${o.sede}</b></div></div>
       <div class="fact"><span class="fi">📤</span><div><small>Enviada</small><b>${o.sent}</b></div></div>
