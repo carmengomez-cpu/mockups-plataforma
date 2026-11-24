@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Flujo · Pedir más tests</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #1B1B1B; --muted: #555; --muted-2: #6B6B6B; --line: #E6E6E4; --border: #DADADA;
+    --page: #F4F4F3; --side: #F7F7F6; --soft: #ECECEA; --pill: #EEEEEE;
+    --green: #1E6B3C; --green-bg: #EAF6EE;
+    --amber: #8A4B00; --amber-bg: #FFF4E0; --amber-line: #E9C07A;
+    --red: #A3362E;
+    --cta: #9CC5D8; --cta-soft: #CFE3EC; --cta-disabled: #D6E6EE;
+    --intestinal: #2B6F86; --vaginal: #C0605A;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, system-ui, sans-serif; color: var(--text); background: var(--page); }
+  button { font: inherit; cursor: pointer; }
+  a { color: inherit; }
+  [hidden] { display: none !important; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ===== Barra de demo (fuera del producto) ===== */
+  .demo-bar { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; background: #1F2326; color: #FFF; font-size: 14px; }
+  .demo-bar span.label { color: #C9CED3; margin-right: 6px; }
+  .demo-step { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; border: 1px solid #3A4045; background: transparent; color: #C9CED3; font-size: 13px; }
+  .demo-step b { width: 20px; height: 20px; border-radius: 50%; background: #3A4045; color: #FFF; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; }
+  .demo-step[aria-current="step"] { background: #FFF; color: #1F2326; border-color: #FFF; }
+  .demo-step[aria-current="step"] b { background: #1F2326; }
+  .demo-reset { margin-left: 8px; border: 0; background: transparent; color: #C9CED3; text-decoration: underline; font-size: 13px; }
+
+  /* ===== Plataforma ===== */
+  .app { display: flex; min-height: calc(100vh - 48px); }
+  .sidebar { width: 250px; flex: none; background: var(--side); border-right: 1px solid var(--line); padding: 28px 18px 24px; display: flex; flex-direction: column; gap: 22px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-size: 16px; letter-spacing: 0.12em; font-weight: 500; }
+  .account { font-size: 14px; color: var(--muted); margin: -8px 0 0 4px; }
+  .filter { display: inline-flex; gap: 2px; padding: 4px; background: var(--soft); border-radius: 12px; align-self: flex-start; }
+  .filter button { border: 0; background: transparent; padding: 6px 10px; border-radius: 9px; font-size: 13px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+  .filter button[aria-pressed="true"] { background: #FFF; color: var(--text); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex: none; }
+  .nav { display: flex; flex-direction: column; gap: 4px; }
+  .nav a { padding: 12px 14px; border-radius: 12px; font-size: 16px; color: #333; text-decoration: none; }
+  .nav a:hover { background: #EFEFED; }
+  .nav a[aria-current="page"] { background: var(--soft); color: var(--text); font-weight: 500; }
+  .sidebar-foot { margin-top: auto; font-size: 15px; color: var(--muted); padding: 0 4px; }
+
+  .content { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .topbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 40px; border-bottom: 1px solid var(--line); }
+  .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 16px; color: var(--muted); }
+  .crumbs a { text-decoration: none; }
+  .crumbs strong { color: var(--text); font-weight: 500; }
+  .user-area { display: flex; align-items: center; gap: 18px; }
+  .user-area select { font: inherit; font-size: 15px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: #FFF; color: var(--text); }
+  .user { display: flex; align-items: center; gap: 12px; }
+  .user-text { text-align: right; line-height: 1.25; }
+  .user-text div:last-child { font-size: 13px; color: var(--muted); }
+  .avatar { width: 46px; height: 46px; border-radius: 50%; background: #8FB4C6; color: #12313D; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+
+  .page { padding: 32px 40px 40px; display: flex; flex-direction: column; gap: 24px; max-width: 1280px; width: 100%; }
+  .page-foot { padding: 0 40px 32px; font-size: 15px; color: var(--muted); }
+
+  .btn-pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 22px; border: 0; border-radius: 999px; font-size: 17px; color: var(--text); text-decoration: none; }
+  .btn-soft { background: var(--cta-soft); }
+  .btn-strong { background: var(--cta); }
+
+  /* ===== Paso 1: Stock de tests ===== */
+  .stock-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+  .stock-head h1 { margin: 0; font-size: 32px; font-weight: 700; }
+  .stock-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .card { background: #FFF; border-radius: 26px; padding: 28px 30px; display: flex; flex-direction: column; gap: 20px; }
+  .card h2 { margin: 0; font-size: 21px; font-weight: 600; }
+  .search { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 18px; background: #F2F2F1; border-radius: 999px; }
+  .search input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font: inherit; font-size: 16px; color: var(--text); }
+  .stock-table-wrap { border: 1px solid var(--line); border-radius: 18px; overflow-x: auto; }
+  .stock-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+  .stock-table th { text-align: left; font-size: 13px; letter-spacing: 0.06em; font-weight: 600; color: var(--muted); padding: 18px 24px; border-bottom: 1px solid var(--line); }
+  .stock-table td { padding: 56px 24px; text-align: center; color: var(--muted); font-size: 15px; }
+
+  /* ===== Paso 2: Pop-up ===== */
+  .backdrop { position: fixed; inset: 0; background: rgba(30, 30, 30, 0.42); display: flex; align-items: flex-start; justify-content: center; padding: 72px 16px 36px; overflow-y: auto; z-index: 20; }
+  .modal { width: 100%; max-width: 690px; background: #FFF; border-radius: 32px; padding: 34px 34px 30px; display: flex; flex-direction: column; gap: 22px; box-shadow: 0 24px 60px rgba(0,0,0,0.18); }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; }
+  .modal-head h2 { margin: 0; font-size: 21px; font-weight: 600; }
+  .close { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: #333; border-radius: 12px; }
+  .close:hover { background: #F2F2F2; }
+
+  .test { display: flex; flex-direction: column; gap: 14px; }
+  .test-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .test-name { display: flex; align-items: center; gap: 6px; }
+  .test-name h3 { margin: 0; font-size: 18px; font-weight: 500; }
+  .info { width: 28px; height: 28px; padding: 0; border: 0; background: transparent; color: #333; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+  .info:hover, .info[aria-expanded="true"] { background: #F0F0EF; }
+  .info-wrap { position: relative; }
+  .popover { position: absolute; top: 34px; left: -12px; z-index: 5; width: 320px; max-width: calc(100vw - 48px); background: #1F2326; color: #FFF; border-radius: 14px; padding: 14px 16px; box-shadow: 0 12px 30px rgba(0,0,0,0.2); font-size: 14px; line-height: 1.5; }
+  .popover::before { content: ""; position: absolute; top: -6px; left: 20px; width: 12px; height: 12px; background: #1F2326; transform: rotate(45deg); }
+  .popover strong { display: block; margin-bottom: 4px; font-size: 15px; }
+  .popover p { margin: 0 0 6px; color: #E4E7EA; }
+  .popover p:last-child { margin-bottom: 0; }
+
+  .price { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .price-old { display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--muted-2); }
+  .badge { font-size: 13px; font-weight: 600; color: var(--green); background: var(--green-bg); padding: 2px 8px; border-radius: 999px; }
+  .price-now { font-size: 26px; font-weight: 700; line-height: 1.1; }
+  .price-now small { font-size: 14px; font-weight: 400; color: var(--muted); }
+  .saving { font-size: 13px; font-weight: 600; color: var(--green); background: var(--green-bg); padding: 3px 10px; border-radius: 999px; }
+
+  .qty-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .qty-row > span { font-size: 16px; color: var(--muted); }
+  .stepper { display: flex; align-items: center; gap: 8px; }
+  .stepper button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: #FFF; color: var(--text); display: flex; align-items: center; justify-content: center; }
+  .stepper button:hover:not(:disabled) { background: #F5F5F5; }
+  .stepper button:disabled { color: #BDBDBD; cursor: not-allowed; }
+  .stepper output { width: 86px; height: 44px; border-radius: 999px; background: var(--pill); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+
+  .divider { height: 1px; background: var(--line); }
+  .note { font-size: 15px; color: #444; }
+
+  .summary { display: flex; flex-direction: column; gap: 10px; font-size: 17px; }
+  .s-row { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); }
+  .s-row small { font-size: 14px; }
+  .s-row.discount { color: var(--green); }
+  .s-row .dark { color: var(--text); }
+  .s-row.total { color: var(--text); font-weight: 600; font-size: 18px; padding-top: 4px; }
+  .saving-box { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-radius: 14px; background: var(--green-bg); color: var(--green); font-size: 15px; }
+
+  .modal-foot { display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
+  .btn { min-height: 56px; padding: 0 24px; border-radius: 999px; font-size: 17px; }
+  .btn-secondary { border: 1px solid var(--border); background: #FFF; color: var(--text); }
+  .btn-primary { border: 0; background: var(--cta); color: var(--text); padding: 0 32px; }
+  .btn-primary:disabled { background: var(--cta-disabled); color: #6B6B6B; cursor: not-allowed; }
+
+  /* ===== Paso 3: Revisa tu solicitud ===== */
+  .back-link { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: var(--muted); font-size: 15px; padding: 6px 0; }
+  .back-link:hover { color: var(--text); }
+  .review-head h1 { margin: 0; font-size: 30px; font-weight: 700; }
+  .review-head p { margin: 6px 0 0; font-size: 16px; color: var(--muted); }
+  .meta { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+  .tag-amber { background: var(--amber-bg); color: var(--amber); }
+  .tag-green { background: var(--green-bg); color: var(--green); }
+  .tag-grey { background: var(--soft); color: #333; font-weight: 500; }
+
+  .alert { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 20px; border-radius: 18px; background: var(--amber-bg); border: 1px solid var(--amber-line); }
+  .alert-body { display: flex; gap: 12px; align-items: flex-start; }
+  .alert-body svg { flex: none; margin-top: 2px; }
+  .alert strong { display: block; font-size: 16px; margin-bottom: 2px; }
+  .alert span { font-size: 14px; color: #5A3A10; }
+  .btn-amber { min-height: 48px; font-size: 16px; background: #FFF; border: 1px solid var(--amber-line); color: var(--amber); font-weight: 600; }
+
+  .grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+  .col { display: flex; flex-direction: column; gap: 22px; }
+  .card-sub { margin: -10px 0 0; font-size: 14px; color: var(--muted); }
+  .card-title-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .link-btn { border: 0; background: transparent; color: #2B6F86; font-size: 15px; font-weight: 500; padding: 8px 0; text-decoration: underline; text-underline-offset: 3px; }
+
+  .table-wrap { overflow-x: auto; }
+  .order-table { width: 100%; border-collapse: collapse; min-width: 520px; }
+  .order-table th { text-align: left; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; color: var(--muted); padding: 0 0 12px; border-bottom: 1px solid var(--line); }
+  .order-table td { padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 16px; vertical-align: middle; }
+  .order-table .num { text-align: right; }
+  .order-table th + th, .order-table td + td { padding-left: 16px; }
+  .test-cell { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+  .unit-old { display: block; font-size: 13px; color: var(--muted-2); }
+  .unit-now { font-weight: 600; }
+
+  .totals { display: flex; flex-direction: column; gap: 10px; font-size: 16px; }
+  .totals .s-row.total { padding-top: 12px; border-top: 1px solid var(--line); align-items: baseline; }
+  .totals .s-row.total span:first-child small { font-weight: 400; color: var(--muted); }
+  .totals .s-row.total span:last-child { font-size: 28px; font-weight: 700; }
+  .tax { font-size: 14px; color: var(--muted); text-align: right; margin-top: -4px; }
+
+  .address { background: #F6F6F5; border-radius: 16px; padding: 16px 18px; font-size: 15px; line-height: 1.6; }
+  .address dl { margin: 0; display: grid; grid-template-columns: auto 1fr; column-gap: 14px; row-gap: 2px; }
+  .address dt { color: var(--muted); }
+  .address dd { margin: 0; }
+  .missing { color: var(--amber); font-weight: 600; }
+  .hint { font-size: 14px; color: var(--muted); margin: 0; }
+
+  .pay-options { display: flex; flex-direction: column; gap: 10px; border: 0; padding: 0; margin: 0; }
+  .pay-option { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--border); border-radius: 16px; cursor: pointer; }
+  .pay-option:has(input:checked) { border-color: #6FA3BA; background: #F3F9FC; }
+  .pay-option input { margin: 3px 0 0; width: 18px; height: 18px; accent-color: #2B6F86; }
+  .pay-option strong { display: block; font-size: 16px; font-weight: 600; }
+  .pay-option span { font-size: 14px; color: var(--muted); }
+  .btn-pay { width: 100%; min-height: 56px; border: 0; border-radius: 999px; background: var(--cta); color: var(--text); font-size: 17px; font-weight: 600; }
+  .btn-pay:disabled { background: var(--cta-disabled); color: #6B6B6B; cursor: not-allowed; }
+  .pay-blocked { font-size: 14px; color: var(--amber); margin: -6px 0 0; text-align: center; }
+  .cancel { align-self: flex-start; border: 0; background: transparent; color: var(--red); font-size: 15px; padding: 10px 4px; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ===== Pop-up: completar la sede ===== */
+  .modal-sm { max-width: 560px; }
+  .modal-intro { margin: -10px 0 0; font-size: 15px; color: var(--muted); line-height: 1.5; }
+  .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 14px; font-weight: 500; color: #333; }
+  .field label .req { color: var(--amber); }
+  .field input { font: inherit; font-size: 16px; min-height: 48px; padding: 0 14px; border: 1px solid var(--border); border-radius: 12px; background: #FFF; color: var(--text); }
+  .field input:focus { outline: 2px solid #6FA3BA; outline-offset: 1px; border-color: #6FA3BA; }
+  .field.needs input { border-color: var(--amber-line); background: #FFFBF3; }
+  .field.invalid input { border-color: var(--red); background: #FFF; }
+  .field .err { font-size: 13px; color: var(--red); }
+  .form-note { font-size: 14px; color: var(--muted); margin: 0; }
+  @media (max-width: 560px) { .form-grid { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ===== Paso 4: Confirmación ===== */
+  .done { max-width: 620px; margin: 40px auto 0; text-align: center; align-items: center; padding: 44px 36px; }
+  .done-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--green-bg); color: var(--green); display: flex; align-items: center; justify-content: center; }
+  .done h1 { margin: 0; font-size: 26px; }
+  .done p { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.5; }
+
+  @media (max-width: 1100px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 900px) {
+    .app { flex-direction: column; }
+    .sidebar { width: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+    .nav { flex-direction: row; flex-wrap: wrap; }
+    .sidebar-foot { display: none; }
+    .topbar, .page, .page-foot { padding-left: 16px; padding-right: 16px; }
+    .user-text { display: none; }
+    .card { padding: 22px 18px; }
+  }
+  @media (max-width: 560px) {
+    .modal { padding: 24px 20px; border-radius: 24px; }
+    .test-head { flex-direction: column; }
+    .price { align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Barra de demo: no forma parte del producto, solo sirve para navegar el flujo -->
+<div class="demo-bar" aria-label="Pasos del flujo (demo)">
+  <span class="label">Flujo de demo:</span>
+  <button type="button" class="demo-step" data-goto="stock"><b>1</b>Stock de tests</button>
+  <button type="button" class="demo-step" data-goto="order"><b>2</b>Elegir tests</button>
+  <button type="button" class="demo-step" data-goto="review"><b>3</b>Revisar solicitud</button>
+  <button type="button" class="demo-step" data-goto="done"><b>4</b>Confirmación</button>
+  <button type="button" class="demo-reset" id="demo-reset">Reiniciar</button>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="6" r="2.5"/><circle cx="16" cy="12" r="2.5"/><circle cx="8" cy="18" r="2.5"/><path d="M10 7l4 3.5M10 17l4-3.5"/></svg>
+      BIOTASMART
+    </div>
+    <div class="account">Mi consulta</div>
+    <div class="filter" role="group" aria-label="Filtrar por tipo de test">
+      <button type="button" aria-pressed="true">Todo</button>
+      <button type="button" aria-pressed="false"><span class="dot" style="background: var(--intestinal)"></span>Intestinal</button>
+      <button type="button" aria-pressed="false"><span class="dot" style="background: var(--vaginal)"></span>Vaginal</button>
+    </div>
+    <nav class="nav" aria-label="Menú principal">
+      <a href="#">Inicio</a>
+      <a href="#">Pacientes</a>
+      <a href="#" aria-current="page" data-goto="stock">Stock de tests</a>
+      <a href="#">Pedidos</a>
+      <a href="#">Ajustes</a>
+    </nav>
+    <div class="sidebar-foot">Preferencias de cookies</div>
+  </aside>
+
+  <div class="content">
+    <header class="topbar">
+      <nav class="crumbs" aria-label="Migas de pan">
+        <a href="#">Inicio</a> <span aria-hidden="true">›</span>
+        <a href="#" data-goto="stock" id="crumb-stock">Stock de tests</a>
+        <span id="crumb-review" hidden><span aria-hidden="true">› </span><strong>Revisa tu solicitud</strong></span>
+      </nav>
+      <div class="user-area">
+        <label><span class="sr-only">Idioma</span>
+          <select><option>Español</option><option>English</option></select>
+        </label>
+        <div class="user">
+          <div class="user-text"><div>Mi consulta</div><div>Profesional</div></div>
+          <div class="avatar">MC</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== Paso 1: Stock de tests ===== -->
+    <main class="page" id="view-stock">
+      <div class="stock-head">
+        <h1>Stock de tests</h1>
+        <div class="stock-actions">
+          <button type="button" class="btn-pill btn-soft">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Activar test a paciente
+          </button>
+          <button type="button" class="btn-pill btn-strong" data-goto="order">Pedir más tests</button>
+        </div>
+      </div>
+      <section class="card">
+        <h2>Tests disponibles</h2>
+        <label class="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <span class="sr-only">Buscar test</span>
+          <input type="search" placeholder="Buscar por código de tubo o paciente...">
+        </label>
+        <div class="stock-table-wrap">
+          <table class="stock-table">
+            <thead><tr><th>TUBO Y PACIENTE</th><th>TIPO</th><th>ESTADO</th><th>FECHA DE ALTA</th></tr></thead>
+            <tbody><tr><td colspan="4">No tienes tests disponibles. Pide más para tenerlos en stock.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===== Paso 3: Revisa tu solicitud ===== -->
+    <main class="page" id="view-review" hidden>
+      <button type="button" class="back-link" data-goto="order">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        Volver a elegir tests
+      </button>
+
+      <div class="review-head">
+        <h1>Revisa tu solicitud</h1>
+        <p>Comprueba los tests, el envío y la dirección antes de pagar.</p>
+        <div class="meta">
+          <span class="tag tag-amber">Pendiente de pago</span>
+          <span class="tag tag-grey">Enviada el 24/11/2026</span>
+          <span class="tag tag-grey">Caduca el 24/12/2026</span>
+        </div>
+      </div>
+
+      <div class="alert" role="alert" id="sede-alert">
+        <div class="alert-body">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8A4B00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></svg>
+          <div>
+            <strong>Completa los datos de tu sede para poder pagar</strong>
+            <span id="sede-missing-text">Faltan: ciudad, provincia y teléfono.</span>
+          </div>
+        </div>
+        <button type="button" class="btn-pill btn-amber" id="complete-sede">Completar la sede</button>
+      </div>
+
+      <div class="grid">
+        <div class="col">
+          <section class="card">
+            <div class="card-title-row">
+              <h2>Resumen del pedido</h2>
+              <button type="button" class="link-btn" data-goto="order">Editar tests</button>
+            </div>
+            <div class="table-wrap">
+              <table class="order-table">
+                <thead>
+                  <tr><th>Test</th><th class="num">Cantidad</th><th class="num">Precio por test</th><th class="num">Importe</th></tr>
+                </thead>
+                <tbody id="order-rows"></tbody>
+              </table>
+            </div>
+            <div class="totals">
+              <div class="s-row"><span>Precio de tarifa · <span data-bind="countText"></span></span><span data-bind="subtotal"></span></div>
+              <div class="s-row discount"><span>Descuento profesional (15 %)</span><span>−<span data-bind="discount"></span></span></div>
+              <div class="s-row"><span>Envío Paq24 a tu consulta</span><span class="dark">Incluido</span></div>
+              <div class="s-row total"><span>Total <small>(IVA incluido)</small></span><span data-bind="total"></span></div>
+              <div class="tax">Base imponible <span data-bind="base"></span> · IVA (21 %) <span data-bind="iva"></span></div>
+            </div>
+            <div class="saving-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+              <span>Con este pedido ahorras <strong data-bind="discount"></strong> frente al precio de tarifa</span>
+            </div>
+          </section>
+          <button type="button" class="cancel" data-goto="stock">Cancelar solicitud</button>
+        </div>
+
+        <div class="col">
+          <section class="card">
+            <h2>Dirección de entrega</h2>
+            <p class="card-sub">Enviamos los tests a la sede que elegiste al pedir.</p>
+            <div class="address">
+              <dl>
+                <dt>Sede</dt><dd class="sede-field" data-field="name"></dd>
+                <dt>Dirección</dt><dd class="sede-field" data-field="street"></dd>
+                <dt>C. P.</dt><dd class="sede-field" data-field="cp"></dd>
+                <dt>Ciudad</dt><dd class="sede-field" data-field="city"></dd>
+                <dt>Provincia</dt><dd class="sede-field" data-field="province"></dd>
+                <dt>Teléfono</dt><dd class="sede-field" data-field="phone"></dd>
+                <dt>Contacto</dt><dd class="sede-field" data-field="contact"></dd>
+              </dl>
+            </div>
+            <p class="hint">¿No es correcta? Cámbiala en <a href="#">Ajustes › Sedes</a> antes de pagar. Vale para todos los envíos y recogidas de esa sede.</p>
+          </section>
+
+          <section class="card">
+            <h2>Cómo quieres pagar</h2>
+            <fieldset class="pay-options">
+              <legend class="sr-only">Método de pago</legend>
+              <label class="pay-option">
+                <input type="radio" name="pay" value="card" checked>
+                <div><strong>Tarjeta</strong><span>Pagas ahora en la página segura de nuestro proveedor de pagos.</span></div>
+              </label>
+              <label class="pay-option">
+                <input type="radio" name="pay" value="transfer">
+                <div><strong>Transferencia</strong><span>Enviamos los tests ya y tienes 30 días desde la fecha de la factura para pagar. Los datos bancarios van en la factura.</span></div>
+              </label>
+            </fieldset>
+            <button type="button" class="btn-pay" id="pay-btn" disabled></button>
+            <p class="pay-blocked" id="pay-blocked">Completa los datos de tu sede para continuar.</p>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== Paso 4: Confirmación ===== -->
+    <main class="page" id="view-done" hidden>
+      <section class="card done">
+        <div class="done-icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h1>¡Pedido confirmado!</h1>
+        <p id="done-text"></p>
+        <div class="meta" style="justify-content: center">
+          <span class="tag tag-green">Ahorro: <span data-bind="discount"></span></span>
+          <span class="tag tag-grey">Entrega estimada 3-4 días laborables</span>
+        </div>
+        <button type="button" class="btn-pill btn-strong" data-goto="stock">Volver a Stock de tests</button>
+      </section>
+    </main>
+
+    <footer class="page-foot"><a href="#">Política de cookies</a></footer>
+  </div>
+</div>
+
+<!-- ===== Paso 2: Pop-up Pedir más tests ===== -->
+<div class="backdrop" id="view-order" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+    <div class="modal-head">
+      <h2 id="dlg-title">Pedir más tests</h2>
+      <button type="button" class="close" data-close-order aria-label="Cerrar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <section class="test">
+      <div class="test-head">
+        <div class="test-name">
+          <h3>Test Intestinal Avanzado</h3>
+          <div class="info-wrap">
+            <button type="button" class="info" aria-label="Más información sobre el Test Intestinal Avanzado" aria-expanded="false" aria-controls="info-intestinal">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+            </button>
+            <div class="popover" id="info-intestinal" role="tooltip" hidden>
+              <strong>Test Intestinal Avanzado</strong>
+              <p>[PENDIENTE: texto informativo del Test Intestinal Avanzado]</p>
+            </div>
+          </div>
+        </div>
+        <div class="price">
+          <div class="price-old"><span><span class="sr-only">Precio sin descuento: </span><s>349,00 €</s></span><span class="badge">−15 %</span></div>
+          <div class="price-now">296,65 € <small>/ test</small></div>
+          <div class="saving">Ahorras 52,35 €</div>
+        </div>
+      </div>
+      <div class="qty-row">
+        <span>Cantidad</span>
+        <div class="stepper" data-key="intestinal" data-label="Test Intestinal"></div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="test">
+      <div class="test-head">
+        <div class="test-name">
+          <h3>Test Vaginal Avanzado</h3>
+          <div class="info-wrap">
+            <button type="button" class="info" aria-label="Más información sobre el Test Vaginal Avanzado" aria-expanded="false" aria-controls="info-vaginal">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+            </button>
+            <div class="popover" id="info-vaginal" role="tooltip" hidden>
+              <strong>Test Vaginal Avanzado</strong>
+              <p>Equilibrio de la microbiota vaginal.</p>
+              <p>[PENDIENTE: resto del texto informativo del Test Vaginal Avanzado]</p>
+            </div>
+          </div>
+        </div>
+        <div class="price">
+          <div class="price-old"><span><span class="sr-only">Precio sin descuento: </span><s>349,00 €</s></span><span class="badge">−15 %</span></div>
+          <div class="price-now">296,65 € <small>/ test</small></div>
+          <div class="saving">Ahorras 52,35 €</div>
+        </div>
+      </div>
+      <div class="qty-row">
+        <span>Cantidad</span>
+        <div class="stepper" data-key="vaginal" data-label="Test Vaginal"></div>
+      </div>
+    </section>
+
+    <div class="note">El paciente se elige al activar cada test.</div>
+    <div class="divider"></div>
+
+    <div class="summary" aria-live="polite">
+      <div class="s-row"><span>Subtotal · <span data-bind="countText"></span> <small>(sin descuento)</small></span><span data-bind="subtotal"></span></div>
+      <div class="s-row discount"><span>Descuento profesional 15 %</span><span>−<span data-bind="discount"></span></span></div>
+      <div class="s-row"><span>Envío Paq24 a tu consulta</span><span class="dark">Incluido</span></div>
+      <div class="s-row total"><span>Total</span><span data-bind="total"></span></div>
+      <div class="saving-box" id="modal-saving">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+        <span>Con este pedido ahorras <strong data-bind="discount"></strong> frente al precio sin descuento</span>
+      </div>
+    </div>
+
+    <div class="note">Entrega estimada 3-4 días laborables · factura automática</div>
+
+    <div class="modal-foot">
+      <button type="button" class="btn btn-secondary" data-close-order>Cancelar</button>
+      <button type="button" class="btn btn-primary" id="to-review">Revisar solicitud</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Pop-up: completar la sede ===== -->
+<div class="backdrop" id="sede-modal" hidden>
+  <form class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="sede-title" id="sede-form" novalidate>
+    <div class="modal-head">
+      <h2 id="sede-title">Completa los datos de tu sede</h2>
+      <button type="button" class="close" data-close-sede aria-label="Cerrar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <p class="modal-intro">Los necesitamos para enviarte los tests y emitir la factura. Los campos marcados en naranja faltan.</p>
+
+    <div class="form-grid">
+      <div class="field full">
+        <label for="f-name">Nombre de la sede <span class="req">*</span></label>
+        <input id="f-name" name="name" autocomplete="organization" required>
+      </div>
+      <div class="field full">
+        <label for="f-street">Dirección <span class="req">*</span></label>
+        <input id="f-street" name="street" autocomplete="street-address" required>
+      </div>
+      <div class="field">
+        <label for="f-cp">Código postal <span class="req">*</span></label>
+        <input id="f-cp" name="cp" inputmode="numeric" autocomplete="postal-code" maxlength="5" required>
+      </div>
+      <div class="field">
+        <label for="f-city">Ciudad <span class="req">*</span></label>
+        <input id="f-city" name="city" autocomplete="address-level2" required>
+      </div>
+      <div class="field">
+        <label for="f-province">Provincia <span class="req">*</span></label>
+        <input id="f-province" name="province" autocomplete="address-level1" required>
+      </div>
+      <div class="field">
+        <label for="f-phone">Teléfono <span class="req">*</span></label>
+        <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
+      </div>
+      <div class="field full">
+        <label for="f-contact">Persona de contacto</label>
+        <input id="f-contact" name="contact" autocomplete="name">
+      </div>
+    </div>
+
+    <p class="form-note">Se guardará en Ajustes › Sedes y valdrá para todos los envíos y recogidas de esta sede.</p>
+
+    <div class="modal-foot">
+      <button type="button" class="btn btn-secondary" data-close-sede>Cancelar</button>
+      <button type="submit" class="btn btn-primary">Guardar datos</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  var LIST_PRICE = 349.00;  // precio sin descuento (IVA incluido)
+  var PRICE = 296.65;       // precio con 15 % de descuento (IVA incluido)
+  var TESTS = [
+    { key: 'intestinal', name: 'Test Intestinal Avanzado', color: 'var(--intestinal)' },
+    { key: 'vaginal', name: 'Test Vaginal Avanzado', color: 'var(--vaginal)' }
+  ];
+  var START = { intestinal: 2, vaginal: 2 };
+  var qty = Object.assign({}, START);
+  var SEDE_START = { name: '[NOMBRE DE LA SEDE]', street: '[CALLE Y NÚMERO]', cp: '[CÓDIGO POSTAL]', city: '', province: '', phone: '', contact: '[PERSONA DE CONTACTO]' };
+  var REQUIRED = ['name', 'street', 'cp', 'city', 'province', 'phone'];
+  var FIELD_NAMES = { name: 'nombre', street: 'dirección', cp: 'código postal', city: 'ciudad', province: 'provincia', phone: 'teléfono' };
+  var sede = Object.assign({}, SEDE_START);
+  var sedeComplete = false;
+  function missingFields() { return REQUIRED.filter(function (k) { return !String(sede[k]).trim(); }); }
+  var current = 'stock';
+
+  function eur(n) {
+    var parts = n.toFixed(2).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return parts[0] + ',' + parts[1] + ' €';
+  }
+
+  /* ---------- Steppers ---------- */
+  var MINUS = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>';
+  var PLUS = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+  document.querySelectorAll('.stepper').forEach(function (el) {
+    var key = el.dataset.key, label = el.dataset.label;
+    el.innerHTML =
+      '<button type="button" data-step="-1" aria-label="Quitar un ' + label + '">' + MINUS + '</button>' +
+      '<output aria-label="Cantidad de ' + label + '"></output>' +
+      '<button type="button" data-step="1" aria-label="Añadir un ' + label + '">' + PLUS + '</button>';
+    el.addEventListener('click', function (e) {
+      var btn = e.target.closest('button');
+      if (!btn) return;
+      qty[key] = Math.max(0, qty[key] + Number(btn.dataset.step));
+      update();
+    });
+  });
+
+  /* ---------- Cálculos y pintado ---------- */
+  function update() {
+    var count = qty.intestinal + qty.vaginal;
+    var total = count * PRICE;
+    var base = total / 1.21;
+    var vals = {
+      countText: count + (count === 1 ? ' test' : ' tests'),
+      subtotal: eur(count * LIST_PRICE),
+      discount: eur(count * (LIST_PRICE - PRICE)),
+      total: eur(total),
+      base: eur(base),
+      iva: eur(total - base)
+    };
+    document.querySelectorAll('[data-bind]').forEach(function (el) { el.textContent = vals[el.dataset.bind]; });
+
+    document.querySelectorAll('.stepper').forEach(function (el) {
+      var q = qty[el.dataset.key];
+      el.querySelector('output').textContent = q;
+      el.querySelector('[data-step="-1"]').disabled = q === 0;
+    });
+    document.getElementById('modal-saving').hidden = count === 0;
+    document.getElementById('to-review').disabled = count === 0;
+
+    // Filas del resumen (solo tests con cantidad)
+    document.getElementById('order-rows').innerHTML = TESTS.filter(function (t) { return qty[t.key] > 0; }).map(function (t) {
+      return '<tr>' +
+        '<td><div class="test-cell"><span class="dot" style="background:' + t.color + ';width:9px;height:9px"></span>' + t.name + '</div></td>' +
+        '<td class="num">' + qty[t.key] + '</td>' +
+        '<td class="num"><span class="unit-old"><span class="sr-only">Antes </span><s>' + eur(LIST_PRICE) + '</s></span><span class="unit-now">' + eur(PRICE) + '</span></td>' +
+        '<td class="num">' + eur(qty[t.key] * PRICE) + '</td>' +
+      '</tr>';
+    }).join('');
+
+    // Pago
+    var method = document.querySelector('input[name="pay"]:checked').value;
+    sedeComplete = missingFields().length === 0;
+    var payBtn = document.getElementById('pay-btn');
+    payBtn.textContent = method === 'card' ? 'Pagar con tarjeta · ' + vals.total : 'Confirmar pedido por transferencia';
+    payBtn.disabled = !sedeComplete;
+    document.getElementById('pay-blocked').hidden = sedeComplete;
+    document.getElementById('sede-alert').hidden = sedeComplete;
+    var missing = missingFields();
+    sedeComplete = missing.length === 0;
+    document.querySelectorAll('.sede-field').forEach(function (dd) {
+      var v = String(sede[dd.dataset.field] || '').trim();
+      var isMissing = REQUIRED.indexOf(dd.dataset.field) !== -1 && !v;
+      dd.textContent = isMissing ? 'Falta' : (v || '—');
+      dd.classList.toggle('missing', isMissing);
+    });
+    if (missing.length) {
+      var names = missing.map(function (k) { return FIELD_NAMES[k]; });
+      var list = names.length > 1 ? names.slice(0, -1).join(', ') + ' y ' + names[names.length - 1] : names[0];
+      document.getElementById('sede-missing-text').textContent = (missing.length > 1 ? 'Faltan: ' : 'Falta: ') + list + '.';
+    }
+
+    document.getElementById('done-text').textContent = method === 'card'
+      ? 'Hemos recibido tu pago de ' + vals.total + '. Te enviaremos ' + vals.countText + ' a tu sede y recibirás la factura por correo.'
+      : 'Te enviaremos ' + vals.countText + ' a tu sede. Tienes 30 días desde la fecha de la factura para pagar ' + vals.total + ' por transferencia.';
+  }
+
+  /* ---------- Navegación entre pasos ---------- */
+  function go(step) {
+    current = step;
+    var page = step === 'order' ? 'stock' : step;  // el pop-up se abre encima de Stock de tests
+    if (step === 'order' && document.getElementById('view-review').hidden === false) page = 'review';
+    ['stock', 'review', 'done'].forEach(function (v) {
+      document.getElementById('view-' + v).hidden = v !== page;
+    });
+    document.getElementById('view-order').hidden = step !== 'order';
+    document.getElementById('crumb-review').hidden = !(page === 'review' || page === 'done');
+    if (page === 'done') document.querySelector('#crumb-review strong').textContent = 'Pedido confirmado';
+    else document.querySelector('#crumb-review strong').textContent = 'Revisa tu solicitud';
+    document.querySelectorAll('.demo-step').forEach(function (b) {
+      if (b.dataset.goto === step) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+    });
+    closeInfos();
+    if (step !== 'order') window.scrollTo(0, 0);
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-goto]');
+    if (t) { e.preventDefault(); go(t.dataset.goto); }
+  });
+  document.querySelectorAll('[data-close-order]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      go(document.getElementById('view-review').hidden ? 'stock' : 'review');
+    });
+  });
+  document.getElementById('view-order').addEventListener('click', function (e) {
+    if (e.target.id === 'view-order') go(document.getElementById('view-review').hidden ? 'stock' : 'review');
+  });
+  document.getElementById('to-review').addEventListener('click', function () {
+    document.getElementById('view-review').hidden = false;
+    go('review');
+  });
+  /* ---------- Pop-up: completar la sede ---------- */
+  var sedeModal = document.getElementById('sede-modal');
+  var sedeForm = document.getElementById('sede-form');
+  function openSede() {
+    Object.keys(sede).forEach(function (k) {
+      var input = sedeForm.elements[k];
+      if (!input) return;
+      input.value = sede[k];
+      var field = input.closest('.field');
+      field.classList.remove('invalid');
+      var err = field.querySelector('.err'); if (err) err.remove();
+      field.classList.toggle('needs', REQUIRED.indexOf(k) !== -1 && !String(sede[k]).trim());
+    });
+    sedeModal.hidden = false;
+    var firstMissing = sedeForm.querySelector('.field.needs input') || sedeForm.elements.name;
+    firstMissing.focus();
+  }
+  function closeSede() { sedeModal.hidden = true; document.getElementById('complete-sede').focus(); }
+
+  document.getElementById('complete-sede').addEventListener('click', openSede);
+  document.querySelectorAll('[data-close-sede]').forEach(function (b) { b.addEventListener('click', closeSede); });
+  sedeModal.addEventListener('click', function (e) { if (e.target === sedeModal) closeSede(); });
+
+  sedeForm.addEventListener('input', function (e) {
+    var field = e.target.closest('.field');
+    if (field && e.target.value.trim()) {
+      field.classList.remove('invalid', 'needs');
+      var err = field.querySelector('.err'); if (err) err.remove();
+    }
+  });
+
+  sedeForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var firstBad = null;
+    REQUIRED.forEach(function (k) {
+      var input = sedeForm.elements[k];
+      var field = input.closest('.field');
+      var old = field.querySelector('.err'); if (old) old.remove();
+      if (!input.value.trim()) {
+        field.classList.add('invalid');
+        var msg = document.createElement('span');
+        msg.className = 'err';
+        msg.textContent = 'Este campo es obligatorio.';
+        field.appendChild(msg);
+        input.setAttribute('aria-invalid', 'true');
+        if (!firstBad) firstBad = input;
+      } else {
+        field.classList.remove('invalid');
+        input.removeAttribute('aria-invalid');
+      }
+    });
+    if (firstBad) { firstBad.focus(); return; }
+    Object.keys(sede).forEach(function (k) {
+      if (sedeForm.elements[k]) sede[k] = sedeForm.elements[k].value.trim();
+    });
+    sedeModal.hidden = true;
+    update();
+    document.getElementById('pay-btn').focus();
+  });
+  document.querySelectorAll('input[name="pay"]').forEach(function (r) { r.addEventListener('change', update); });
+  document.getElementById('pay-btn').addEventListener('click', function () { go('done'); });
+  document.getElementById('demo-reset').addEventListener('click', function () {
+    qty = Object.assign({}, START); sede = Object.assign({}, SEDE_START); sedeModal.hidden = true;
+    document.querySelector('input[name="pay"][value="card"]').checked = true;
+    document.getElementById('view-review').hidden = true;
+    update(); go('stock');
+  });
+
+  /* ---------- Botón (i) ---------- */
+  function closeInfos(except) {
+    document.querySelectorAll('.info[aria-expanded="true"]').forEach(function (b) {
+      if (b === except) return;
+      b.setAttribute('aria-expanded', 'false');
+      document.getElementById(b.getAttribute('aria-controls')).hidden = true;
+    });
+  }
+  document.querySelectorAll('.info').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      closeInfos(btn);
+      btn.setAttribute('aria-expanded', String(!open));
+      document.getElementById(btn.getAttribute('aria-controls')).hidden = open;
+    });
+  });
+  document.addEventListener('click', function (e) { if (!e.target.closest('.info-wrap')) closeInfos(); });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (document.querySelector('.info[aria-expanded="true"]')) { closeInfos(); return; }
+    if (!sedeModal.hidden) { closeSede(); return; }
+    if (current === 'order') go(document.getElementById('view-review').hidden ? 'stock' : 'review');
+  });
+
+  update();
+  go('stock');
+</script>
+</body>
+</html>
