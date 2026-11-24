@@ -183,6 +183,27 @@
   .paidline{margin-top:10px;font-size:13px;text-align:right;font-weight:600}
   .paidline.ok{color:var(--green)}
   .paidline.pend{color:var(--amber)}
+  .paidline.cx{color:var(--red)}
+  /* Solicitud cancelada */
+  :root{--red:#c0392b;--red-soft:#fbe9e7}
+  .pill.red{background:var(--red-soft);color:var(--red);font-weight:600}
+  .pcx{color:var(--red);font-size:12px;margin-top:6px}
+  .pay.cancel{background:var(--red-soft);color:var(--red);border:1px solid #f1c4bd}
+  .pay.cancel .ic{background:#fff}
+  .pay.cancel .amt b{text-decoration:line-through;opacity:.7}
+  .cxbtn{border:1px solid var(--red);background:#fff;color:var(--red);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:600;cursor:pointer}
+  .cxbtn:hover{background:var(--red-soft)}
+  .tacts{display:flex;gap:10px;flex-wrap:wrap}
+  .tl .fill.cx{background:var(--red)}
+  .ev.cx i{border-color:var(--red);background:var(--red);box-shadow:0 0 0 4px var(--red-soft)}
+  .ev.cx b,.ev.cx small{color:var(--red)}
+  .ev.na i{border-color:#e6e6e3;border-style:dashed}
+  .ev.na b,.ev.na small{color:#b3b3ad;font-weight:500}
+  .cdlg{background:#fff;border-radius:18px;max-width:460px;width:100%;padding:24px 26px;box-shadow:0 20px 50px rgba(0,0,0,.2)}
+  .cdlg h3{margin:0 0 8px;font-size:19px}
+  .cdlg p{margin:0 0 10px;color:#3a3a37;line-height:1.5}
+  .cdlg .warn{background:var(--red-soft);color:var(--red);border-radius:12px;padding:10px 12px;font-size:13px}
+  .btn.red{background:var(--red);color:#fff}
   .dfoot{margin-top:22px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.55}
   .dnum{font-size:13px;color:var(--muted);font-weight:400;margin-left:8px}
   .ov{overflow:auto}
@@ -213,7 +234,7 @@
         </div>
         <div class="filters">
           <div class="f"><label for="fEstado">Estado</label>
-            <select id="fEstado"><option value="">Todos</option><option value="pend">Pendiente de pago</option><option value="paid">Pagado</option></select></div>
+            <select id="fEstado"><option value="">Todos</option><option value="pend">Pendiente de pago</option><option value="paid">Pagado</option><option value="cx">Solicitud cancelada</option></select></div>
           <div class="f"><label for="fTipo">Filtrar por</label>
             <select id="fTipo"><option value="req">Fecha de solicitud</option><option value="pay">Fecha de pago</option></select></div>
           <div class="f"><label for="fDesde">Desde</label><input type="date" id="fDesde"></div>
@@ -227,7 +248,7 @@
       <!-- ===== VISTA DETALLE ===== -->
       <div id="vDetail" class="hidden">
         <button class="back" onclick="showList()">← Volver a Mis pedidos</button>
-        <div class="titlebar"><h1>Tu pedido</h1><button class="invbtn" id="invBtn" hidden onclick="openInv()">📄 Ver factura</button></div>
+        <div class="titlebar"><h1>Tu pedido</h1><div class="tacts"><button class="cxbtn" id="cxBtn" hidden onclick="askCancel()">✕ Cancelar solicitud</button><button class="invbtn" id="invBtn" hidden onclick="openInv()">📄 Ver factura</button></div></div>
         <div class="meta" id="dMeta"></div>
 
         <div class="pay" id="dPay"></div>
@@ -256,6 +277,18 @@
     <div class="inv-a">
       <button class="btn" onclick="closeInv()">Cerrar</button>
       <button class="btn p" onclick="toast('Descargando factura en PDF…')">⤓ Descargar PDF</button>
+    </div>
+  </div>
+</div>
+<!-- Confirmar cancelación de la solicitud -->
+<div class="ov" id="cxOv" role="dialog" aria-modal="true" aria-labelledby="cxT">
+  <div class="cdlg">
+    <h3 id="cxT">¿Cancelar esta solicitud?</h3>
+    <p id="cxTxt"></p>
+    <p class="warn">No se enviarán los tests ni se cobrará nada. Esta acción no se puede deshacer.</p>
+    <div class="inv-a">
+      <button class="btn" onclick="closeCancel()">Volver</button>
+      <button class="btn red" onclick="doCancel()">Sí, cancelar solicitud</button>
     </div>
   </div>
 </div>
@@ -299,7 +332,7 @@
       ${o.lines.map(l=>`<tr><td><b>${l.name}</b>${l.enf?` <span class="enf">· Enfoque ${l.enf}</span>`:''}
           <small>Ref. ${l.ref} · precio unitario sin IVA</small>
           <ul>${l.incl.map(x=>`<li>${x}</li>`).join('')}</ul>
-          ${withPrep?`<span class="pr ${done?'ok':''}">${done?'✓ ':''}${done?l.q:0}/${l.q} preparados</span>`:''}</td>
+          ${withPrep&&!o.cancelled?`<span class="pr ${done?'ok':''}">${done?'✓ ':''}${done?l.q:0}/${l.q} preparados</span>`:''}</td>
         <td>${l.q}</td><td>${eur(l.pu)}</td><td>−${Math.round(DISC*100)} %</td><td>${eur(l.imp)}</td></tr>`).join('')}
       <tr><td><b>Envío Paq24 a la sede ${o.sede}</b><small>Entrega en 24 h laborables</small></td><td>1</td><td>${eur(0)}</td><td>—</td><td>Incluido</td></tr>
     </table></div>`;
@@ -315,7 +348,8 @@
         <div class="row"><span>Base imponible</span><span>${eur(o.base)}</span></div>
         <div class="row"><span>IVA (21 %)</span><span>${eur(o.iva)}</span></div>
         <div class="totbox"><span>TOTAL</span><b>${eur(o.total)}</b></div>
-        ${o.paid?`<div class="paidline ok">✓ Pagado el ${o.paidOn} con tarjeta ···· 4242</div>`:`<div class="paidline pend">Pendiente de pago</div>`}
+        ${o.cancelled?`<div class="paidline cx">✕ Solicitud cancelada el ${o.cancelled} · no se ha cobrado</div>`
+          :o.paid?`<div class="paidline ok">✓ Pagado el ${o.paidOn} con tarjeta ···· 4242</div>`:`<div class="paidline pend">Pendiente de pago</div>`}
       </div>
     </div>`;
   }
@@ -324,21 +358,27 @@
     mk('17/11/2026',[['nut',2]],'Entregado','ok',null,'18/11/2026','20/11/2026','Entregado',[['Confirmado','17/11/2026'],['Preparado','18/11/2026'],['Enviado','18/11/2026'],['Entregado','20/11/2026']]),
     mk('02/11/2026',[['nut',2],['vag',1]],'Entregado','ok','03/11/2026','04/11/2026','06/11/2026','Entregado',[['Confirmado','02/11/2026'],['Preparado','03/11/2026'],['Enviado','04/11/2026'],['Entregado','06/11/2026']]),
     mk('20/10/2026',[['nut',3],['muj',2]],'Entregado','ok','21/10/2026','22/10/2026','24/10/2026','Entregado',[['Confirmado','20/10/2026'],['Preparado','21/10/2026'],['Enviado','22/10/2026'],['Entregado','24/10/2026']]),
-    mk('28/09/2026',[['vag',2]],'Entregado','ok','30/09/2026','01/10/2026','03/10/2026','Entregado',[['Confirmado','28/09/2026'],['Preparado','30/09/2026'],['Enviado','01/10/2026'],['Entregado','03/10/2026']])
+    mk('28/09/2026',[['vag',2]],'Entregado','ok','30/09/2026','01/10/2026','03/10/2026','Entregado',[['Confirmado','28/09/2026'],['Preparado','30/09/2026'],['Enviado','01/10/2026'],['Entregado','03/10/2026']]),
+    mk('10/11/2026',[['nut',2]],'Cancelado','red',null,'—','—','Solicitud cancelada',[['Confirmado','10/11/2026'],['Cancelada','11/11/2026'],['Enviado',null],['Entregado',null]])
   ];
+  ORDERS[5].cancelled='11/11/2026';
+  const TODAY=()=>{const d=new Date();return [d.getDate(),d.getMonth()+1,d.getFullYear()].map(n=>String(n).padStart(2,'0')).join('/');};
+  // Solo se puede cancelar mientras no está pagada ni se ha empezado a preparar
+  const canCancel=o=>!o.paid&&!o.cancelled&&o.ship==='Pendiente';
   const crumb=document.getElementById('crumb');
   const iso=d=>d?d.split('/').reverse().join('-'):'';   // dd/mm/aaaa → aaaa-mm-dd (para ordenar y filtrar)
 
   // ===== Listado: filtros + columnas ordenables =====
   let sortKey='default', sortDir=-1;   // por defecto: pendientes de pago primero y, dentro, lo más reciente
   const COLS=[['estado','Estado',''],['req','Fecha de solicitud',''],['pay','Fecha de pago',''],['total','Total','r']];
-  function val(o,k){return k==='estado'?(o.paid?1:0):k==='total'?o.total:k==='req'?iso(o.id):iso(o.paidOn)||'0000';}
+  function val(o,k){return k==='estado'?(o.cancelled?2:o.paid?1:0):k==='total'?o.total:k==='req'?iso(o.id):iso(o.paidOn)||'0000';}
   function renderList(){
     const fe=document.getElementById('fEstado').value, ft=document.getElementById('fTipo').value,
           fd=document.getElementById('fDesde').value, fh=document.getElementById('fHasta').value;
     let rows=ORDERS.map((o,i)=>({o,i})).filter(({o})=>{
-      if(fe==='pend'&&o.paid) return false;
+      if(fe==='pend'&&(o.paid||o.cancelled)) return false;
       if(fe==='paid'&&!o.paid) return false;
+      if(fe==='cx'&&!o.cancelled) return false;
       const d=ft==='pay'?iso(o.paidOn):iso(o.id);
       if((fd||fh)&&!d) return false;
       if(fd&&d<fd) return false;
@@ -346,13 +386,15 @@
       return true;
     });
     rows.sort((a,b)=>{
-      if(sortKey==='default'){ if(a.o.paid!==b.o.paid) return a.o.paid?1:-1; return iso(b.o.id).localeCompare(iso(a.o.id)); }
+      if(sortKey==='default'){ const ga=a.o.paid||!!a.o.cancelled, gb=b.o.paid||!!b.o.cancelled; if(ga!==gb) return ga?1:-1; return iso(b.o.id).localeCompare(iso(a.o.id)); }
       const x=val(a.o,sortKey), y=val(b.o,sortKey);
       return (x>y?1:x<y?-1:0)*sortDir;
     });
     const head=`<div class="lrow lth">`+COLS.map(([k,l,c])=>`<div class="${c}"><button class="sortb ${sortKey===k?'on':''}" data-sort="${k}">${l} <i>${sortKey===k?(sortDir>0?'▲':'▼'):'↕'}</i></button></div>`).join('')+`<div></div></div>`;
     document.getElementById('list').innerHTML=head+(rows.length?rows.map(({o,i})=>`<div class="lrow">
-      <div>${o.paid
+      <div>${o.cancelled
+        ? `<span class="pill red">Solicitud cancelada</span><div class="pcx">Cancelada el ${o.cancelled}</div>`
+        : o.paid
         ? `<span class="pill ok">Pagado</span>`
         : o.ship==='Entregado'
         ? `<span class="pill ok">Entregado</span><div class="pc">Pendiente de pago</div>`
@@ -406,13 +448,17 @@
     const o=ORDERS[i];
     curOrder=i;
     document.getElementById('invBtn').hidden=!o.paid;
+    document.getElementById('cxBtn').hidden=!canCancel(o);
     document.getElementById('vList').classList.add('hidden');
     document.getElementById('vDetail').classList.remove('hidden');
     crumb.innerHTML=`Inicio<span>›</span><a onclick="showList()">Pedidos</a><span>›</span><b>Pedido del ${o.id}</b>`;
     document.getElementById('dMeta').innerHTML=`<span class="pill ${o.shipCls}">Envío: ${o.ship}</span> Clínica Demo · Pedido emitido el ${o.id}`;
     const pay=document.getElementById('dPay');
     pay.classList.toggle('paid',o.paid);
-    pay.innerHTML=o.paid
+    pay.classList.toggle('cancel',!!o.cancelled);
+    pay.innerHTML=o.cancelled
+      ? `<div class="l"><div class="ic">✕</div><div><h2>Solicitud cancelada</h2><p>Cancelada el ${o.cancelled}. No se enviarán los tests ni se cobrará nada.</p></div></div><div class="amt"><b>${eur(o.total)}</b><small>No se cobra</small></div>`
+      : o.paid
       ? `<div class="l"><div class="ic">✅</div><div><h2>Pagado</h2><p>Gracias, el pago está registrado.</p></div></div><div class="amt"><b>${eur(o.total)}</b><small>IVA incluido</small></div>`
       : `<div class="l"><div class="ic">💳</div><div><h2>Pendiente de pago</h2><p>La factura llegará con la entrega.</p></div></div>
          <div class="payr"><div class="amt"><b>${eur(o.total)}</b><small>IVA incluido</small></div>
@@ -423,11 +469,31 @@
     document.getElementById('dFacts').innerHTML=`
       <div class="fact"><span class="fi">📍</span><div><small>Sede</small><b>${o.sede}</b></div></div>
       <div class="fact"><span class="fi">📤</span><div><small>Enviada</small><b>${o.sent}</b></div></div>
-      <div class="fact"><span class="fi">✅</span><div><small>Completada</small><b>${o.done}</b></div></div>`;
-    document.getElementById('dShipSt').textContent=o.shipSt;
+      ${o.cancelled
+        ?`<div class="fact"><span class="fi">✕</span><div><small>Cancelada</small><b style="color:var(--red)">${o.cancelled}</b></div></div>`
+        :`<div class="fact"><span class="fi">✅</span><div><small>Completada</small><b>${o.done}</b></div></div>`}`;
+    const st=document.getElementById('dShipSt');
+    st.textContent=o.shipSt; st.style.color=o.cancelled?'var(--red)':'';
     const last=o.tl.map(e=>!!e[1]).lastIndexOf(true);
-    document.getElementById('dTl').innerHTML=`<span class="fill" style="width:${last/3*75}%"></span>`+
-      o.tl.map((e,k)=>`<div class="ev ${!e[1]?'pend':''} ${k===last?'now':''}"><i></i><b>${e[0]}</b><small>${e[1]||'Pendiente'}</small></div>`).join('');
+    document.getElementById('dTl').innerHTML=`<span class="fill ${o.cancelled?'cx':''}" style="width:${last/3*75}%"></span>`+
+      o.tl.map((e,k)=>{
+        const cx=o.cancelled&&e[0]==='Cancelada', na=o.cancelled&&!e[1];
+        return `<div class="ev ${cx?'cx':na?'na':!e[1]?'pend':''} ${k===last&&!cx?'now':''}"><i></i><b>${e[0]}</b><small>${e[1]||(na?'No aplica':'Pendiente')}</small></div>`;
+      }).join('');
+  }
+  // ===== Cancelar la solicitud (solo antes de pagar y de preparar el pedido) =====
+  function askCancel(){
+    const o=ORDERS[curOrder];
+    document.getElementById('cxTxt').innerHTML=`Vas a cancelar el pedido <b>${o.num}</b> del ${o.id}: ${o.tests} test${o.tests>1?'s':''} por <b>${eur(o.total)}</b>.`;
+    document.getElementById('cxOv').classList.add('show');
+  }
+  function closeCancel(){document.getElementById('cxOv').classList.remove('show');}
+  document.getElementById('cxOv').addEventListener('click',e=>{if(e.target.id==='cxOv')closeCancel();});
+  function doCancel(){
+    const o=ORDERS[curOrder], t=TODAY();
+    Object.assign(o,{cancelled:t,ship:'Cancelado',shipCls:'red',shipSt:'Solicitud cancelada',
+      tl:[['Confirmado',o.id],['Cancelada',t],['Enviado',null],['Entregado',null]]});
+    closeCancel(); showDetail(curOrder); toast('Solicitud cancelada');
   }
   // Simulación del pago (en la plataforma real abriría la pasarela de pago)
   function payNow(i){
