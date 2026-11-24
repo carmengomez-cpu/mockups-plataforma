@@ -667,6 +667,12 @@
 
   /* ---------- Navegación entre pasos ---------- */
   function go(step) {
+    // Una solicitud nueva (abrir «Pedir más tests» desde Stock, sin solicitud en revisión)
+    // empieza siempre con los contadores a 0. Desde «Editar tests» se conservan las cantidades.
+    if (step === 'order' && document.getElementById('view-review').hidden) {
+      qty = { intestinal: 0, vaginal: 0 };
+      update();
+    }
     current = step;
     var page = step === 'order' ? 'stock' : step;  // el pop-up se abre encima de Stock de tests
     if (step === 'order' && document.getElementById('view-review').hidden === false) page = 'review';
