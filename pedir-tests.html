@@ -260,6 +260,16 @@
   .pb-opt:hover:not(:disabled) { transform: translateY(-1px); }
   .pb-opt:not(.main):hover:not(:disabled) { background: rgba(255,255,255,.12); }
   .pb-opt:disabled { opacity: .55; cursor: not-allowed; box-shadow: none; }
+  .how-pay { gap: 14px; padding-top: 22px; padding-bottom: 22px; }
+  .how-pay h2 { margin: 0; }
+  .hp-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .hp-btn { min-height: 52px; padding: 0 28px; border-radius: 999px; border: 1px solid var(--border); background: #FFF; color: var(--text); font-size: 16px; cursor: pointer; }
+  .hp-btn.main { background: var(--cta); border-color: var(--cta); }
+  .hp-btn:hover:not(:disabled) { filter: brightness(.97); }
+  .hp-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .how-pay .pay-blocked { margin: -4px 0 0; text-align: left; }
+  .how-pay [hidden] { display: none !important; }
+  .hp-txt p { margin: 0; font-size: 13.5px; color: var(--muted); line-height: 1.6; }
   .pay-switch { border: 0; background: transparent; color: #FFF; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; padding: 2px 4px; opacity: .9; cursor: pointer; }
   .pay-switch:hover { opacity: 1; }
 
@@ -417,17 +427,19 @@
         </div>
         <div class="pb-amt"><b data-bind="total"></b><small>IVA incluido</small></div>
         <div hidden><input type="radio" name="pay" value="card" checked><input type="radio" name="pay" value="transfer"></div>
-        <div class="pb-pay">
-          <span class="pb-lbl">Acepta y elige cómo pagar</span>
-          <div class="pb-opts">
-            <button type="button" class="pb-opt main" id="pay-btn" data-method="card" disabled>
-              <b>💳 Pagar con tarjeta</b><small>Ahora · pago seguro</small>
-            </button>
-            <button type="button" class="pb-opt" id="pay-tr" data-method="transfer" disabled>
-              <b>🏦 Pagar por transferencia</b><small>30 días desde la factura</small>
-            </button>
-          </div>
-          <p class="pay-blocked" id="pay-blocked">Revisa la dirección para poder pagar</p>
+      </section>
+
+      <!-- Cómo quieres pagar -->
+      <section class="card how-pay">
+        <h2>Cómo quieres pagar</h2>
+        <div class="hp-btns">
+          <button type="button" class="hp-btn main" id="pay-btn" data-method="card" disabled>Pagar con tarjeta · <span data-bind="total"></span></button>
+          <button type="button" class="hp-btn" id="pay-tr" data-method="transfer" disabled>Pagar por transferencia</button>
+        </div>
+        <p class="pay-blocked" id="pay-blocked">Revisa la dirección para poder pagar.</p>
+        <div class="hp-txt">
+          <p>Con tarjeta pagas ahora en la página segura de nuestro proveedor de pagos.</p>
+          <p>Por transferencia te enviamos los tests ya y tienes 30 días desde la fecha de la factura para pagar. Recibirás la factura por correo con la entrega y los datos bancarios figuran en ella.</p>
         </div>
       </section>
 
