@@ -126,6 +126,25 @@
   .ln.sep{border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
   .ln.tot{border-top:2px solid var(--text);margin-top:8px;padding-top:10px;font-size:17px;font-weight:700;color:var(--text)}
   .ln .inc{color:var(--green);font-weight:500}
+  /* Resumen del pedido en tabla (propuesta de Olga + nuestro descuento destacado) */
+  .ot{width:100%;border-collapse:collapse;font-size:14px}
+  .ot th{font-size:11px;letter-spacing:.08em;color:var(--muted);font-weight:600;text-transform:uppercase;text-align:right;padding:8px 0;border-bottom:2px solid var(--text)}
+  .ot th:first-child,.ot td:first-child{text-align:left}
+  .ot td{padding:12px 0;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+  .ot td small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+  .ot .pr{color:var(--muted)} .ot .pr.ok{color:var(--green);font-weight:600}
+  .onote{font-size:12.5px;color:var(--muted);margin:12px 0 0;line-height:1.5}
+  .onote b{color:var(--text)}
+  .osum{margin:14px 0 0 auto;max-width:340px}
+  .osum .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .osum .row.save{color:var(--green);font-weight:600;border:0;background:var(--green-soft);border-radius:10px;padding:9px 12px;margin-bottom:4px}
+  .osum .row.save small{display:block;font-weight:400;font-size:12px}
+  .ship{display:flex;gap:14px;align-items:flex-start;margin-top:18px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#fafaf8}
+  .ship .fi{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);display:grid;place-items:center;flex:none}
+  .ship small{display:block;color:var(--muted);font-size:12px}
+  .ship b{font-size:15px}
+  .ship p{margin:2px 0 0;font-size:13.5px;color:#3a3a37;line-height:1.45}
+  @media(max-width:700px){.ot th:nth-child(3),.ot td:nth-child(3){display:none}}
   .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
   .fact{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px 14px}
   .fact .fi{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);display:grid;place-items:center;flex:none}
@@ -308,7 +327,7 @@
 
 <script>
   const eur=n=>{const [e,d]=Math.abs(n).toFixed(2).split('.');return (n<0?'−':'')+e.replace(/\B(?=(\d{3})+(?!\d))/g,'.')+','+d+' €';};
-  // Cifras de ejemplo (inventadas): precio por test sin IVA y un 10 % de descuento de la clínica
+  // Cifras de ejemplo (inventadas): precio por test sin IVA y un 15 % de descuento de la clínica
   const T=v=>Math.round(v*100)/100;
   const INCL=['Tubo de recogida de la muestra','Recogida de la muestra y envío al laboratorio','Secuenciación y análisis de la microbiota'];
   const PROD={
@@ -316,7 +335,7 @@
     muj:{name:'Test avanzado de microbiota intestinal',enf:'Mujer',ref:'TAI-MUJ',pu:225.00,incl:[...INCL,'Informe con recomendaciones adaptadas a la salud de la mujer']},
     vag:{name:'Test avanzado de microbiota vaginal',enf:null,ref:'TAV',pu:168.00,incl:[...INCL,'Informe con recomendaciones para la salud vaginal']}
   };
-  const DISC=.10;
+  const DISC=.15;
   // Quién emite y a quién se factura (la clínica y sus datos son de ejemplo)
   const EMISOR={name:'Biotahealth S.L.',brand:'Biotasmart',addr:'Travessia s/n, Bloque E, Esc. 1<br>46024 Valencia, España',nif:'B19872431',mail:'hola@biotasmart.com'};
   const CLIENTE={name:'Clínica Demo S.L.',brand:'Clínica Demo',addr:'Calle Santa Ana, 12<br>28001 Madrid, España',nif:'B00000000',mail:'facturacion@clinica-ejemplo.es'};
@@ -351,6 +370,26 @@
         <div class="ln tot"><span>Total</span><span>${eur(o.total)}</span></div>
         ${o.cancelled?`<p class="sfoot" style="color:var(--red)">Solicitud cancelada el ${o.cancelled} · no se ha cobrado.</p>`:''}
       </div></div>`;
+  }
+  // Resumen del pedido: tabla como la factura (propuesta de Olga) + descuento destacado + dirección de envío.
+  function orderSummary(o){
+    const done=o.ship==='Entregado', pct=Math.round(DISC*100), save=T(o.gross-o.base);
+    const tarifa=[...new Map(o.lines.map(l=>[l.name,l])).values()]
+      .map(l=>`${eur(l.pu)} el test ${l.name.includes('vaginal')?'vaginal':'intestinal'}`).join(' y ');
+    const rows=o.lines.map(l=>`<tr><td>${l.name}${l.enf?`<small>Enfoque ${l.enf}</small>`:''}</td>
+        <td>${l.q}</td><td>${eur(T(l.pu*(1-DISC)))}</td><td>${eur(l.imp)}</td>
+        <td>${o.cancelled?'—':`<span class="pr ${done?'ok':''}">${done?'✓ ':''}${done?l.q:0}/${l.q}</span>`}</td></tr>`).join('');
+    return `<table class="ot"><tr><th>Descripción</th><th>Cant.</th><th>Precio/ud</th><th>Importe</th><th>Preparados</th></tr>${rows}</table>
+      <p class="onote"><b>Nota:</b> precio unitario sin IVA con tu <b>descuento de clínica (−${pct} % sobre la tarifa sin IVA: ${tarifa})</b> ya aplicado. Envío Paq24 a tu consulta incluido.</p>
+      <div class="osum">
+        <div class="row save"><span>Descuento de clínica (−${pct} %)<small>Ahorras en este pedido (sin IVA)</small></span><span>−${eur(save)}</span></div>
+        <div class="row"><span>Base imponible</span><span>${eur(o.base)}</span></div>
+        <div class="row"><span>IVA (21 %)</span><span>${eur(o.iva)}</span></div>
+        <div class="totbox"><span>TOTAL</span><b>${eur(o.total)}</b></div>
+        ${o.cancelled?`<p class="onote" style="color:var(--red)">Solicitud cancelada el ${o.cancelled} · no se ha cobrado.</p>`:''}
+      </div>
+      <div class="ship"><span class="fi">📍</span><div><small>Se envía a</small><b>${CLIENTE.brand} · Sede ${o.sede}</b>
+        <p>${SEDES[o.sede].replace('<br>',', ')}<br>Envío Paq24 (24 h laborables)</p></div></div>`;
   }
   // Vista sencilla del pedido: qué tests, cuántos y el total. Todo el detalle va en la factura.
   function simpleSummary(o){
@@ -509,9 +548,9 @@
          <button class="paybtn" id="payBtn" onclick="payNow(${i})">Pagar ${eur(o.total)} →</button>
          <span class="secure">🔒 Pago seguro con tarjeta</span></div>`;
     document.getElementById('dNum').textContent=o.num;
-    document.getElementById('dBreak').innerHTML=classicSummary(o);
+    document.getElementById('dBreak').innerHTML=orderSummary(o);
     document.getElementById('dFacts').innerHTML=`
-      <div class="fact"><span class="fi">📍</span><div><small>Sede</small><b>${o.sede}</b></div></div>
+      <div class="fact"><span class="fi">🗓️</span><div><small>Solicitado</small><b>${o.id}</b></div></div>
       <div class="fact"><span class="fi">📤</span><div><small>Enviada</small><b>${o.sent}</b></div></div>
       ${o.cancelled
         ?`<div class="fact"><span class="fi">✕</span><div><small>Cancelada</small><b style="color:var(--red)">${o.cancelled}</b></div></div>`
