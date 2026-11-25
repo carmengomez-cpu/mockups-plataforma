@@ -230,6 +230,27 @@
   .pay-right .pay-blocked { margin: 0; }
   .addr-line [hidden], .pay-right [hidden] { display: none !important; }
 
+  #view-review { max-width: none; }
+  .btn-cancel { min-height: 0 !important; padding: 6px 2px !important; border: 0 !important; background: transparent !important; color: var(--muted) !important; font-size: 14px !important; font-weight: 400 !important; text-decoration: underline; text-underline-offset: 3px; }
+  .btn-cancel:hover { color: var(--red) !important; }
+  .pay-band { background: #2E5F78; color: #FFF; border-radius: 20px; padding: 14px 22px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .pay-band .pb-l { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 220px; }
+  .pay-band .pb-ic { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,.15); display: grid; place-items: center; font-size: 19px; flex: none; }
+  .pay-band h2 { margin: 0; font-size: 19px; font-weight: 700; color: #FFF; }
+  .pay-band .pb-l p { margin: 2px 0 0; font-size: 13.5px; opacity: .85; }
+  .pay-band .pb-amt { text-align: right; }
+  .pay-band .pb-amt b { display: block; font-size: 28px; line-height: 1.1; }
+  .pay-band .pb-amt small { font-size: 12.5px; opacity: .8; }
+  .pay-band .pay-methods label { border-color: rgba(255,255,255,.45); color: #FFF; padding: 7px 14px; flex: none; }
+  .pay-band .pay-methods label:has(input:checked) { background: rgba(255,255,255,.18); border-color: #FFF; }
+  .pay-band .pay-methods input { accent-color: #FFF; }
+  .pay-band .pb-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .pay-band .btn-pay { width: auto; min-height: 50px; padding: 0 28px; background: #FFF; color: #2E5F78; font-weight: 700; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+  .pay-band .btn-pay:disabled { background: rgba(255,255,255,.55); color: #2E5F78; box-shadow: none; }
+  .pay-band .pay-blocked { color: #FFE2A8; font-size: 12.5px; margin: 0; }
+  .pay-band .pay-hint { color: #FFF; opacity: .8; font-size: 12px; margin: 0; }
+  .pay-band [hidden] { display: none !important; }
+
   /* ===== Pop-up: completar la sede ===== */
   .modal-sm { max-width: 560px; }
   .modal-intro { margin: -10px 0 0; font-size: 15px; color: var(--muted); line-height: 1.5; }
@@ -366,7 +387,7 @@
             <span class="tag tag-grey">Caduca el 24/12/2026</span>
           </div>
         </div>
-        <button type="button" class="btn-cancel" data-goto="stock">✕ Cancelar solicitud</button>
+        <button type="button" class="btn-cancel" data-goto="stock">Cancelar solicitud</button>
       </div>
 
       <!-- Dirección en una línea: normal si está completa; en amarillo y con «Revisar dirección» si falta algo -->
@@ -376,21 +397,21 @@
         <button type="button" class="btn-pill btn-amber" id="complete-sede">Revisar dirección</button>
       </div>
 
-      <!-- Pago arriba -->
-      <section class="card pay-card">
-        <div class="pay-amt">
-          <small>Total a pagar</small>
-          <b data-bind="total"></b>
-          <span class="sub">IVA incluido · <span data-bind="countText"></span> · envío Paq24 incluido</span>
+      <!-- Pago arriba: banda azul como en Pedidos -->
+      <section class="pay-band">
+        <div class="pb-l">
+          <span class="pb-ic" aria-hidden="true">💳</span>
+          <div><h2>Pendiente de pago</h2><p><span data-bind="countText"></span> · envío Paq24 incluido. La factura llegará con la entrega.</p></div>
         </div>
-        <div class="pay-right">
-          <fieldset class="pay-methods">
-            <legend class="sr-only">Método de pago</legend>
-            <label><input type="radio" name="pay" value="card" checked> Tarjeta</label>
-            <label><input type="radio" name="pay" value="transfer"> Transferencia</label>
-          </fieldset>
+        <div class="pb-amt"><b data-bind="total"></b><small>IVA incluido</small></div>
+        <fieldset class="pay-methods">
+          <legend class="sr-only">Método de pago</legend>
+          <label><input type="radio" name="pay" value="card" checked> Tarjeta</label>
+          <label><input type="radio" name="pay" value="transfer"> Transferencia</label>
+        </fieldset>
+        <div class="pb-btn">
           <button type="button" class="btn-pay" id="pay-btn" disabled></button>
-          <p class="pay-blocked" id="pay-blocked">Revisa la dirección para poder pagar.</p>
+          <p class="pay-blocked" id="pay-blocked">Revisa la dirección para poder pagar</p>
           <p class="pay-hint" id="pay-hint"></p>
         </div>
       </section>
@@ -660,9 +681,10 @@
     payBtn.textContent = method === 'card' ? 'Aceptar y pagar ' + vals.total : 'Aceptar y pagar por transferencia';
     payBtn.disabled = !sedeComplete;
     document.getElementById('pay-blocked').hidden = sedeComplete;
+    document.getElementById('pay-hint').hidden = !sedeComplete;
     document.getElementById('pay-hint').textContent = method === 'card'
-      ? '🔒 Pago seguro en la página de nuestro proveedor de pagos.'
-      : 'Enviamos los tests ya; tienes 30 días desde la factura para pagar.';
+      ? '🔒 Pago seguro con tarjeta'
+      : '30 días para pagar desde la factura';
     // Dirección en una línea
     var miss = missingFields();
     var parts = [sede.name, sede.street, [sede.cp, sede.city].filter(Boolean).join(' '), sede.province ? '(' + sede.province + ')' : '', sede.phone ? 'Tel. ' + sede.phone : '', sede.contact ? 'Contacto: ' + sede.contact : '']
