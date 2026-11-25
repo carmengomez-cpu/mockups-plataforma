@@ -92,6 +92,52 @@
   .link-btn { border: 0; background: transparent; color: var(--blue); text-decoration: underline; text-underline-offset: 3px; font-size: 14px; padding: 0; }
   .note-box { display: flex; gap: 10px; padding: 12px 16px; border-radius: 14px; background: var(--blue-bg); color: #1F4E60; font-size: 14px; line-height: 1.5; }
 
+  /* ===== Página de pago de Stripe (la ve el paciente) ===== */
+  #v-shop { background: #FFF; padding: 0; }
+  #v-shop.is-done { background: #F4F4F3; padding: 32px 20px 48px; }
+  #v-shop .pt-tag { margin: 0; max-width: none; padding: 8px 12px; background: #F4F4F3; }
+  #v-shop.is-done .pt-tag { background: transparent; }
+  .stx { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: calc(100vh - 48px - 34px); background: #FFF; color: #1A1A1A; }
+  .st-l { padding: 44px 48px; }
+  .st-r { padding: 44px 48px; box-shadow: -14px 0 18px -14px rgba(0,0,0,.14); }
+  .st-l .in { max-width: 470px; margin-left: auto; }
+  .st-r .in { max-width: 520px; }
+  .st-back { display: flex; align-items: center; gap: 14px; margin-bottom: 38px; }
+  .st-back .arr { color: #8A8A8A; font-size: 20px; }
+  .st-back .logo { width: 42px; height: 42px; border-radius: 50%; background: #FFF; box-shadow: 0 1px 6px rgba(0,0,0,.14); display: grid; place-items: center; font-size: 17px; }
+  .st-back b { font-size: 17px; font-weight: 600; }
+  .st-name { margin: 0; font-size: 18px; color: #666; }
+  .st-price { margin: 4px 0 2px; font-size: 42px; font-weight: 700; letter-spacing: -.01em; color: #2B2B2B; }
+  .st-qty { margin: 0; font-size: 15px; color: #666; }
+  .st-desc { margin: 14px 0 0; font-size: 14px; color: #666; }
+  .st-h { margin: 30px 0 10px; font-size: 16px; font-weight: 600; }
+  .st-h:first-child { margin-top: 0; }
+  .st-lbl { display: block; margin: 0 0 6px; font-size: 15px; color: #222; }
+  .st-in { display: block; width: 100%; min-width: 0; height: 48px; padding: 0 16px; border: 1px solid #DCDCDC; border-radius: 6px; background: #FFF; font: inherit; font-size: 16px; color: #1A1A1A; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+  .st-in[readonly] { background: #F7F7F7; color: #555; }
+  .st-in::placeholder { color: #8A8A8A; }
+  .st-grp { border: 1px solid #DCDCDC; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+  .st-grp .st-in { border: 0; border-radius: 0; box-shadow: none; }
+  .st-grp > * + *, .st-grp .st-two > * + * { border-top: 1px solid #DCDCDC; }
+  .st-grp .st-two { display: grid; grid-template-columns: 1fr 1fr; }
+  .st-grp .st-two .st-in + .st-in { border-top: 0; border-left: 1px solid #DCDCDC; }
+  .st-grp select.st-in { background: #F2F2F2; color: #666; }
+  .st-pm { border: 1px solid #DCDCDC; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+  .st-opt { display: flex; align-items: center; gap: 14px; padding: 18px 20px; cursor: pointer; font-size: 17px; color: #555; }
+  .st-opt + .st-opt, .st-card + .st-opt { border-top: 1px solid #DCDCDC; }
+  .st-opt input { width: 20px; height: 20px; margin: 0; accent-color: #2E5F78; flex: none; }
+  .st-opt .ic { width: 24px; height: 24px; border-radius: 5px; background: #E9E9E9; color: #333; font-size: 12px; font-weight: 700; display: grid; place-items: center; flex: none; }
+  .st-opt .nm { flex: 1; }
+  .st-opt .brands { display: flex; gap: 5px; }
+  .bd { font-style: normal; font-size: 10px; font-weight: 700; padding: 4px 6px; border-radius: 4px; background: #EDEDED; color: #444; }
+  .st-card { padding: 4px 20px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .st-more { margin-top: 12px; display: flex; align-items: center; gap: 12px; padding: 16px 20px; border: 1px solid #DCDCDC; border-radius: 6px; color: #555; font-size: 15px; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+  .st-more .brands { margin-left: auto; display: flex; gap: 5px; }
+  .st-pay { margin-top: 28px; width: 100%; height: 52px; border: 0; border-radius: 6px; background: #2E5F78; color: #FFF; font-size: 17px; font-weight: 600; }
+  .st-pay:hover { filter: brightness(1.08); }
+  .st-foot { margin: 22px 0 0; font-size: 13px; color: #777; text-align: center; }
+  @media (max-width: 900px) { .stx { grid-template-columns: minmax(0, 1fr); } .st-l, .st-r { padding: 28px 20px; box-shadow: none; } .st-l .in { margin-left: 0; } }
+
   /* ===== Pop-up enviar link ===== */
   .backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(20,20,20,.45); display: flex; align-items: center; justify-content: center; padding: 24px; }
   .modal { width: 100%; max-width: 620px; max-height: calc(100vh - 48px); overflow: auto; background: #FFF; border-radius: 28px; padding: 30px 32px 26px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 24px 60px rgba(0,0,0,.18); }
@@ -173,7 +219,7 @@
   <button class="demo-step" data-step="send"><b>2</b>Enviar link</button>
   <button class="demo-step" data-step="pending"><b>3</b>Pacientes: pendiente</button>
   <button class="demo-step" data-step="mail"><b>4</b>Email del paciente</button>
-  <button class="demo-step" data-step="shop"><b>5</b>Compra del paciente</button>
+  <button class="demo-step" data-step="shop"><b>5</b>Pago en Stripe</button>
   <button class="demo-step" data-step="paid"><b>6</b>Pacientes: cuestionario enviado</button>
   <button class="demo-reset" id="reset">Reiniciar</button>
 </nav>
@@ -313,43 +359,55 @@
 </div>
 
 <div class="patient" id="v-shop" hidden>
-  <p class="pt-tag">Página de compra que abre el paciente desde el email</p>
-  <div class="shop-head">
-    <div class="brand">BIOTASMART</div>
-    <small>Recomendado por <b>Mi consulta</b></small>
-  </div>
-  <form class="shop" id="shopForm" novalidate>
-    <section class="card">
-      <h2>Tus datos</h2>
-      <p class="muted">Los necesitamos para enviarte el test y la factura.</p>
-      <div class="form-grid">
-        <div class="field full"><label>Email</label><input readonly data-v="email"></div>
-        <div class="field"><label for="s-name">Nombre</label><input id="s-name" name="name" value="Ana"></div>
-        <div class="field"><label for="s-last">Apellidos</label><input id="s-last" name="last" value="Ejemplo Ruiz"></div>
-        <div class="field"><label for="s-phone">Teléfono</label><input id="s-phone" name="phone" value="600 000 000"></div>
-        <div class="field"><label for="s-cp">Código postal</label><input id="s-cp" name="cp" value="07001"></div>
-        <div class="field full"><label for="s-addr">Dirección de envío</label><input id="s-addr" name="addr" value="Calle de Ejemplo, 12, 2.º B"></div>
-        <div class="field"><label for="s-city">Ciudad</label><input id="s-city" name="city" value="Palma"></div>
-        <div class="field"><label for="s-prov">Provincia</label><input id="s-prov" name="prov" value="Illes Balears"></div>
+  <p class="pt-tag">Página de pago de Stripe que abre el paciente desde el email (datos de ejemplo)</p>
+  <form class="stx" id="shopForm" novalidate>
+    <div class="st-l"><div class="in">
+      <div class="st-back"><span class="arr" aria-hidden="true">←</span><span class="logo" aria-hidden="true">🏪</span><b>biotasmart</b></div>
+      <p class="st-name" data-b="stripeName"></p>
+      <p class="st-price">349,00 €</p>
+      <p class="st-qty">Cantidad 1, 349,00 € unidad</p>
+      <p class="st-desc" data-b="stripeDesc"></p>
+    </div></div>
+    <div class="st-r"><div class="in">
+      <h3 class="st-h">Información de contacto</h3>
+      <label class="st-lbl" for="s-mail">Correo electrónico</label>
+      <input id="s-mail" class="st-in" type="email" readonly data-v="email">
+
+      <h3 class="st-h">Envío</h3>
+      <div class="st-grp">
+        <input id="s-name" class="st-in" placeholder="Nombre completo" value="Ana Ejemplo Ruiz" aria-label="Nombre completo">
+        <select class="st-in" aria-label="País"><option>España</option><option>Portugal</option><option>Francia</option></select>
+        <input class="st-in" placeholder="Dirección" value="Calle de Ejemplo, 12, 2.º B" aria-label="Dirección">
+        <div class="st-two">
+          <input class="st-in" placeholder="Código postal" value="07001" aria-label="Código postal">
+          <input class="st-in" placeholder="Ciudad" value="Palma" aria-label="Ciudad">
+        </div>
+        <input class="st-in" placeholder="Provincia" value="Illes Balears" aria-label="Provincia">
       </div>
-      <p class="sec-t">Pago con tarjeta</p>
-      <div class="card-fields">
-        <div class="field"><label>Número de tarjeta</label><input placeholder="1234 1234 1234 1234"></div>
-        <div class="field"><label>Caducidad</label><input placeholder="MM / AA"></div>
-        <div class="field"><label>CVC</label><input placeholder="123"></div>
+
+      <h3 class="st-h">Método de pago</h3>
+      <div class="st-pm">
+        <label class="st-opt"><input type="radio" name="pm" value="card" checked><span class="ic">▭</span><span class="nm">Tarjeta</span><span class="brands"><i class="bd">VISA</i><i class="bd">MC</i><i class="bd">AMEX</i></span></label>
+        <div class="st-card" id="stCard">
+          <input class="st-in" placeholder="Número de tarjeta" aria-label="Número de tarjeta" inputmode="numeric">
+          <div class="st-grp" style="border:0;box-shadow:none;display:grid;grid-template-columns:1fr 1fr;gap:10px;overflow:visible">
+            <input class="st-in" style="border:1px solid #DCDCDC;border-radius:6px" placeholder="MM / AA" aria-label="Caducidad">
+            <input class="st-in" style="border:1px solid #DCDCDC;border-radius:6px" placeholder="CVC" aria-label="CVC">
+          </div>
+        </div>
+        <label class="st-opt"><input type="radio" name="pm" value="revolut"><span class="ic">R</span><span class="nm">Revolut Pay</span></label>
+        <label class="st-opt"><input type="radio" name="pm" value="klarna"><span class="ic">K</span><span class="nm">Klarna</span></label>
+        <label class="st-opt"><input type="radio" name="pm" value="ideal"><span class="ic">i</span><span class="nm">iDEAL | Wero</span></label>
       </div>
-      <p class="muted" style="font-size:13px">Pantalla de ejemplo: en la plataforma real estos campos son los del proveedor de pagos.</p>
-    </section>
-    <aside class="card">
-      <h2>Tu test</h2>
-      <div class="prod"><span class="ic">🧪</span><div><b data-b="testName"></b><small>1 test · a tu nombre</small></div></div>
-      <div class="one" style="font-size:13px">Este enlace es para <b>1 test</b>. No se puede cambiar la cantidad.</div>
-      <div class="sum-row"><span>Test</span><span>349,00 €</span></div>
-      <div class="sum-row"><span>Envío a domicilio</span><span>Incluido</span></div>
-      <div class="sum-row tot"><span>Total</span><span>349,00 €</span></div>
-      <button type="submit" class="pay-btn">Pagar 349,00 €</button>
-      <p class="lock">🔒 Pago seguro</p>
-    </aside>
+      <div class="st-more">••• <span>Más</span><span class="brands"><i class="bd">Pay</i><i class="bd">MB</i><i class="bd">SEPA</i></span></div>
+
+      <h3 class="st-h">Información adicional</h3>
+      <label class="st-lbl" for="s-phone">Teléfono</label>
+      <input id="s-phone" class="st-in" type="tel" value="600 000 000">
+
+      <button type="submit" class="st-pay">Pagar</button>
+      <p class="st-foot">Con tecnología de <b>Stripe</b> · Términos · Privacidad</p>
+    </div></div>
   </form>
   <section class="card done" id="shopDone" hidden>
     <div class="done-ic">✓</div>
@@ -368,6 +426,8 @@
   ];
   var ENF = { nut: 'Test intestinal avanzado · Enfoque Nutrición', muj: 'Test intestinal avanzado · Enfoque Mujer', vag: 'Test vaginal avanzado' };
   var ENF_SHORT = { nut: 'Intestinal · Nutrición', muj: 'Intestinal · Mujer', vag: 'Vaginal' };
+  var STRIPE_NAME = { nut: 'Test de microbiota intestinal · Avanzado', muj: 'Test de microbiota intestinal · Avanzado', vag: 'Test de microbiota vaginal · Avanzado' };
+  var STRIPE_DESC = { nut: 'Enfoque Nutrición', muj: 'Enfoque Mujer', vag: '' };
   // Estado del ejemplo: a quién se manda el link y en qué punto está
   var link = null;        // { who:'new'|'existing', idx, email, enf, paid, name }
   var DEFAULT_LINK = { who: 'new', idx: null, email: 'ana.ejemplo@correo.com', enf: 'nut', paid: false, name: '' };
@@ -380,6 +440,8 @@
     document.querySelectorAll('[data-b="email"]').forEach(function (e) { e.textContent = l.email; });
     document.querySelectorAll('[data-v="email"]').forEach(function (e) { e.value = l.email; });
     document.querySelectorAll('[data-b="testName"]').forEach(function (e) { e.textContent = ENF[l.enf]; });
+    document.querySelectorAll('[data-b="stripeName"]').forEach(function (e) { e.textContent = STRIPE_NAME[l.enf]; });
+    document.querySelectorAll('[data-b="stripeDesc"]').forEach(function (e) { e.textContent = STRIPE_DESC[l.enf]; e.hidden = !STRIPE_DESC[l.enf]; });
     document.querySelectorAll('[data-b="name"]').forEach(function (e) { e.textContent = l.name || 'Ana'; });
   }
 
@@ -392,7 +454,7 @@
     target.hl = true;
     target.test = ENF_SHORT[l.enf];
     if (l.paid) {
-      if (!target.name) target.name = (l.name || 'Ana') + ' Ejemplo Ruiz';
+      if (!target.name) target.name = l.fullName || 'Ana Ejemplo Ruiz';
       target.st = ['green', '✓ Cuestionario enviado'];
       target.last = 'Pagado hoy · datos completados';
     } else {
@@ -405,10 +467,10 @@
       return '<tr class="' + (p.hl ? 'hl' : '') + '"><td>' + who + '</td><td>' + p.test + '</td><td><span class="st ' + p.st[0] + '">' + p.st[1] + '</span></td><td>' + p.last + '</td><td>' + act + '</td></tr>';
     }).join('');
     $('pnote').innerHTML = l.paid
-      ? '✅ Al pagar, el paciente ha rellenado nombre, apellidos, teléfono y dirección. La ficha se ha completado sola y se le ha enviado el cuestionario.'
+      ? '✅ Al pagar, el paciente ha dado su nombre, teléfono y dirección en la página de pago de Stripe. La ficha se ha completado sola y se le ha enviado el cuestionario.'
       : 'ℹ️ Desde que envías el link ya puedes seguir a este paciente. Cuando pague, se completarán sus datos y el estado pasará a «Cuestionario enviado».';
     $('activeCount').textContent = (link && link.who === 'new' ? 3 : 2);
-    $('news').textContent = l.paid ? '✅ ' + (l.name || 'Ana') + ' Ejemplo Ruiz ha pagado su test. Cuestionario enviado.' : '🔔 Sin novedades esta semana';
+    $('news').textContent = l.paid ? '✅ ' + (l.fullName || 'Ana Ejemplo Ruiz') + ' ha pagado su test. Cuestionario enviado.' : '🔔 Sin novedades esta semana';
   }
 
   /* ---------- Navegación de la demo ---------- */
@@ -428,7 +490,7 @@
     if (step === 'pending' || step === 'paid' || step === 'mail' || step === 'shop') { if (!link) link = Object.assign({}, DEFAULT_LINK); }
     if (step === 'paid') link.paid = true;
     if (step === 'pending' || step === 'mail' || step === 'shop') link.paid = false;
-    if (step === 'shop') { $('shopForm').hidden = false; $('shopDone').hidden = true; }
+    if (step === 'shop') { $('shopForm').hidden = false; $('shopDone').hidden = true; $('v-shop').classList.remove('is-done'); }
     if (step === 'send') openSend();
     bind(); renderPatients();
     document.querySelectorAll('.demo-step').forEach(function (b) { if (b.dataset.step === step) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
@@ -479,15 +541,18 @@
     toast('Link enviado a ' + email);
   });
 
-  /* ---------- Compra del paciente ---------- */
+  /* ---------- Pago en Stripe ---------- */
+  document.querySelectorAll('input[name="pm"]').forEach(function (r) {
+    r.addEventListener('change', function () { $('stCard').hidden = document.querySelector('input[name="pm"]:checked').value !== 'card'; });
+  });
   $('toShop').addEventListener('click', function () { show('shop'); });
   $('shopForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    link.name = $('s-name').value.trim() || 'Ana';
+    var fn = $('s-name').value.trim() || 'Ana Ejemplo Ruiz'; link.fullName = fn; link.name = fn.split(' ')[0];
     link.paid = true;
     if (link.who === 'existing') PATIENTS_BASE[link.idx].name = PATIENTS_BASE[link.idx].name; // los datos de la ficha se actualizan con lo que pide el pago
     bind();
-    $('shopForm').hidden = true; $('shopDone').hidden = false;
+    $('shopForm').hidden = true; $('shopDone').hidden = false; $('v-shop').classList.add('is-done');
     window.scrollTo(0, 0);
   });
 
