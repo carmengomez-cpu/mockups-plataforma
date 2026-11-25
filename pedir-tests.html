@@ -172,6 +172,20 @@
   .totals .s-row.total span:first-child small { font-weight: 400; color: var(--muted); }
   .totals .s-row.total span:last-child { font-size: 28px; font-weight: 700; }
   .tax { font-size: 14px; color: var(--muted); text-align: right; margin-top: -4px; }
+  /* Resumen tipo factura (propuesta de Olga) */
+  .order-table td small { display: block; font-size: 13px; color: var(--muted-2); margin-top: 2px; }
+  .o-note { font-size: 13.5px; color: var(--muted); line-height: 1.5; margin: 0; }
+  .o-note b { color: var(--text); font-weight: 600; }
+  .o-sum { display: flex; flex-direction: column; gap: 0; margin-left: auto; width: 100%; max-width: 360px; font-size: 15px; }
+  .o-sum .row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); color: var(--muted); }
+  .o-sum .row span:last-child { color: var(--text); }
+  .o-sum .row.save { background: var(--green-bg); color: var(--green); font-weight: 600; border: 0; border-radius: 12px; padding: 10px 14px; margin-bottom: 4px; }
+  .o-sum .row.save span:last-child { color: var(--green); }
+  .o-sum .row.save small { display: block; font-weight: 400; font-size: 12.5px; }
+  .o-total { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-radius: 14px; background: var(--cta-soft); border: 1px solid var(--cta); }
+  .o-total span { font-size: 12px; letter-spacing: .1em; font-weight: 600; }
+  .o-total span small { display: block; font-weight: 400; letter-spacing: 0; color: var(--muted); }
+  .o-total b { font-size: 28px; }
 
   .address { background: #F6F6F5; border-radius: 16px; padding: 16px 18px; font-size: 15px; line-height: 1.6; }
   .address dl { margin: 0; display: grid; grid-template-columns: auto 1fr; column-gap: 14px; row-gap: 2px; }
@@ -348,21 +362,17 @@
             <div class="table-wrap">
               <table class="order-table">
                 <thead>
-                  <tr><th>Test</th><th class="num">Cantidad</th><th class="num">Precio por test</th><th class="num">Importe</th></tr>
+                  <tr><th>Descripción</th><th class="num">Cant.</th><th class="num">Precio/ud</th><th class="num">Importe</th></tr>
                 </thead>
                 <tbody id="order-rows"></tbody>
               </table>
             </div>
-            <div class="totals">
-              <div class="s-row"><span>Precio de tarifa · <span data-bind="countText"></span></span><span data-bind="subtotal"></span></div>
-              <div class="s-row discount"><span>Descuento profesional (15 %)</span><span>−<span data-bind="discount"></span></span></div>
-              <div class="s-row"><span>Envío Paq24 a tu consulta</span><span class="dark">Incluido</span></div>
-              <div class="s-row total"><span>Total <small>(IVA incluido)</small></span><span data-bind="total"></span></div>
-              <div class="tax">Base imponible <span data-bind="base"></span> · IVA (21 %) <span data-bind="iva"></span></div>
-            </div>
-            <div class="saving-box">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
-              <span>Con este pedido ahorras <strong data-bind="discount"></strong> frente al precio de tarifa</span>
+            <p class="o-note"><b>Nota:</b> precio unitario sin IVA, con tu <b>descuento de clínica (−15 % sobre la tarifa sin IVA: <span data-bind="tarifaNet"></span> el test)</b> ya aplicado. Envío Paq24 a tu consulta incluido.</p>
+            <div class="o-sum">
+              <div class="row save"><span>Descuento de clínica (−15 %)<small>Ahorras en esta solicitud (sin IVA)</small></span><span>−<span data-bind="saveNet"></span></span></div>
+              <div class="row"><span>Base imponible</span><span data-bind="base"></span></div>
+              <div class="row"><span>IVA (21 %)</span><span data-bind="iva"></span></div>
+              <div class="o-total"><span>TOTAL<small>IVA incluido</small></span><b data-bind="total"></b></div>
             </div>
           </section>
           <button type="button" class="cancel" data-goto="stock">Cancelar solicitud</button>
@@ -616,7 +626,9 @@
       discount: eur(count * (LIST_PRICE - PRICE)),
       total: eur(total),
       base: eur(base),
-      iva: eur(total - base)
+      iva: eur(total - base),
+      tarifaNet: eur(LIST_PRICE / 1.21),
+      saveNet: eur(count * (LIST_PRICE - PRICE) / 1.21)
     };
     document.querySelectorAll('[data-bind]').forEach(function (el) { el.textContent = vals[el.dataset.bind]; });
 
@@ -631,10 +643,10 @@
     // Filas del resumen (solo tests con cantidad)
     document.getElementById('order-rows').innerHTML = TESTS.filter(function (t) { return qty[t.key] > 0; }).map(function (t) {
       return '<tr>' +
-        '<td><div class="test-cell"><span class="dot" style="background:' + t.color + ';width:9px;height:9px"></span>' + t.name + '</div></td>' +
+        '<td><div class="test-cell"><span class="dot" style="background:' + t.color + ';width:9px;height:9px"></span>' + t.name + '</div><small>Envío Paq24 incluido</small></td>' +
         '<td class="num">' + qty[t.key] + '</td>' +
-        '<td class="num"><span class="unit-old"><span class="sr-only">Antes </span><s>' + eur(LIST_PRICE) + '</s></span><span class="unit-now">' + eur(PRICE) + '</span></td>' +
-        '<td class="num">' + eur(qty[t.key] * PRICE) + '</td>' +
+        '<td class="num"><span class="unit-old"><span class="sr-only">Antes </span><s>' + eur(LIST_PRICE / 1.21) + '</s></span><span class="unit-now">' + eur(PRICE / 1.21) + '</span></td>' +
+        '<td class="num">' + eur(qty[t.key] * PRICE / 1.21) + '</td>' +
       '</tr>';
     }).join('');
 
