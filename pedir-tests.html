@@ -250,6 +250,16 @@
   .pay-band .pay-blocked { color: #FFE2A8; font-size: 12.5px; margin: 0; }
   .pay-band .pay-hint { color: #FFF; opacity: .8; font-size: 12px; margin: 0; }
   .pay-band [hidden] { display: none !important; }
+  .pay-band .pb-pay { display: flex; flex-direction: column; gap: 6px; }
+  .pay-band .pb-lbl { font-size: 12.5px; opacity: .85; }
+  .pay-band .pb-opts { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pb-opt { min-width: 210px; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 9px 18px; border-radius: 14px; border: 1.5px solid rgba(255,255,255,.75); background: transparent; color: #FFF; text-align: left; cursor: pointer; }
+  .pb-opt b { font-size: 16px; }
+  .pb-opt small { font-size: 12.5px; opacity: .85; }
+  .pb-opt.main { background: #FFF; color: #2E5F78; border-color: #FFF; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+  .pb-opt:hover:not(:disabled) { transform: translateY(-1px); }
+  .pb-opt:not(.main):hover:not(:disabled) { background: rgba(255,255,255,.12); }
+  .pb-opt:disabled { opacity: .55; cursor: not-allowed; box-shadow: none; }
   .pay-switch { border: 0; background: transparent; color: #FFF; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; padding: 2px 4px; opacity: .9; cursor: pointer; }
   .pay-switch:hover { opacity: 1; }
 
@@ -407,11 +417,17 @@
         </div>
         <div class="pb-amt"><b data-bind="total"></b><small>IVA incluido</small></div>
         <div hidden><input type="radio" name="pay" value="card" checked><input type="radio" name="pay" value="transfer"></div>
-        <div class="pb-btn">
-          <button type="button" class="btn-pay" id="pay-btn" disabled></button>
+        <div class="pb-pay">
+          <span class="pb-lbl">Acepta y elige cómo pagar</span>
+          <div class="pb-opts">
+            <button type="button" class="pb-opt main" id="pay-btn" data-method="card" disabled>
+              <b>💳 Pagar con tarjeta</b><small>Ahora · pago seguro</small>
+            </button>
+            <button type="button" class="pb-opt" id="pay-tr" data-method="transfer" disabled>
+              <b>🏦 Pagar por transferencia</b><small>30 días desde la factura</small>
+            </button>
+          </div>
           <p class="pay-blocked" id="pay-blocked">Revisa la dirección para poder pagar</p>
-          <p class="pay-hint" id="pay-hint"></p>
-          <button type="button" class="pay-switch" id="pay-switch"></button>
         </div>
       </section>
 
@@ -677,15 +693,9 @@
     var method = document.querySelector('input[name="pay"]:checked').value;
     sedeComplete = missingFields().length === 0;
     var payBtn = document.getElementById('pay-btn');
-    payBtn.textContent = method === 'card' ? 'Aceptar y pagar con tarjeta' : 'Aceptar y pagar por transferencia';
-    document.getElementById('pay-switch').textContent = method === 'card'
-      ? '¿Prefieres pagar por transferencia?' : 'Prefiero pagar con tarjeta';
     payBtn.disabled = !sedeComplete;
+    document.getElementById('pay-tr').disabled = !sedeComplete;
     document.getElementById('pay-blocked').hidden = sedeComplete;
-    document.getElementById('pay-hint').hidden = !sedeComplete;
-    document.getElementById('pay-hint').textContent = method === 'card'
-      ? '🔒 Pago seguro con tarjeta'
-      : 'Tienes 30 días desde la factura para pagar';
     // Dirección en una línea
     var miss = missingFields();
     var parts = [sede.name, sede.street, [sede.cp, sede.city].filter(Boolean).join(' '), sede.province ? '(' + sede.province + ')' : '', sede.phone ? 'Tel. ' + sede.phone : '', sede.contact ? 'Contacto: ' + sede.contact : '']
@@ -814,12 +824,14 @@
     document.getElementById('pay-btn').focus();
   });
   document.querySelectorAll('input[name="pay"]').forEach(function (r) { r.addEventListener('change', update); });
-  document.getElementById('pay-switch').addEventListener('click', function () {
-    var card = document.querySelector('input[name="pay"][value="card"]');
-    (card.checked ? document.querySelector('input[name="pay"][value="transfer"]') : card).checked = true;
-    update();
+  // Cada botón paga con su método y lleva a la confirmación
+  ['pay-btn', 'pay-tr'].forEach(function (id) {
+    document.getElementById(id).addEventListener('click', function () {
+      document.querySelector('input[name="pay"][value="' + this.dataset.method + '"]').checked = true;
+      update();
+      go('done');
+    });
   });
-  document.getElementById('pay-btn').addEventListener('click', function () { go('done'); });
   document.getElementById('demo-reset').addEventListener('click', function () {
     qty = Object.assign({}, START); sede = Object.assign({}, SEDE_START); sedeModal.hidden = true;
     document.querySelector('input[name="pay"][value="card"]').checked = true;
