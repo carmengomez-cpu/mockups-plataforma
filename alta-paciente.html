@@ -1,163 +1,111 @@
 <!doctype html>
+<html lang="es">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mockup alta de paciente</title>
 <meta name="robots" content="noindex">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Mockup · Nuevo usuario</title>
+<link rel="stylesheet" href="tema.css">
 <style>
-  :root{
-    --bg:#f0f0ef; --side:#f0f0ef; --card:#fff; --line:#e3e3e0; --field:#f3f3f2; --text:#1d1d1b; --muted:#66665f;
-    --accent:#97bdd0; --accent-soft:#e6f0f5; --navy:#2e5f78; --req:#c0392b; --banner:#fbb900;
-  }
-  *{box-sizing:border-box}
-  .notif{display:flex;gap:12px;align-items:center;border:1.5px solid var(--navy);background:var(--accent-soft);border-radius:14px;padding:10px 14px}
-  .notif .ni{width:34px;height:34px;border-radius:10px;background:#fff;display:grid;place-items:center;flex:none}
-  .notif b{display:block;color:var(--navy);font-size:14px}
-  .notif small{color:var(--muted);font-size:12px}
-  html,body{height:100%}
-  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
-
-  /* ===== Estructura de la plataforma (sin cambios) ===== */
-  .app{display:grid;grid-template-columns:330px 1fr;min-height:100vh}
-  aside{border-right:1px solid var(--line);background:var(--side);padding:30px 20px 24px;display:flex;flex-direction:column}
-  .logo{display:flex;align-items:center;gap:10px;font-size:17px;letter-spacing:.06em;padding:0 0 38px}
-  .org{font-size:15px;color:#4a4a45;padding:0 11px 22px}
-  .nav a{display:block;padding:14px 17px;border-radius:12px;font-size:19px;color:#3a3a37;margin-bottom:4px;text-decoration:none;cursor:pointer}
-  .nav a.on{background:#fff;border:1px solid var(--line);color:var(--text);font-weight:500}
-  .cookies{margin-top:auto;display:flex;gap:12px;align-items:center;font-size:18px;color:#3a3a37;padding:0 16px}
-  .page{display:flex;flex-direction:column;min-width:0}
-  .banner{background:var(--banner);text-align:center;padding:9px;font-size:18px}
-  .banner button{margin-left:14px;border:0;background:#fff;border-radius:999px;padding:6px 16px;font:inherit;font-size:16px;font-weight:600}
-  .topbar{display:flex;justify-content:space-between;align-items:center;padding:20px 54px;border-bottom:1px solid var(--line)}
-  .crumb{font-size:18px;color:#5a5a55}.crumb b{color:var(--text);font-weight:500}.crumb span{margin:0 12px}
-  .user{display:flex;align-items:center;gap:16px}
-  .sel{border:1px solid var(--line);background:#f5f5f4;border-radius:999px;padding:7px 14px;font-size:15px}
-  .sel.big{font-size:18px;padding:9px 16px}
-  .who{text-align:right;font-size:18px;line-height:1.2}.who small{display:block;font-size:15px;color:var(--muted)}
-  .av{width:48px;height:48px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-weight:600;font-size:18px}
-  .content{padding:28px 54px 20px;flex:1}
-  .pfoot{padding:0 54px 30px;font-size:18px;color:#5a5a55}
-
-  /* ===== Formulario compacto (nuevo diseño) ===== */
-  .head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px}
-  h1{margin:0;font-size:30px;font-weight:700}
-  .sub{color:var(--muted);font-size:17px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:26px 30px;box-shadow:0 2px 10px rgba(0,0,0,.03)}
-  .cols{display:grid;grid-template-columns:1fr 1fr;gap:32px}
-  .cols>section+section{border-left:1px solid var(--line);padding-left:32px}
-  .sec-title{font-size:12px;font-weight:600;letter-spacing:.07em;color:var(--muted);margin:0 0 12px;text-transform:uppercase}
-  .sec-title.mt{margin-top:20px}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .full{grid-column:1/-1}
-  label{display:block;font-size:14px;font-weight:500;margin-bottom:6px}
-  .req{color:var(--req)}
-  input,select{width:100%;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--field);padding:0 16px;font:inherit;color:var(--text)}
-  input:focus,select:focus{outline:2px solid var(--accent);background:#fff}
-  .opts{display:grid;gap:8px}.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:repeat(3,1fr)}
-  .opt{display:flex;align-items:center;gap:8px;justify-content:center;border:1.5px solid var(--line);background:#fff;border-radius:999px;height:40px;padding:0 12px;cursor:pointer;font:inherit;font-weight:500;color:var(--text)}
-  .opt:hover{border-color:var(--accent)}
-  .opt.on{border-color:var(--navy);background:var(--accent-soft);color:var(--navy);font-weight:600}
-  .addr{margin-top:10px;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fafaf9;display:flex;gap:10px}
-  .addr b{display:block;font-size:14px}
-  .addr p{margin:2px 0 0;color:#3a3a37;font-size:13px;line-height:1.45}
-  .confirm{display:flex;gap:8px;align-items:center;margin:8px 0 0;font-size:13px;font-weight:400;cursor:pointer}
-  .confirm input{width:16px;height:16px;accent-color:var(--navy)}
-  .home{margin-top:10px}
-  .home .grid{grid-template-columns:2fr 1fr 1fr;gap:8px}
-  .home .grid+.grid{margin-top:8px}
-  .hidden{display:none}
-  .footer{margin-top:22px;padding-top:16px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
-  .note{font-size:12px;color:var(--muted)}
-  .btn{border:0;background:var(--accent);border-radius:999px;padding:13px 26px;font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+  .cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px}
+  .req{color:var(--rojo)}
+  .sec-t{margin:0 0 12px;font-size:17px}
+  .sec-t.mt{margin-top:26px}
+  .notif{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:var(--cobalto2)}
+  .notif b{font-family:var(--display);font-weight:500;display:block}
+  .notif small{display:block;color:var(--gris);font-size:12.5px;line-height:1.5}
+  .dir{display:flex;gap:12px;align-items:flex-start;margin-top:14px;padding:14px 16px;border-radius:16px;box-shadow:inset 0 0 0 1px var(--linea2);background:var(--blanco)}
+  .dir b{font-family:var(--display);font-weight:500}
+  .dir p{font-size:13.5px;color:var(--gris);margin:2px 0 8px}
+  .conf{display:flex;gap:8px;align-items:center;font-size:13.5px}
+  .pie-f{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:26px;padding-top:18px;border-top:1px solid var(--linea)}
+  @media (max-width:900px){.cols{grid-template-columns:minmax(0,1fr);gap:26px}}
 </style>
-<div class="app">
-  <!-- MENÚ IZQUIERDO (igual que ahora) -->
-  <aside>
-    <div class="logo">⁂ BIOTASMART</div>
-    <div class="org">Clínica Demo</div>
-    <nav class="nav"><a>Inicio</a><a class="on">Pacientes</a><a>Stock de tests</a><a>Pedidos</a><a>Ajustes</a></nav>
-    <div class="cookies">🍪 Preferencias de cookies</div>
-  </aside>
+</head>
+<body>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main">
+    <span class="cel cel-flor2" aria-hidden="true"></span><span class="cel cel-racimo" aria-hidden="true"></span>
+    <p class="migas"><a href="listado-pacientes.html">Usuarios</a> / Nuevo usuario</p>
+    <div class="cabecera">
+      <div><h1>Nuevo usuario</h1><p class="meta">Da de alta un usuario nuevo para poder darle un test.</p></div>
+    </div>
 
-  <div class="page">
-    <div class="banner">👁 Estás viendo la plataforma como <b>Clínica Demo</b> (demo@clinica-ejemplo.es) <button>Salir</button></div>
-    <div class="topbar">
-      <div class="crumb">Inicio<span>›</span>Pacientes<span>›</span><b>Nuevo paciente</b></div>
-      <div class="user">
-        <span style="font-size:18px">文A</span>
-        <span class="sel">Español ▾</span>
-        <span class="sel big">Clínica Demo ▾</span>
-        <div class="who">Clínica Demo<small>Profesional</small></div>
-        <div class="av">CD</div>
-        <span style="font-size:20px">⇥</span>
+    <form class="card" id="alta" novalidate>
+      <div class="cols">
+        <section>
+          <h2 class="sec-t">Datos del usuario</h2>
+          <div class="campos">
+            <label class="campo"><span>Nombre <span class="req">*</span></span><input name="n" required></label>
+            <label class="campo"><span>Apellido <span class="req">*</span></span><input name="a" required></label>
+            <label class="campo full">Segundo apellido<input></label>
+            <label class="campo"><span>Email <span class="req">*</span></span><input type="email" name="e" required></label>
+            <label class="campo"><span>Teléfono <span class="req">*</span></span><input type="tel" name="t" required placeholder="+34 600 000 000"></label>
+          </div>
+          <h2 class="sec-t mt">Notificaciones</h2>
+          <div class="notif"><span aria-hidden="true">✉️</span><div><b>Por email</b><small>Le enviaremos el código QR y los avisos del test al email indicado.</small></div></div>
+        </section>
+
+        <section>
+          <h2 class="sec-t">Envío del test <span class="req">*</span></h2>
+          <div class="opc-grid">
+            <button type="button" class="opc-big on" data-addr="clinica"><span><b>A consulta</b><small>Lo recoges tú en el centro</small></span><span class="chk"></span></button>
+            <button type="button" class="opc-big" data-addr="domicilio"><span><b>A domicilio</b><small>Se lo enviamos a casa</small></span><span class="chk"></span></button>
+          </div>
+          <div id="clinica" class="dir">
+            <span aria-hidden="true">📍</span>
+            <div>
+              <b>Centro Demo · Valencia</b>
+              <p>Calle de Ejemplo, 12 · 46004 Valencia · España</p>
+              <label class="conf"><input type="checkbox" id="ok"> Confirmo que la dirección es correcta</label>
+            </div>
+          </div>
+          <div id="domicilio" hidden style="margin-top:14px">
+            <div class="campos" style="grid-template-columns:2fr 1fr 1fr">
+              <label class="campo"><span>Calle <span class="req">*</span></span><input data-home></label>
+              <label class="campo"><span>Número <span class="req">*</span></span><input data-home></label>
+              <label class="campo">Piso / puerta<input></label>
+            </div>
+            <div class="campos" style="margin-top:12px;grid-template-columns:1fr 1fr 1fr">
+              <label class="campo"><span>Ciudad <span class="req">*</span></span><input data-home></label>
+              <label class="campo"><span>C. postal <span class="req">*</span></span><input data-home></label>
+              <label class="campo"><span>País <span class="req">*</span></span><select><option>España</option><option>Portugal</option><option>Andorra</option></select></label>
+            </div>
+          </div>
+        </section>
       </div>
-    </div>
-
-    <div class="content">
-      <div class="head"><h1>Nuevo paciente</h1><span class="sub">Da de alta un paciente nuevo.</span></div>
-
-      <form class="card" onsubmit="event.preventDefault();this.querySelector('.note').textContent='✓ Paciente creado (solo maqueta)'">
-        <div class="cols">
-          <section>
-            <p class="sec-title">Datos del paciente</p>
-            <div class="grid">
-              <div><label>Nombre <span class="req">*</span></label><input required></div>
-              <div><label>Apellido <span class="req">*</span></label><input required></div>
-              <div class="full"><label>Segundo apellido</label><input></div>
-              <div><label>Email <span class="req">*</span></label><input type="email" required></div>
-              <div><label>Teléfono <span class="req">*</span></label><input type="tel" required placeholder="+34 600 000 000"></div>
-            </div>
-            <p class="sec-title mt">Notificaciones</p>
-            <div class="notif">
-              <span class="ni">✉️</span>
-              <div><b>Por email</b><small>Le enviaremos el código QR y los avisos del test al email indicado.</small></div>
-            </div>
-          </section>
-
-          <section>
-            <p class="sec-title">Envío del test <span class="req">*</span></p>
-            <div class="opts two">
-              <button type="button" class="opt on" data-addr="clinica">🏥 A consulta</button>
-              <button type="button" class="opt" data-addr="domicilio">🏠 A domicilio</button>
-            </div>
-            <div id="clinica" class="addr">
-              <span>📍</span>
-              <div>
-                <b>Clínica Demo</b>
-                <p>Calle Santa Ana, 12 · 28001 Madrid · España</p>
-                <label class="confirm"><input type="checkbox" id="ok" required> Confirmo que la dirección es correcta</label>
-              </div>
-            </div>
-            <div id="domicilio" class="home hidden">
-              <div class="grid">
-                <div><label>Calle <span class="req">*</span></label><input data-home></div>
-                <div><label>Número <span class="req">*</span></label><input data-home></div>
-                <div><label>Piso / puerta</label><input></div>
-              </div>
-              <div class="grid">
-                <div><label>Ciudad <span class="req">*</span></label><input data-home></div>
-                <div><label>C. postal <span class="req">*</span></label><input data-home></div>
-                <div><label>País <span class="req">*</span></label><select data-home><option>España</option><option>Portugal</option><option>Andorra</option></select></div>
-              </div>
-            </div>
-          </section>
-        </div>
-        <div class="footer">
-          <span class="note"><span class="req">*</span> Campos obligatorios</span>
-          <button class="btn" type="submit">Añadir paciente</button>
-        </div>
-      </form>
-    </div>
-    <div class="pfoot">Política de cookies</div>
-  </div>
+      <div class="pie-f">
+        <span class="nota"><span class="req">*</span> Campos obligatorios</span>
+        <div class="acciones"><a class="btn borde" href="listado-pacientes.html">Cancelar</a><button class="btn negro" type="submit">Añadir usuario</button></div>
+      </div>
+    </form>
+  </main>
 </div>
+<script src="tema.js"></script>
 <script>
-  const addrBtns=document.querySelectorAll('[data-addr]'), ok=document.getElementById('ok'), home=document.querySelectorAll('[data-home]');
-  addrBtns.forEach(b=>b.onclick=()=>{
-    addrBtns.forEach(x=>x.classList.toggle('on',x===b));
-    const h=b.dataset.addr==='domicilio';
-    document.getElementById('clinica').classList.toggle('hidden',h);
-    document.getElementById('domicilio').classList.toggle('hidden',!h);
-    ok.required=!h; home.forEach(i=>i.required=h);
+  Tema.shell({ nav: 'usuarios', badges: { usuarios: 2 } });
+  var btns = document.querySelectorAll('[data-addr]'), home = false;
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      btns.forEach(function (x) { x.classList.toggle('on', x === b); });
+      home = b.dataset.addr === 'domicilio';
+      document.getElementById('clinica').hidden = home;
+      document.getElementById('domicilio').hidden = !home;
+    });
+  });
+  document.getElementById('alta').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var ok = true;
+    this.querySelectorAll('.campo').forEach(function (c) { c.classList.remove('err'); var er = c.querySelector('.error'); if (er) er.remove(); });
+    var need = Array.from(this.querySelectorAll('input[required]'));
+    if (home) need = need.concat(Array.from(this.querySelectorAll('input[data-home]')));
+    need.forEach(function (i) {
+      if (!i.value.trim()) { ok = false; var c = i.closest('.campo'); c.classList.add('err'); c.insertAdjacentHTML('beforeend', '<span class="error">Este campo es obligatorio.</span>'); }
+    });
+    if (!home && !document.getElementById('ok').checked) { ok = false; Tema.toast('Confirma que la dirección es correcta.'); }
+    if (ok) Tema.toast('✓ Usuario creado (solo maqueta)');
   });
 </script>
+</body>
+</html>

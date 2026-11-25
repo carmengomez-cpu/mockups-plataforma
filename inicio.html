@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Mockup · Inicio</title>
+<link rel="stylesheet" href="tema.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main">
+    <img class="celulas" src="assets/img/celulas-inicio.jpeg" alt="">
+    <p class="migas">Miércoles, 25 de noviembre · Centro Demo</p>
+    <h1 class="titular">Hola, Marta.<span>Hoy tienes 3 informes nuevos y 2 cosas pendientes.</span></h1>
+
+    <div class="card">
+      <div class="acc-fila">
+        <h2 style="margin-right:6px">Acciones rápidas</h2>
+        <a class="btn negro" href="alta-paciente.html">Nuevo usuario</a>
+        <a class="btn borde" href="activar-test.html">Entregar un test</a>
+        <a class="btn borde" href="enviar-link-rapido.html">Nuevo enlace de pago</a>
+        <a class="btn borde" href="pedir-tests.html">Pedir más tests</a>
+        <span class="pie-a"><b>2</b> cuestionarios sin rellenar</span>
+      </div>
+    </div>
+
+    <div class="dos-col" style="margin-top:16px">
+      <div class="card">
+        <div class="card-h"><h2>Informes nuevos <span class="cuenta" style="background:var(--cobalto);color:#fff;border-radius:999px;padding:0 8px;font:500 12px var(--display);vertical-align:3px">3</span></h2><small>Revísalos y decide qué compartes</small></div>
+        <div class="fila-av"><span class="av">LM</span><div><b>Lucía M.</b><small><span class="ba int">Intestinal</span> Test Avanzado · listo ayer</small></div><a class="btn borde chico" href="ficha-con-test.html">Abrir</a></div>
+        <div class="fila-av"><span class="av">PR</span><div><b>Pablo R.</b><small><span class="ba int">Intestinal</span> Test Avanzado · listo hoy</small></div><a class="btn borde chico" href="ficha-con-test.html">Abrir</a></div>
+        <div class="fila-av"><span class="av vag">ET</span><div><b>Elena T.</b><small><span class="ba vag">Vaginal</span> Test Avanzado · listo ayer</small></div><a class="btn borde chico" href="ficha-con-test.html">Abrir</a></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>Para hoy</h2><small>0 de 2 hechas</small></div>
+        <div class="fila-av" style="grid-template-columns:minmax(0,1fr) auto"><div><b>Alba D. no ha rellenado el cuestionario</b><small>Tiene el test desde hace 5 días</small></div><button class="btn borde chico" data-toast="Recordatorio enviado a Alba D.">Enviar recordatorio</button></div>
+        <div class="fila-av" style="grid-template-columns:minmax(0,1fr) auto"><div><b>Hugo S. tiene la muestra lista</b><small>Elige cómo enviarla al laboratorio</small></div><a class="btn borde chico" href="aviso-cambio-sede.html">Pedir recogida</a></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="tema.js"></script>
+<script>
+  Tema.shell({ nav: 'inicio', badges: { usuarios: 2 } });
+  document.querySelectorAll('[data-toast]').forEach(function (b) { b.addEventListener('click', function () { Tema.toast(b.dataset.toast); }); });
+</script>
+</body>
+</html>

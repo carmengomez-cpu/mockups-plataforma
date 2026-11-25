@@ -3,118 +3,33 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Stock vacío</title>
 <meta name="robots" content="noindex">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{--bg:#f0f0ef;--card:#fff;--line:#e3e3e0;--text:#1d1d1b;--muted:#66665f;--accent:#97bdd0;--accent-soft:#e6f0f5;--navy:#2e5f78;--banner:#fbb900}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
-  .app{display:grid;grid-template-columns:198px 1fr;min-height:100vh}
-  aside{border-right:1px solid var(--line);padding:8px 6px 20px;display:flex;flex-direction:column}
-  .logo{font-size:13px;letter-spacing:.06em;padding:2px 2px 26px}
-  .org{font-size:11px;color:#4a4a45;padding:0 4px 16px}
-  .nav a{display:block;padding:8px 4px;border-radius:10px;font-size:13px;color:#3a3a37;margin-bottom:4px}
-  .nav a.on{background:#fff;border:1px solid var(--line);color:var(--text);font-weight:500}
-  .cookies{margin-top:auto;font-size:12px;color:#3a3a37;padding:0 10px}
-  .banner{background:var(--banner);text-align:center;padding:4px;font-size:12px}
-  .banner button{margin-left:10px;border:0;background:#fff;border-radius:999px;padding:3px 12px;font:inherit;font-weight:600}
-  .topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 34px;border-bottom:1px solid var(--line);font-size:12px}
-  .user{display:flex;align-items:center;gap:12px}
-  .sel{border:1px solid var(--line);background:#f5f5f4;border-radius:999px;padding:4px 10px;font-size:11px}
-  .who{text-align:right;line-height:1.2;font-size:12px}.who small{display:block;font-size:10px;color:var(--muted)}
-  .av{width:30px;height:30px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-weight:600;font-size:12px}
-  .page{display:flex;flex-direction:column;min-height:100vh}
-  .content{padding:26px 32px 24px;flex:1;display:flex;flex-direction:column}
-  .content>.card:last-child{flex:1;display:flex;flex-direction:column}
-  .content>.card:last-child .empty{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}
-  .filters{grid-template-columns:minmax(220px,300px) 1fr !important}
-  .head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
-  h1{margin:0 0 6px;font-size:20px}
-  .sub{color:var(--muted);font-size:13px}
-  .btn{border:0;background:var(--accent);border-radius:999px;padding:10px 18px;font:inherit;font-weight:600;font-size:13px;cursor:pointer}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:22px}
-  .filters{padding:14px 14px;display:grid;grid-template-columns:212px 1fr;gap:12px;align-items:start;margin-bottom:16px}
-  .search{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:9px 14px;color:var(--muted);font-size:12px;margin-top:24px;white-space:nowrap;overflow:hidden}
-  .tabs{display:flex;background:#f3f3f1;border-radius:999px;padding:3px;gap:2px;flex-wrap:wrap}
-  .tabs span{padding:6px 10px;border-radius:999px;font-size:12px;color:#3a3a37;white-space:nowrap}
-  .tabs span.on{background:var(--accent);font-weight:500}
-  .sede{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);background:#f5f5f4;border-radius:999px;padding:7px 12px;font-size:12px;margin-top:8px}
-  .sede b{font-weight:600}
-  .th{display:grid;grid-template-columns:2.2fr 1fr 1.2fr 1.3fr 1.1fr .9fr;padding:14px 18px;border-bottom:1px solid var(--line);font-size:10px;font-weight:600;letter-spacing:.06em;color:#3a3a37}
-  .th div:last-child{text-align:right}
-  .empty{padding:56px 20px 64px;text-align:center}
-  .eic{width:64px;height:64px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center;margin:0 auto 16px;font-size:28px}
-  .empty h2{margin:0 0 6px;font-size:17px}
-  .empty p{margin:0 auto 20px;color:var(--muted);max-width:380px;line-height:1.5;font-size:13px}
-  .empty .btn{padding:12px 22px;font-size:14px}
-  .hint{margin-top:14px;font-size:12px;color:var(--muted)}
-  .hint a{color:var(--navy);font-weight:500}
-
-  .nav a{cursor:pointer;text-decoration:none}
-  .nav a:hover{background:#e9e9e6}
-  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
-  .kpi{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px}
-  .kpi small{color:var(--muted);font-size:12px;display:block}
-  .kpi b{font-size:30px;display:block;margin-top:6px}
-  .kpi em{font-style:normal;font-size:11px;color:var(--muted)}
-  .sec{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
-  .sec h3{margin:0;font-size:15px}
-  .sec p{margin:2px 0 0;color:var(--muted);font-size:12px}
-  .sedes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 20px}
-  .sc{border:1px solid var(--line);border-radius:16px;padding:12px 16px}
-  .sc small{font-size:13px;color:#3a3a37}
-  .sc b{display:block;font-size:24px;margin-top:2px}
-  .mini{padding:22px 20px;color:var(--muted);font-size:13px;text-align:center}
-  .mb{margin-bottom:16px}
-  .btn.ghost{background:#fff;border:1px solid var(--line)}
-  .acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-</style>
+<title>Mockup · Stock vacío</title>
+<link rel="stylesheet" href="../tema.css">
 </head>
 <body>
-<div class="app">
-  <aside>
-    <div class="logo">⁂ BIOTASMART</div>
-    <div class="org">Clínica Demo</div>
-    <nav class="nav"><a href="./">Inicio</a><a href="mockup-pacientes-vacio.html">Pacientes</a><a class="on" href="mockup-stock-vacio.html">Stock de tests</a><a href="mockup-pagos-vacio.html">Pedidos</a><a>Ajustes</a></nav>
-    <div class="cookies">🍪 Preferencias de cookies</div>
-  </aside>
-  <div class="page">
-    <div class="banner">👁 Estás viendo la plataforma como <b>Clínica Demo</b> (demo@clinica-ejemplo.es) <button>Salir</button></div>
-    <div class="topbar">
-      <div>Inicio &nbsp;›&nbsp; <b style="font-weight:500">Stock de tests</b></div>
-      <div class="user">文A <span class="sel">Español ▾</span><div class="who">Clínica Demo<small>Profesional</small></div><div class="av">CD</div>⇥</div>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main">
+
+    <span class="cel cel-capA" aria-hidden="true"></span>
+    <div class="cabecera"><div><h1>Stock</h1><p class="meta">Cada tubo, del cajón del centro al laboratorio.</p></div></div>
+    <div class="kpis"><div class="kpi"><b>0</b><span>Libres en el centro</span></div><div class="kpi"><b>0</b><span>Entregados a usuarios</span></div><div class="kpi"><b>0</b><span>En camino</span></div></div>
+    <div class="acciones-st">
+      <button class="acc-st" disabled style="opacity:.55"><span class="ico az">▣</span><span><b>Añadir al stock</b><small>Confirma un pedido o escanea un tubo</small></span></button>
+      <button class="acc-st" disabled style="opacity:.55"><span class="ico ve">⇢</span><span><b>Entregar a un usuario</b><small>Sale del stock en cuanto lo das</small></span></button>
+      <a class="acc-st" href="../pedir-tests.html" style="text-decoration:none"><span class="ico os">＋</span><span><b>Pedir más</b><small>Sin mínimo · llega en 3-4 días laborables</small></span></a>
     </div>
-    <div class="content">
-      <div class="head">
-        <div><h1>Stock de tests</h1><div class="sub">0 tests disponibles · 0 pedidos por llegar</div></div>
-        <button class="btn">Pedir más tests</button>
-      </div>
-      <div class="card mb">
-        <div class="sec"><div><h3>Stock por sede</h3><p>Tubos de cada sede sin asignar a ningún paciente.</p></div><div class="sede" style="margin:0">📍 Sede <b>Todas las sedes</b> ▾</div></div>
-        <div class="sedes">
-          <div class="sc"><small>Madrid</small><b>0</b></div>
-          <div class="sc"><small>Barcelona</small><b>0</b></div>
-          <div class="sc"><small>Mallorca</small><b>0</b></div>
-        </div>
-      </div>
-      <div class="card mb">
-        <div class="sec"><div><h3>Pedidos por llegar</h3></div></div>
-        <div class="mini">No tienes pedidos en camino.</div>
-      </div>
-      <div class="card">
-        <div class="sec"><div><h3>Tests disponibles en la clínica</h3></div></div>
-        <div class="th" style="grid-template-columns:2fr 1fr 1.2fr 1fr"><div>TUBO Y PACIENTE</div><div>SEDE</div><div>TIPO DE TEST</div><div>FECHA DE ALTA</div></div>
-        <div class="empty">
-          <div class="eic">📦</div>
-          <h2>Aún no tienes tests en stock</h2>
-          <p>Pide tests para tenerlos en tu clínica y vincularlos a tus pacientes. Mientras tanto, puedes dar de alta pacientes igualmente.</p>
-          <button class="btn">Pedir más tests</button>
-          <div class="hint">¿Prefieres empezar por los pacientes? <a href="mockup-pacientes-vacio.html">Añadir paciente</a></div>
-        </div>
-      </div>
-    </div>
-  </div>
+    <div class="card"><div class="card-h"><h2>Tus tubos</h2></div>
+      <div class="vac">
+        <span class="e">▣</span><h2>Aún no tienes tests en stock</h2>
+        <p>Pide tests para tenerlos en tu centro y asignarlos a tus usuarios. Mientras tanto, puedes dar de alta usuarios igualmente.</p>
+        <div class="acciones"><a class="btn negro" href="../pedir-tests.html">Pedir más tests</a></div>
+        <p class="pista">¿Prefieres empezar por los usuarios? <a class="lnk" href="../alta-paciente.html">Nuevo usuario</a></p>
+      </div></div>
+  </main>
 </div>
+<script src="../tema.js"></script>
+<script>Tema.shell({ nav: 'stock', links: {inicio:'index.html',usuarios:'mockup-pacientes-vacio.html',pedidos:'mockup-pagos-vacio.html',stock:'mockup-stock-vacio.html'} });</script>
 </body>
 </html>

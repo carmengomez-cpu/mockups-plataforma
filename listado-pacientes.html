@@ -1,127 +1,115 @@
-<title>Mockup listado de pacientes</title>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Mockup · Usuarios</title>
+<link rel="stylesheet" href="tema.css">
 <style>
-  :root{
-    --bg:#f4f4f2; --card:#fff; --line:#e6e6e3; --text:#1d1d1b; --muted:#6b6b66;
-    --accent:#8fb8cc; --accent-strong:#7aa9c0; --accent-soft:#e3eff5;
-    --green:#5fae8a; --green-soft:#e6f4ec; --amber:#b9852a; --amber-soft:#fbefd6;
-    --banner:#fbb900;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
-  .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
-  aside{background:#f7f7f5;border-right:1px solid var(--line);padding:16px 6px;display:flex;flex-direction:column}
-  .logo{font-weight:600;letter-spacing:.06em;font-size:14px;padding:0 8px 22px}
-  .org{font-size:12px;color:var(--muted);padding:0 9px 12px}
-  .nav a{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;color:#3a3a37;text-decoration:none;font-size:15px;margin-bottom:2px}
-  .nav a.active{background:#fff;border:1px solid var(--line);color:var(--text);font-weight:500}
-  .badge{background:var(--accent-strong);color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;display:grid;place-items:center}
-  .cookies{margin-top:auto;padding:12px;color:#3a3a37;font-size:14px}
-  .banner{background:var(--banner);text-align:center;padding:8px;font-size:14px}
-  .banner button{margin-left:10px;border:0;background:#fff;border-radius:999px;padding:4px 12px;font:inherit;font-weight:500}
-  .topbar{display:flex;justify-content:space-between;align-items:center;padding:18px 40px;border-bottom:1px solid var(--line)}
-  .crumb{color:var(--muted);font-size:14px}.crumb b{color:var(--text);font-weight:500}
-  .user{display:flex;align-items:center;gap:12px;font-size:13px}
-  .avatar-lg{width:36px;height:36px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-weight:600}
-
-  /* CONTENIDO A ANCHO COMPLETO (sin huecos laterales) */
-  main{padding:32px 40px}
-  .head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
-  h1{margin:0 0 6px;font-size:26px;font-weight:600}
-  .sub{color:var(--muted);font-size:16px}
-  .actions{display:flex;gap:12px;align-items:center}
-  .btn-sede{display:flex;align-items:center;gap:8px;border:1px solid var(--accent);background:var(--accent-soft);border-radius:999px;padding:11px 18px;font:inherit;font-size:15px;color:var(--text)}
-  .btn-sede b{font-weight:600}
-  .btn-add{border:0;background:var(--accent);border-radius:999px;padding:12px 22px;font:inherit;font-weight:600;font-size:15px}
-
-  .filters{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:22px}
-  .frow{display:flex;justify-content:space-between;align-items:center;gap:16px}
-  .frow .btn-sede{flex:none;white-space:nowrap}
-  .search{display:flex;align-items:center;gap:10px;flex:0 1 520px;border:1px solid var(--line);background:#f8f8f6;border-radius:999px;padding:14px 20px;font-size:15px;color:var(--muted);white-space:nowrap}
-  .tabs{display:flex;gap:6px;margin-top:16px;background:#f3f3f1;border-radius:999px;padding:5px;flex-wrap:wrap}
-  .tabs span{flex:1;text-align:center;padding:11px 14px;border-radius:999px;font-size:15px;color:#3a3a37;white-space:nowrap}
-  .tabs span.on{background:var(--accent);color:var(--text);font-weight:600}
-
-  /* TABLA CON COLUMNAS EQUIDISTANTES */
-  .table{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
-  .row{display:grid;grid-template-columns:repeat(6,1fr);align-items:center;border-bottom:1px solid var(--line);padding:18px 0}
-  .row>div{display:flex;justify-content:center;text-align:center}
-  .row:not(.th)>div:first-child{text-align:left}
-  .row>div:not(:first-child)>div{display:flex;flex-direction:column;align-items:center}
-  .row.th{padding:16px 0;font-size:12px;font-weight:600;letter-spacing:.06em;color:#3a3a37}
-  .row:last-child{border-bottom:0}
-  .pat{display:flex;gap:12px;align-items:center}
-  .ini{width:40px;height:40px;border-radius:50%;background:#eef1f3;display:grid;place-items:center;font-weight:600;flex:none}
-  .name{font-size:15px;font-weight:500}
-  .meta{font-size:12px;color:var(--muted);line-height:1.5}
-  .stack{display:flex;flex-direction:column;gap:6px}
-  .link{font-size:12px;color:var(--muted)}
-  .pill{font-size:12px;padding:4px 12px;border-radius:999px;background:var(--green-soft);color:var(--green);font-weight:500;width:max-content}
-  .pill.amber{background:var(--amber-soft);color:var(--amber)}
-  .bar{display:flex;gap:4px;margin-top:8px}.bar i{width:18px;height:3px;border-radius:2px;background:#2e5f78}.bar i.off{background:#e1e1de}
-  .sm{font-size:13px}.sm small{color:var(--muted)}
-  .dot::before{content:"•";margin-right:6px}
-  .act{display:flex;flex-direction:column;gap:8px;align-items:center}
-  .b{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;font-weight:500}
-  .b.p{background:var(--accent);border-color:var(--accent)}
+  .who{display:flex;gap:12px;align-items:center}
+  .who b{font-family:var(--display);font-weight:500;font-size:14.5px;display:block}
+  .who small{display:block;font-size:12.5px;color:var(--gris)}
+  td .ba{margin:1px 4px 1px 0}
+  .vacio-f td{text-align:center;color:var(--gris);padding:34px 0}
 </style>
-<div class="app">
-  <aside>
-    <div class="logo">⁂ BIOTASMART</div>
-    <div class="org">Clínica Demo</div>
-    <nav class="nav">
-      <a>Inicio</a><a class="active">Pacientes</a><a>Stock de tests</a><a>Pagos <span class="badge">1</span></a><a>Ajustes</a>
-    </nav>
-    <div class="cookies">🍪 Preferencias de cookies</div>
-  </aside>
-  <div>
-    <div class="banner">👁 Estás viendo la plataforma como <b>Clínica Demo</b> (demo@clinica-ejemplo.es) <button>Salir</button></div>
-    <div class="topbar">
-      <div class="crumb">Inicio &nbsp;›&nbsp; <b>Pacientes</b></div>
-      <div class="user">文A <span>Español ▾</span><div style="text-align:right"><b>Clínica Demo</b><br><small style="color:var(--muted)">Profesional</small></div><div class="avatar-lg">CD</div></div>
+</head>
+<body>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main">
+    <span class="cel cel-racimo" aria-hidden="true"></span><span class="cel cel-flor2" aria-hidden="true"></span>
+    <div class="cabecera">
+      <div><h1>Usuarios</h1><p class="meta" id="meta"></p></div>
+      <div class="acciones">
+        <a class="btn borde" href="activar-test.html">Asignar un test</a>
+        <a class="btn negro" href="alta-paciente.html">Nuevo usuario</a>
+      </div>
     </div>
-    <main>
-      <div class="head">
-        <div><h1>Pacientes</h1><div class="sub">128 pacientes · 110 informes sin ver · 3 sin formulario</div></div>
-        <div class="actions">
-          <button class="btn-add">＋ Añadir paciente</button>
-        </div>
-      </div>
 
-      <div class="filters">
-        <!-- Línea 1: buscador + sede a la derecha -->
-        <div class="frow">
-          <div class="search">🔍 Buscar por nombre, email o código...</div>
-          <button class="btn-sede">📍 Sede <b>Todas las sedes</b> ▾</button>
+    <div class="card">
+      <div class="flt">
+        <div class="flt-r">
+          <label class="flt-q">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <input type="search" id="q" placeholder="Busca por nombre, correo o código de tubo" aria-label="Buscar en la tabla" autocomplete="off">
+          </label>
+          <div class="flt-seg" id="tipo" role="group" aria-label="Tipo de test">
+            <button type="button" data-t="" class="on">Todos los tipos</button>
+            <button type="button" data-t="int">Intestinal</button>
+            <button type="button" data-t="vag">Vaginal</button>
+          </div>
+          <select class="flt-sel" aria-label="Fecha"><option>Cualquier fecha</option><option>Últimos 7 días</option><option>Últimos 30 días</option><option>Últimos 3 meses</option></select>
         </div>
-        <!-- Línea 2: filtros -->
-        <div class="tabs">
-          <span class="on">Todos (131)</span><span>Sin ver (113)</span><span>En curso (17)</span><span>Cuestionario pendiente (0)</span><span>Para repetir (61)</span><span>Sin formulario (3)</span><span>Sin test (0)</span>
-        </div>
+        <div class="flt-est" id="est" role="group" aria-label="Estado"><span class="flt-k">Estado</span></div>
+        <div class="flt-act"><span id="sinf">Sin filtros</span><b id="n"></b></div>
       </div>
-
-      <div class="table">
-        <div class="row th"><div>PACIENTE</div><div>SEDE</div><div>ESTADO DEL TEST</div><div>ÚLTIMO MOVIMIENTO</div><div>INFORME</div><div>ACCIÓN</div></div>
-        <div id="rows"></div>
+      <div class="tabla-wrap">
+        <table class="tabla-min">
+          <thead><tr><th>Usuario</th><th>Test</th><th>Estado</th><th>Última novedad</th><th>Sede</th><th>Fecha</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
       </div>
-    </main>
-  </div>
+    </div>
+  </main>
 </div>
+<script src="tema.js"></script>
 <script>
-const data=[
- ["LM","Lucía Martín","#999001002824","lucia.martin@ejemplo.com","Madrid","ok","Informe listo","20 oct","• Sin ver",1],
- ["PR","Pablo Ruiz","#999001005968","pablo.ruiz@ejemplo.com","Madrid","ok","Informe listo","28 sept","Visto 13 nov",0],
- ["ET","Elena Torres","#999002001108","elena.torres@ejemplo.com","Barcelona","ok","Informe listo","12 jun","• Sin ver",1],
- ["MG","Marta Gil","#999001005878","marta.gil@ejemplo.com","Madrid","rec","Recogida solicitada","10 nov","—",2],
- ["JS","Jorge Sanz","#999003002792","jorge.sanz@ejemplo.com","Madrid","ok","Informe listo","25 ago","• Sin ver",1]];
-document.getElementById('rows').innerHTML=data.map(d=>`
-<div class="row">
- <div><div class="pat"><div class="ini">${d[0]}</div><div><div class="name">${d[1]}</div><div class="meta">Avanzado · ${d[2]}<br>${d[3]}</div></div></div></div>
- <div><div class="stack"><span class="sm">${d[4]}</span><span class="link">Mover de sede</span></div></div>
- <div><div><div class="pill ${d[5]=='rec'?'amber':''}">${d[6]}</div><div class="bar">${d[5]=='rec'?'<i></i><i></i><i></i><i class=off></i><i class=off></i>':'<i></i><i></i><i></i><i></i><i></i>'}</div></div></div>
- <div class="sm">${d[6]} · <small>${d[7]}</small></div>
- <div class="sm">${d[8]}</div>
- <div><div class="act">${d[9]==2?'<button class="b">Ver respuestas</button>':`<button class="b">⤓ PDF</button><button class="b ${d[9]?'p':''}">Ver informe</button>`}</div></div>
-</div>`).join('');
+  Tema.shell({ nav: 'usuarios', badges: { usuarios: 2 } });
+  var ESTADOS = [['', 'Todos'], ['listo', 'Informe listo'], ['lab', 'En el laboratorio'], ['usu', 'Con el usuario'], ['rec', 'Recogida solicitada'], ['rep', 'Para repetir']];
+  var LABEL = { listo: 'Informe listo', lab: 'En el laboratorio', usu: 'Con el usuario', rec: 'Recogida solicitada', rep: 'Para repetir' };
+  var CLS = { listo: 'listo', lab: 'lab', usu: 'usu', rec: 'ambar', rep: 'rep' };
+  // nombre, correo, tipo, estado, novedad, sede, fecha
+  var D = [
+    ['Lucía Martín', 'lucia.martin@ejemplo.com', 'int', 'listo', 'Informe listo ayer', 'Madrid', '27 nov'],
+    ['Pablo Ruiz', 'pablo.ruiz@ejemplo.com', 'int', 'listo', 'Informe listo el 24 nov', 'Madrid', '24 nov'],
+    ['Elena Torres', 'elena.torres@ejemplo.com', 'vag', 'listo', 'Informe listo hoy', 'Barcelona', '28 nov'],
+    ['Marta Gil', 'marta.gil@ejemplo.com', 'int', 'rec', 'Recogida pedida para el viernes', 'Madrid', '10 nov'],
+    ['Jorge Sanz', 'jorge.sanz@ejemplo.com', 'int', 'lab', 'Muestra recibida en el laboratorio', 'Madrid', '21 nov'],
+    ['Nerea Cano', 'nerea.cano@ejemplo.com', 'vag', 'lab', 'Muestra recibida en el laboratorio', 'Barcelona', '20 nov'],
+    ['Alba Domínguez', 'alba.dominguez@ejemplo.com', 'vag', 'usu', 'Cuestionario sin rellenar', 'Madrid', '23 nov'],
+    ['Hugo Sáez', 'hugo.saez@ejemplo.com', 'int', 'usu', 'Muestra por enviar', 'Madrid', '22 nov'],
+    ['Diego Alonso', 'diego.alonso@ejemplo.com', 'int', 'rep', 'Test hecho hace 6 meses', 'Barcelona', '28 may']
+  ];
+  var tipo = '', est = '', q = '';
+  var $ = function (id) { return document.getElementById(id); };
+  $('est').insertAdjacentHTML('beforeend', ESTADOS.map(function (e) {
+    var c = e[0] ? D.filter(function (d) { return d[3] === e[0]; }).length : 0;
+    return '<button type="button" data-e="' + e[0] + '"' + (e[0] === '' ? ' class="on"' : '') + '>' + e[1] + (e[0] ? ' · ' + c : '') + '</button>';
+  }).join(''));
+  $('meta').textContent = D.length + ' usuarios con test en curso o reciente';
+  function badge(t) { return t === 'int' ? '<span class="ba int">Intestinal · Avanzado</span>' : '<span class="ba vag">Vaginal</span>'; }
+  function render() {
+    var rows = D.filter(function (d) {
+      return (!tipo || d[2] === tipo) && (!est || d[3] === est) &&
+        (!q || (d[0] + ' ' + d[1]).toLowerCase().indexOf(q) !== -1);
+    });
+    $('rows').innerHTML = rows.length ? rows.map(function (d) {
+      return '<tr class="click" data-toast="En este mockup no está abierta la ficha de ' + d[0] + '. Mira «Ficha con test» y «Ficha sin test».">' +
+        '<td><div class="who"><span class="av' + (d[2] === 'vag' ? ' vag' : '') + '">' + d[0].split(' ').map(function (x) { return x[0]; }).slice(0, 2).join('') + '</span><div><b>' + d[0] + '</b><small>' + d[1] + '</small></div></div></td>' +
+        '<td>' + badge(d[2]) + '</td>' +
+        '<td><span class="est ' + CLS[d[3]] + '">' + LABEL[d[3]] + '</span></td>' +
+        '<td class="gr">' + d[4] + '</td>' +
+        '<td class="gr">' + d[5] + '<br><a class="lnk" href="aviso-cambio-sede.html">Mover de sede</a></td>' +
+        '<td class="gr">' + d[6] + '</td></tr>';
+    }).join('') : '<tr class="vacio-f"><td colspan="6">Ningún usuario con estos filtros.</td></tr>';
+    $('n').textContent = rows.length + ' de ' + D.length;
+    $('sinf').textContent = (tipo || est || q) ? 'Con filtros' : 'Sin filtros';
+  }
+  $('q').addEventListener('input', function (e) { q = e.target.value.trim().toLowerCase(); render(); });
+  $('tipo').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return; tipo = b.dataset.t;
+    this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); }); render();
+  });
+  $('est').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return; est = b.dataset.e;
+    this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); }); render();
+  });
+  $('rows').addEventListener('click', function (e) {
+    if (e.target.closest('a')) return;
+    var tr = e.target.closest('tr[data-toast]'); if (tr) Tema.toast(tr.dataset.toast);
+  });
+  render();
 </script>
+</body>
+</html>
