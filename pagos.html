@@ -1,549 +1,324 @@
-<title>Mockup detalle de pago</title>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Mockup · Pedidos</title>
+<link rel="stylesheet" href="tema.css">
 <style>
-  :root{
-    --bg:#f0f0ef; --card:#fff; --line:#e3e3e0; --text:#1d1d1b; --muted:#66665f;
-    --accent:#97bdd0; --accent-soft:#e6f0f5; --navy:#2e5f78; --banner:#fbb900;
-    --green:#3f9a70; --green-soft:#e6f4ec; --amber:#a8741c; --amber-soft:#fbefd6;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
-  button{font:inherit;color:inherit}
-
-  /* ===== Estructura de la plataforma (sin cambios) ===== */
-  .app{display:grid;grid-template-columns:270px 1fr;min-height:100vh}
-  aside{border-right:1px solid var(--line);padding:22px 10px 20px;display:flex;flex-direction:column}
-  .logo{font-size:15px;letter-spacing:.06em;padding:0 2px 28px}
-  .org{font-size:13px;color:#4a4a45;padding:0 10px 16px}
-  .nav a{display:block;padding:11px 14px;border-radius:10px;font-size:15px;color:#3a3a37;margin-bottom:3px;cursor:pointer}
-  .nav a.on{background:#fff;border:1px solid var(--line);color:var(--text);font-weight:500}
-  .cookies{margin-top:auto;font-size:15px;color:#3a3a37;padding:0 14px}
-  .page{display:flex;flex-direction:column;min-width:0}
-  .banner{background:var(--banner);text-align:center;padding:8px;font-size:15px}
-  .banner button{margin-left:12px;border:0;background:#fff;border-radius:999px;padding:4px 14px;font-weight:600}
-  .topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 44px;border-bottom:1px solid var(--line)}
-  .crumb{font-size:15px;color:#5a5a55}.crumb b{color:var(--text);font-weight:500}.crumb span{margin:0 10px}
-  .crumb a{cursor:pointer}.crumb a:hover{text-decoration:underline}
-  .user{display:flex;align-items:center;gap:14px;font-size:14px}
-  .sel{border:1px solid var(--line);background:#f5f5f4;border-radius:999px;padding:6px 12px}
-  .who{text-align:right;line-height:1.2;font-size:15px}.who small{display:block;font-size:12px;color:var(--muted)}
-  .av{width:40px;height:40px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-weight:600}
-  .content{padding:28px 44px 20px;flex:1}
-  .pfoot{padding:0 44px 26px;font-size:15px;color:#5a5a55}
-
-  /* ===== Listado de pagos ===== */
-  .head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:22px}
-  h1{margin:0 0 6px;font-size:26px}
-  .sub{color:var(--muted);font-size:16px}
-  .btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:11px 20px;font-weight:600;cursor:pointer}
-  .btn.p{background:var(--accent);border-color:var(--accent)}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:22px}
-  .row{display:grid;grid-template-columns:repeat(4,1fr);align-items:center;padding:16px 0;border-bottom:1px solid var(--line);text-align:center}
-  .row:last-child{border-bottom:0}
-  .row.th{font-size:12px;font-weight:600;letter-spacing:.06em;color:#3a3a37;padding:14px 0}
-  .row:not(.th){cursor:pointer}
-  .row:not(.th):hover{background:#fafaf9}
-  .stk{display:flex;flex-direction:column;align-items:center;gap:5px}
-  .pill{font-size:12px;padding:4px 12px;border-radius:999px;font-weight:500}
-  .pill.pend{background:var(--accent-soft);color:var(--navy);font-weight:600}
-  .pill.ok{background:var(--green-soft);color:var(--green)}
-  .pill.amber{background:var(--amber-soft);color:var(--amber)}
-  .row small{display:block;color:var(--muted);font-size:12px}
-  .lnk{color:var(--navy);font-weight:500;font-size:15px;cursor:pointer}
-  .lnk:hover{text-decoration:underline}
-  /* Listado de pedidos: ancho completo, filtros y columnas ordenables */
-  .filters{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:14px}
-  .f{display:flex;flex-direction:column;gap:4px}
-  .f label{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
-  .f select,.f input{height:38px;border-radius:999px;border:1px solid var(--line);background:#f8f8f6;padding:0 12px;font:inherit;font-size:13px;color:var(--text)}
-  .clear{border:0;background:none;color:var(--navy);font-weight:500;cursor:pointer;height:38px;padding:0 6px}
-  .count{margin-left:auto;color:var(--muted);font-size:13px;align-self:center}
-  .lrow{display:grid;grid-template-columns:1.4fr 1.2fr 1.2fr 1fr .6fr;gap:16px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);font-size:15px}
-  .lrow:last-child{border-bottom:0}
-  .lth{font-size:13px;padding:10px 18px}
-  .lrow .r{text-align:right}
-  .lrow small{display:block;color:var(--muted);font-size:12px}
-  .sortb{border:0;background:none;font:inherit;font-size:13px;font-weight:600;color:#3a3a37;cursor:pointer;padding:4px 0;display:inline-flex;gap:4px;align-items:center}
-  .sortb:hover{color:var(--navy)}
-  .sortb.on{color:var(--navy)}
-  .sortb i{font-style:normal;font-size:11px;opacity:.5}
-  .sortb.on i{opacity:1}
-  .pill.grey{background:#eef0ec;color:#7a8a76}
-  .pc{color:var(--amber);font-size:13px;margin-top:6px}
-  .muted{color:var(--muted)}
-  .empty-l{padding:28px;text-align:center;color:var(--muted)}
-  /* Ver factura */
-  .titlebar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-  .titlebar h1{margin:0}
-  .invbtn{border:1px solid var(--navy);background:#fff;color:var(--navy);border-radius:999px;padding:8px 16px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
-  .invbtn:hover{background:var(--accent-soft)}
-  .ov{position:fixed;inset:0;background:rgba(20,30,35,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
-  .ov.show{display:flex}
-  .inv{background:#fff;border-radius:18px;max-width:560px;width:100%;padding:24px 26px;box-shadow:0 20px 50px rgba(0,0,0,.2)}
-  .inv-h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
-  .inv-h b{font-size:18px}
-  .inv-h small{display:block;color:var(--muted)}
-  .inv table{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
-  .inv td{padding:6px 0;border-bottom:1px solid var(--line)}
-  .inv td:last-child{text-align:right}
-  .inv tr.t td{font-weight:700;border-bottom:0;border-top:2px solid var(--text)}
-  .inv-a{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1d1d1b;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;display:none;z-index:30}
-
-  /* ===== Detalle del pedido ===== */
-  .back{border:0;background:none;color:var(--navy);font-weight:500;cursor:pointer;padding:0;margin-bottom:12px}
-  .meta{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:15px;flex-wrap:wrap}
-  .pay{margin-top:18px;background:var(--navy);color:#fff;border-radius:20px;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
-  .pay .l{display:flex;align-items:center;gap:16px}
-  .pay .ic{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.15);display:grid;place-items:center;font-size:22px}
-  .pay h2{margin:0;font-size:24px;font-weight:700}
-  .pay p{margin:4px 0 0;opacity:.85}
-  .pay .amt{text-align:right}.pay .amt b{font-size:30px;display:block}.pay .amt small{opacity:.8}
-  .payr{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:flex-end}
-  .paybtn{border:0;background:#fff;color:var(--navy);border-radius:999px;padding:15px 30px;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18);transition:transform .1s}
-  .paybtn:hover{transform:translateY(-1px)}
-  .paybtn:disabled{opacity:.7;cursor:wait}
-  .secure{flex-basis:100%;text-align:right;font-size:12px;opacity:.8}
-  .pay.paid{background:var(--green-soft);color:var(--green)}
-  .pay.paid .ic{background:#fff}
-  .dcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 24px;margin-top:16px}
-  .dcard h2{margin:0 0 14px;font-size:17px}
-  .ttl{font-size:11px;letter-spacing:.08em;color:var(--muted);margin:0 0 8px;font-weight:600;text-transform:uppercase}
-  .item{display:flex;justify-content:space-between;align-items:center;background:#fafaf9;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:14px}
-  .item small{display:block;color:var(--muted)}
-  .prep{color:var(--green);font-weight:600;font-size:13px}
-  .two{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:start}
-  .tiles{display:grid;grid-template-columns:1fr;gap:10px}
-  .tile{border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
-  .tile small{color:var(--muted);display:block}
-  .tile em{font-style:normal;font-size:12px;color:var(--muted)}
-  .tile b{font-size:20px}
-  .tile.disc{background:var(--green-soft);border-color:transparent}
-  .tile.disc small,.tile.disc b,.tile.disc em{color:var(--green)}
-  .ln{display:flex;justify-content:space-between;padding:6px 0;color:#3a3a37}
-  .ln.d{color:var(--green);font-weight:500}
-  .ln.sep{border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
-  .ln.tot{border-top:2px solid var(--text);margin-top:8px;padding-top:10px;font-size:17px;font-weight:700;color:var(--text)}
-  .ln .inc{color:var(--green);font-weight:500}
-  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .fact{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px 14px}
-  .fact .fi{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);display:grid;place-items:center;flex:none}
-  .fact small{display:block;color:var(--muted);font-size:12px}
-  .fact b{font-size:15px}
-  .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-  .ph b{color:var(--navy);font-size:13px}
-  .tl{display:grid;grid-template-columns:repeat(4,1fr);position:relative}
-  .tl::before{content:"";position:absolute;top:8px;left:12.5%;right:12.5%;height:2px;background:#e1e1de}
-  .tl .fill{position:absolute;top:8px;left:12.5%;height:2px;background:var(--navy)}
-  .ev{text-align:center;position:relative;z-index:1}
-  .ev i{display:block;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--navy);margin:0 auto 10px}
-  .ev.now i{background:var(--navy);box-shadow:0 0 0 4px var(--accent-soft)}
-  .ev.pend i{border-color:#d6d6d2}
-  .ev b{display:block;font-size:13px;font-weight:600}
-  .ev.pend b{color:var(--muted);font-weight:500}
-  .ev small{color:var(--muted);font-size:12px}
-  .hidden{display:none!important}
-
-  /* ===== Documento: el mismo diseño en la factura y en el resumen del pedido ===== */
-  .doc{font-size:14px;color:var(--text)}
-  .dh{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--line)}
-  .dh .lg{font-size:18px;letter-spacing:.06em;font-weight:500}
-  .dh .lg small{display:block;letter-spacing:0;font-size:11px;color:var(--muted);margin-top:6px;max-width:250px;line-height:1.4;font-weight:400}
-  .dh .num{text-align:right}
-  .dh .num small{font-size:11px;letter-spacing:.16em;color:var(--accent);font-weight:600}
-  .dh .num b{display:block;font-size:28px;margin:2px 0 8px}
-  .dmeta{display:grid;grid-template-columns:repeat(5,auto);justify-content:start;gap:36px;padding:12px 0;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
-  .lbl{display:block;font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;font-weight:600}
-  .parties{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:18px 0 20px}
-  .party{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fafaf9}
-  .party .lbl{color:var(--navy)}
-  .party b{font-size:14px}
-  .party p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.55}
-  .bkwrap{overflow-x:auto}
-  .bk{width:100%;border-collapse:collapse;min-width:600px}
-  .bk th{font-size:10px;letter-spacing:.1em;color:var(--muted);font-weight:600;text-transform:uppercase;text-align:right;padding:0 0 10px 16px;border-bottom:1.5px solid var(--text);white-space:nowrap}
-  .bk td{text-align:right;padding:14px 0 14px 16px;border-bottom:1px solid var(--line);vertical-align:top;font-size:14px;white-space:nowrap}
-  .bk th:first-child,.bk td:first-child{text-align:left;padding-left:0;white-space:normal}
-  .bk td b{font-weight:600}
-  .bk td .enf{color:var(--navy);font-weight:500}
-  .bk td small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
-  .bk ul{margin:6px 0 0;padding-left:16px;color:var(--muted);font-size:12px;line-height:1.55}
-  .bk .pr{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:var(--muted);background:#f3f3f1;border-radius:999px;padding:2px 10px}
-  .bk .pr.ok{color:var(--green);background:var(--green-soft)}
-  .bkfoot{display:grid;grid-template-columns:1fr minmax(280px,350px);gap:28px;margin-top:16px;align-items:start}
-  .bnote{font-size:12px;color:var(--muted);line-height:1.6}
-  .bnote b{color:var(--text);font-weight:600}
-  .sums .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);color:var(--muted);font-size:14px}
-  .sums .row span:last-child{color:var(--text)}
-  .sums .row.save,.sums .row.save span:last-child{color:var(--green)}
-  .totbox{margin-top:12px;background:var(--accent-soft);border:1px solid #cfe0ea;border-radius:14px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
-  .totbox span{font-size:12px;letter-spacing:.1em;font-weight:600}
-  .totbox b{font-size:26px}
-  .paidline{margin-top:10px;font-size:13px;text-align:right;font-weight:600}
-  .paidline.ok{color:var(--green)}
-  .paidline.pend{color:var(--amber)}
-  .paidline.cx{color:var(--red)}
-  /* Solicitud cancelada */
-  :root{--red:#c0392b;--red-soft:#fbe9e7}
-  .pill.red{background:var(--red-soft);color:var(--red);font-weight:600}
-  .pcx{color:var(--red);font-size:12px;margin-top:6px}
-  .pay.cancel{background:var(--red-soft);color:var(--red);border:1px solid #f1c4bd}
-  .pay.cancel .ic{background:#fff}
-  .pay.cancel .amt b{text-decoration:line-through;opacity:.7}
-  .cxbtn{border:1px solid var(--red);background:#fff;color:var(--red);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:600;cursor:pointer}
-  .cxbtn:hover{background:var(--red-soft)}
-  .tacts{display:flex;gap:10px;flex-wrap:wrap}
-  .tl .fill.cx{background:var(--red)}
-  .ev.cx i{border-color:var(--red);background:var(--red);box-shadow:0 0 0 4px var(--red-soft)}
-  .ev.cx b,.ev.cx small{color:var(--red)}
-  .ev.na i{border-color:#e6e6e3;border-style:dashed}
-  .ev.na b,.ev.na small{color:#b3b3ad;font-weight:500}
-  .cdlg{background:#fff;border-radius:18px;max-width:460px;width:100%;padding:24px 26px;box-shadow:0 20px 50px rgba(0,0,0,.2)}
-  .cdlg h3{margin:0 0 8px;font-size:19px}
-  .cdlg p{margin:0 0 10px;color:#3a3a37;line-height:1.5}
-  .cdlg .warn{background:var(--red-soft);color:var(--red);border-radius:12px;padding:10px 12px;font-size:13px}
-  .btn.red{background:var(--red);color:#fff}
-  .dfoot{margin-top:22px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.55}
-  .dnum{font-size:13px;color:var(--muted);font-weight:400;margin-left:8px}
-  /* Resumen sencillo del pedido (el detalle completo está en la factura) */
-  .sl{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
-  .sl .q{display:inline-grid;place-items:center;min-width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--navy);font-weight:700;margin-right:12px}
-  .sl .n{display:flex;align-items:center}
-  .sl small{color:var(--muted);margin-left:6px}
-  .sl .pr2{font-size:12px;color:var(--muted);margin-left:12px}
-  .sl .pr2.ok{color:var(--green)}
-  .stot{display:flex;justify-content:space-between;align-items:baseline;padding-top:14px}
-  .stot b{font-size:22px}
-  .stot small{display:block;color:var(--muted);font-size:12px;text-align:right;margin-top:2px}
-  .sfoot{margin-top:12px;color:var(--muted);font-size:13px}
-  .sfoot a{color:var(--navy);font-weight:600;cursor:pointer}
-  .ov{overflow:auto}
-  .inv{max-width:880px;max-height:94vh;overflow:auto;padding:32px 36px}
-  @media (max-width:760px){.bkfoot,.parties{grid-template-columns:1fr}.dmeta{grid-template-columns:repeat(2,auto)}}
+  .f-fila{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .f-fila label{font-size:12.5px;color:var(--gris);display:flex;align-items:center;gap:6px}
+  .f-fila input[type=date]{font:inherit;font-size:13.5px;border:0;border-radius:999px;padding:7px 14px;background:var(--blanco);box-shadow:inset 0 0 0 1px var(--linea2)}
+  .sortb{font-weight:400;font-size:12px;color:var(--gris)}
+  .sortb.on{color:var(--tinta)}
+  .sortb i{font-style:normal;font-size:10px;margin-left:3px}
+  .cx-t{display:block;font-size:12px;color:var(--rojo);margin-top:3px}
+  .pc-t{display:block;font-size:12px;color:var(--ambar-tinta);margin-top:3px}
+  .chips-r{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .item{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;background:var(--papel2);margin-bottom:10px}
+  .item b{font-family:var(--display);font-weight:500;display:block}
+  .item small{color:var(--gris);font-size:12.5px}
+  .prep{font-size:13px;color:var(--gris);white-space:nowrap}
+  .prep.ok{color:var(--verde-tinta);font-weight:500}
+  .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;margin-top:16px}
+  .ttl-s{font-size:11.5px;letter-spacing:.08em;color:var(--gris);text-transform:uppercase;margin:0 0 8px}
+  .tile{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-radius:14px;box-shadow:inset 0 0 0 1px var(--linea);margin-bottom:8px}
+  .tile small{display:block;font-size:13px}.tile em{font-style:normal;font-size:12px;color:var(--gris)}
+  .tile b{font:500 22px var(--display)}
+  .tile.disc{background:var(--verde2);color:var(--verde-tinta);box-shadow:none}.tile.disc em{color:var(--verde-tinta)}
+  .ln{display:flex;justify-content:space-between;padding:8px 0;color:#3a3a37}
+  .ln.d{color:var(--verde-tinta);font-weight:500}
+  .ln.sep{border-top:1px solid var(--linea);margin-top:4px}
+  .ln.tot{border-top:2px solid var(--tinta);margin-top:6px;padding-top:12px;font:500 20px var(--display);color:var(--tinta)}
+  .ln .inc{color:var(--verde-tinta)}
+  .sfoot{font-size:13px;color:var(--gris);margin-top:12px}
+  .minis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+  .mini{display:flex;gap:12px;align-items:center;background:var(--blanco);border-radius:18px;box-shadow:var(--blk-sombra);padding:14px 16px}
+  .mini .ico{width:36px;height:36px;font-size:15px}
+  .mini small{display:block;font-size:12px;color:var(--gris)}
+  .mini b{font-family:var(--display);font-weight:500}
+  /* Factura */
+  .modal.fac{width:min(900px,100% - 32px);background:var(--blanco)}
+  .doc{padding:30px 34px 10px}
+  .dh{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--linea)}
+  .dh .lg img{height:18px;width:130px;display:block;margin-bottom:6px}
+  .dh .lg small{display:block;color:var(--gris);font-size:12px;max-width:34ch}
+  .dh .num{text-align:right}.dh .num small{display:block;font-size:11px;letter-spacing:.1em;color:var(--gris)}.dh .num b{font:500 24px var(--display);display:block;margin:2px 0 6px}
+  .dmeta{display:grid;grid-template-columns:repeat(5,auto);justify-content:start;gap:36px;padding:14px 0;border-bottom:1px solid var(--linea);font-size:13px;text-align:left}
+  .lbl{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--gris);margin-bottom:3px}
+  .parties{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;padding:18px 0;border-bottom:1px solid var(--linea)}
+  .party b{font-family:var(--display);font-weight:500;display:block}
+  .party p{font-size:13px;color:var(--gris);line-height:1.55;margin-top:2px}
+  .bk{width:100%;border-collapse:collapse;margin-top:6px;font-size:13.5px}
+  .bk th{font-size:11.5px;font-weight:400;color:var(--gris);text-align:right;padding:12px 8px 8px;border-bottom:1px solid var(--linea2)}
+  .bk th:first-child,.bk td:first-child{text-align:left;padding-left:0}
+  .bk td{padding:12px 8px;border-bottom:1px solid var(--linea);text-align:right;vertical-align:top}
+  .bk td small{display:block;color:var(--gris);font-size:12px;margin-top:2px}
+  .bk td ul{margin:6px 0 0;padding-left:16px;color:var(--gris);font-size:12.5px;text-align:left}
+  .bk .enf{color:var(--gris)}
+  .bkfoot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:26px;padding:16px 0 6px}
+  .bnote{font-size:12.5px;color:var(--gris);line-height:1.6}
+  .sums .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--linea);font-size:13.5px}
+  .sums .row.save{color:var(--verde-tinta)}
+  .sums .totbox{margin-top:10px;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-radius:14px;background:var(--cobalto2)}
+  .sums .totbox span{font-size:12px;letter-spacing:.1em;font-family:var(--display);font-weight:500}.sums .totbox b{font:500 24px var(--display)}
+  .paidline{margin-top:10px;font-size:13px;padding:8px 12px;border-radius:12px;text-align:center}
+  .paidline.ok{background:var(--verde2);color:var(--verde-tinta)}.paidline.pend{background:var(--ambar2);color:var(--ambar-tinta)}.paidline.cx{background:var(--rojo2);color:var(--rojo)}
+  .dfoot{font-size:12px;color:var(--gris);padding:10px 0 16px;border-top:1px solid var(--linea)}
+  .inv-a{display:flex;justify-content:flex-end;gap:10px;padding:14px 24px;border-top:1px solid var(--linea);background:var(--blanco);border-radius:0 0 24px 24px;position:sticky;bottom:0}
+  #vDetail .minis+.card{margin-top:16px}
+  @media (max-width:900px){.two,.bkfoot,.parties,.minis{grid-template-columns:minmax(0,1fr)}.dmeta{grid-template-columns:repeat(2,auto)}}
 </style>
-<div class="app">
-  <aside>
-    <div class="logo">⁂ BIOTASMART</div>
-    <div class="org">Clínica Demo</div>
-    <nav class="nav"><a>Inicio</a><a>Pacientes</a><a>Stock de tests</a><a class="on">Pedidos</a><a>Ajustes</a></nav>
-    <div class="cookies">🍪 Preferencias de cookies</div>
-  </aside>
+</head>
+<body>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main">
 
-  <div class="page">
-    <div class="banner">👁 Estás viendo la plataforma como <b>Clínica Demo</b> (demo@clinica-ejemplo.es) <button>Salir</button></div>
-    <div class="topbar">
-      <div class="crumb" id="crumb"></div>
-      <div class="user">文A <span class="sel">Español ▾</span><span class="sel">Clínica Demo ▾</span><div class="who">Clínica Demo<small>Profesional</small></div><div class="av">CD</div>⇥</div>
-    </div>
-
-    <div class="content">
-      <!-- ===== VISTA LISTADO ===== -->
-      <div id="vList">
-        <div class="head">
-          <div><h1>Mis pedidos</h1><div class="sub">Los pedidos de tu clínica, los pendientes de pago primero.</div></div>
-          <button class="btn p">＋ Pedir más tests</button>
-        </div>
-        <div class="filters">
-          <div class="f"><label for="fEstado">Estado</label>
-            <select id="fEstado"><option value="">Todos</option><option value="pend">Pendiente de pago</option><option value="paid">Pagado</option><option value="cx">Solicitud cancelada</option></select></div>
-          <div class="f"><label for="fTipo">Filtrar por</label>
-            <select id="fTipo"><option value="req">Fecha de solicitud</option><option value="pay">Fecha de pago</option></select></div>
-          <div class="f"><label for="fDesde">Desde</label><input type="date" id="fDesde"></div>
-          <div class="f"><label for="fHasta">Hasta</label><input type="date" id="fHasta"></div>
-          <button class="clear" id="fClear">Limpiar filtros</button>
-          <span class="count" id="count"></span>
-        </div>
-        <div class="card" id="list"></div>
+    <!-- ===== Listado ===== -->
+    <section id="vList">
+      <span class="cel cel-doble" aria-hidden="true"></span>
+      <div class="cabecera">
+        <div><h1>Pedidos</h1><p class="meta">Los pedidos de tu centro, los pendientes de pago primero.</p></div>
+        <div class="acciones"><a class="btn negro" href="pedir-tests.html">Nuevo pedido</a></div>
       </div>
-
-      <!-- ===== VISTA DETALLE ===== -->
-      <div id="vDetail" class="hidden">
-        <button class="back" onclick="showList()">← Volver a Mis pedidos</button>
-        <div class="titlebar"><h1>Tu pedido</h1><div class="tacts"><button class="cxbtn" id="cxBtn" hidden onclick="askCancel()">✕ Cancelar solicitud</button><button class="invbtn" id="invBtn" hidden onclick="openInv()">📄 Ver factura</button></div></div>
-        <div class="meta" id="dMeta"></div>
-
-        <div class="pay" id="dPay"></div>
-
-        <section class="dcard">
-          <h2>Resumen del pedido <span class="dnum" id="dNum"></span></h2>
-          <div id="dBreak"></div>
-        </section>
-
-        <section class="dcard"><div class="facts" id="dFacts"></div></section>
-
-        <section class="dcard">
-          <div class="ph"><h2 style="margin:0">Envío</h2><b id="dShipSt"></b></div>
-          <div class="tl" id="dTl"></div>
-        </section>
+      <div class="card">
+        <div class="flt">
+          <div class="flt-est" style="margin-top:0" id="fEstado" role="group" aria-label="Estado"><span class="flt-k">Estado</span>
+            <button type="button" data-e="" class="on">Todos</button><button type="button" data-e="pend">Pendiente de pago</button><button type="button" data-e="paid">Pagado</button><button type="button" data-e="cx">Solicitud cancelada</button></div>
+          <div class="f-fila">
+            <span class="flt-seg" id="fTipo" role="group" aria-label="Filtrar por"><button type="button" data-t="req" class="on">Fecha de solicitud</button><button type="button" data-t="pay">Fecha de pago</button></span>
+            <label>Desde <input type="date" id="fDesde"></label><label>Hasta <input type="date" id="fHasta"></label>
+            <button type="button" class="lnk" id="fClear">Limpiar filtros</button>
+          </div>
+          <div class="flt-act"><span></span><b id="count"></b></div>
+        </div>
+        <div class="tabla-wrap"><table class="tabla-min" id="list"></table></div>
       </div>
-    </div>
-    <div class="pfoot">Política de cookies</div>
-  </div>
+    </section>
+
+    <!-- ===== Detalle ===== -->
+    <section id="vDetail" hidden>
+      <p class="migas"><button type="button" class="lnk" id="backList">Pedidos</button> / <span id="crumbN"></span></p>
+      <div class="cabecera">
+        <div><h1>Tu pedido</h1><p class="meta" id="dMeta"></p></div>
+        <div class="acciones"><button class="btn rojo" id="cxBtn" hidden type="button">✕ Cancelar solicitud</button><button class="btn borde" id="invBtn" hidden type="button">Ver factura</button></div>
+      </div>
+      <div class="banda" id="dPay"></div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-h"><h2>Resumen del pedido</h2><small id="dNum"></small></div>
+        <div id="dBreak"></div>
+      </div>
+      <div class="minis" id="dFacts"></div>
+      <div class="card">
+        <div class="card-h"><h2>Envío</h2><span id="dShipSt" class="est"></span></div>
+        <ol class="track cuatro" id="dTl"></ol>
+      </div>
+    </section>
+  </main>
 </div>
+
+<div class="velo" id="velo" hidden></div>
 
 <!-- Factura (solo pedidos pagados) -->
-<div class="ov" id="invOv" role="dialog" aria-modal="true" aria-label="Factura">
-  <div class="inv">
-    <div class="doc" id="invDoc"></div>
-    <div class="inv-a">
-      <button class="btn" onclick="closeInv()">Cerrar</button>
-      <button class="btn p" onclick="toast('Descargando factura en PDF…')">⤓ Descargar PDF</button>
-    </div>
-  </div>
+<div class="modal fac" id="invOv" hidden role="dialog" aria-modal="true" aria-label="Factura">
+  <div class="doc" id="invDoc"></div>
+  <div class="inv-a"><button class="btn borde" type="button" id="invClose">Cerrar</button><button class="btn negro" type="button" id="invPdf">Descargar PDF</button></div>
 </div>
-<!-- Confirmar cancelación de la solicitud -->
-<div class="ov" id="cxOv" role="dialog" aria-modal="true" aria-labelledby="cxT">
-  <div class="cdlg">
-    <h3 id="cxT">¿Cancelar esta solicitud?</h3>
-    <p id="cxTxt"></p>
-    <p class="warn">No se enviarán los tests ni se cobrará nada. Esta acción no se puede deshacer.</p>
-    <div class="inv-a">
-      <button class="btn" onclick="closeCancel()">Volver</button>
-      <button class="btn red" onclick="doCancel()">Sí, cancelar solicitud</button>
-    </div>
-  </div>
+<!-- Confirmar cancelación -->
+<div class="modal sm" id="cxOv" hidden role="dialog" aria-modal="true" aria-labelledby="cxT">
+  <div class="m-cab"><span class="ico" style="background:var(--rojo)">✕</span><div><h2 id="cxT">¿Cancelar esta solicitud?</h2><p id="cxTxt"></p></div></div>
+  <div class="m-cuerpo"><div class="aviso rojo" style="margin:6px 0 14px;display:block">No se enviarán los tests ni se cobrará nada. Esta acción no se puede deshacer.</div></div>
+  <div class="m-pie"><span class="res"></span><div class="bots"><button type="button" class="btn borde" id="cxBack">Volver</button><button type="button" class="btn rojo" id="cxDo" style="background:var(--rojo);color:#fff;box-shadow:none">Sí, cancelar solicitud</button></div></div>
 </div>
-<div class="toast" id="toast"></div>
 
+<script src="tema.js"></script>
 <script>
-  const eur=n=>{const [e,d]=Math.abs(n).toFixed(2).split('.');return (n<0?'−':'')+e.replace(/\B(?=(\d{3})+(?!\d))/g,'.')+','+d+' €';};
-  // Cifras de ejemplo (inventadas): precio por test sin IVA y un 10 % de descuento de la clínica
-  const T=v=>Math.round(v*100)/100;
-  const INCL=['Tubo de recogida de la muestra','Recogida de la muestra y envío al laboratorio','Secuenciación y análisis de la microbiota'];
-  const PROD={
-    nut:{name:'Test avanzado de microbiota intestinal',enf:'Nutrición',ref:'TAI-NUT',pu:225.00,incl:[...INCL,'Informe con recomendaciones de alimentos, prebióticos y probióticos']},
-    muj:{name:'Test avanzado de microbiota intestinal',enf:'Mujer',ref:'TAI-MUJ',pu:225.00,incl:[...INCL,'Informe con recomendaciones adaptadas a la salud de la mujer']},
-    vag:{name:'Test avanzado de microbiota vaginal',enf:null,ref:'TAV',pu:168.00,incl:[...INCL,'Informe con recomendaciones para la salud vaginal']}
+  Tema.shell({ nav: 'pedidos', badges: { usuarios: 2 }, handlers: { pedidos: function () { showList(); } } });
+  var $ = function (id) { return document.getElementById(id); };
+  var eur = function (n) { var p = Math.abs(n).toFixed(2).split('.'); return (n < 0 ? '−' : '') + p[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + p[1] + ' €'; };
+  // Cifras de ejemplo (inventadas): precio por test sin IVA y un 15 % de descuento de la clínica
+  var T = function (v) { return Math.round(v * 100) / 100; };
+  var INCL = ['Tubo de recogida de la muestra', 'Recogida de la muestra y envío al laboratorio', 'Secuenciación y análisis de la microbiota'];
+  var PROD = {
+    nut: { name: 'Test avanzado de microbiota intestinal', enf: 'Nutrición', ref: 'TAI-NUT', pu: 225.00, incl: INCL.concat(['Informe con recomendaciones de alimentos, prebióticos y probióticos']) },
+    muj: { name: 'Test avanzado de microbiota intestinal', enf: 'Mujer', ref: 'TAI-MUJ', pu: 225.00, incl: INCL.concat(['Informe con recomendaciones adaptadas a la salud de la mujer']) },
+    vag: { name: 'Test avanzado de microbiota vaginal', enf: null, ref: 'TAV', pu: 168.00, incl: INCL.concat(['Informe con recomendaciones para la salud vaginal']) }
   };
-  const DISC=.10;
-  // Quién emite y a quién se factura (la clínica y sus datos son de ejemplo)
-  const EMISOR={name:'Biotahealth S.L.',brand:'Biotasmart',addr:'Travessia s/n, Bloque E, Esc. 1<br>46024 Valencia, España',nif:'B19872431',mail:'hola@biotasmart.com'};
-  const CLIENTE={name:'Clínica Demo S.L.',brand:'Clínica Demo',addr:'Calle Santa Ana, 12<br>28001 Madrid, España',nif:'B00000000',mail:'facturacion@clinica-ejemplo.es'};
-  const SEDES={Madrid:'Calle Santa Ana, 12<br>28001 Madrid, España'};
-  function mk(id,items,ship,shipCls,paidOn,sent,done,shipSt,tl){
-    const lines=items.map(([k,q])=>({...PROD[k],q,imp:T(q*PROD[k].pu*(1-DISC))}));
-    const tests=lines.reduce((s,l)=>s+l.q,0), gross=T(lines.reduce((s,l)=>s+l.q*l.pu,0)),
-          base=T(lines.reduce((s,l)=>s+l.imp,0)), iva=T(base*.21);
-    const [d,m,y]=id.split('/');
-    return {id,num:`PED-${y}-${m}${d}`,lines,tests,gross,ship,shipCls,paid:!!paidOn,paidOn,base,iva,total:T(base+iva),
-      sede:'Madrid',sent,done,shipSt,tl};
+  var DISC = .15;
+  // Quién emite y a quién se factura (el centro y sus datos son de ejemplo)
+  var EMISOR = { name: 'Biotahealth S.L.', brand: 'Biotasmart', addr: 'Travessia s/n, Bloque E, Esc. 1<br>46024 Valencia, España', nif: 'B19872431', mail: 'hola@biotasmart.com' };
+  var CLIENTE = { name: 'Centro Demo S.L.', brand: 'Centro Demo', addr: 'Calle de Ejemplo, 12<br>46004 Valencia, España', nif: 'B00000000', mail: 'facturacion@centro-ejemplo.es' };
+  var SEDES = { Madrid: 'Calle Santa Ana, 12<br>28001 Madrid, España' };
+  function mk(id, items, ship, shipCls, paidOn, sent, done, shipSt, tl) {
+    var lines = items.map(function (it) { var p = PROD[it[0]]; return Object.assign({}, p, { q: it[1], imp: T(it[1] * p.pu * (1 - DISC)) }); });
+    var tests = lines.reduce(function (s, l) { return s + l.q; }, 0), gross = T(lines.reduce(function (s, l) { return s + l.q * l.pu; }, 0)),
+      base = T(lines.reduce(function (s, l) { return s + l.imp; }, 0)), iva = T(base * .21), d = id.split('/');
+    return { id: id, num: 'PED-' + d[2] + '-' + d[1] + d[0], lines: lines, tests: tests, gross: gross, ship: ship, shipCls: shipCls, paid: !!paidOn, paidOn: paidOn, base: base, iva: iva, total: T(base + iva), sede: 'Madrid', sent: sent, done: done, shipSt: shipSt, tl: tl };
   }
-  // Bloques del documento: los usan igual la factura y el resumen del pedido
-  // Resumen del pedido con el diseño de antes: tests del pedido, precio por test y desglose.
-  // Datos fiscales, referencias y qué incluye cada test van solo en la factura.
-  function classicSummary(o){
-    const done=o.ship==='Entregado', pct=Math.round(DISC*100), short=n=>n.replace('Test avanzado de microbiota ','Microbiota ')+' Avanzado';
-    const items=o.lines.map(l=>`<div class="item"><div><b>${l.q} test${l.q>1?'s':''} · ${short(l.name)}${l.enf?' · '+l.enf:''}</b><small>Envío Paq24 a tu consulta incluido</small></div>
-      ${o.cancelled?'':`<span class="prep" style="${done?'':'color:var(--muted)'}">${done?`✓ ${l.q}/${l.q}`:`0/${l.q}`} preparados</span>`}</div>`).join('');
-    const seen={}, tiles=o.lines.filter(l=>{const k=l.name+l.pu; if(seen[k]) return false; seen[k]=1; return true;}).map(l=>{
-      const net=T(l.pu*(1-DISC)); return `<div class="tile"><div><small>${short(l.name)}</small><em>sin IVA ${eur(net)} · con descuento</em></div><b>${eur(T(net*1.21))}</b></div>`;}).join('');
-    const save=T(o.gross-o.base);
-    return `${items}<div class="two">
-      <div><p class="ttl">Precio por test (con IVA)</p><div class="tiles">${tiles}
-        <div class="tile disc"><div><small>Descuento por tu pedido</small><em>ahorras ${eur(save)} (sin IVA) en este pedido</em></div><b>−${pct} %</b></div></div></div>
-      <div><p class="ttl">Desglose</p>
-        ${o.lines.map(l=>`<div class="ln"><span>${l.q} × ${eur(l.pu)} (tarifa)</span><span>${eur(T(l.q*l.pu))}</span></div>`).join('')}
-        <div class="ln d"><span>Descuento por pedido (${pct} %)</span><span>−${eur(save)}</span></div>
-        <div class="ln sep"><span>Base imponible</span><span>${eur(o.base)}</span></div>
-        <div class="ln"><span>IVA (21 %)</span><span>${eur(o.iva)}</span></div>
-        <div class="ln"><span>Envío Paq24</span><span class="inc">Incluido</span></div>
-        <div class="ln tot"><span>Total</span><span>${eur(o.total)}</span></div>
-        ${o.cancelled?`<p class="sfoot" style="color:var(--red)">Solicitud cancelada el ${o.cancelled} · no se ha cobrado.</p>`:''}
-      </div></div>`;
-  }
-  // Vista sencilla del pedido: qué tests, cuántos y el total. Todo el detalle va en la factura.
-  function simpleSummary(o){
-    const done=o.ship==='Entregado';
-    const rows=o.lines.map(l=>`<div class="sl"><span class="n"><span class="q">${l.q}</span>${l.name.replace('Test avanzado de microbiota','Test')}${l.enf?`<small>· ${l.enf}</small>`:''}
-        ${o.cancelled?'':`<span class="pr2 ${done?'ok':''}">${done?'✓ ':''}${done?l.q:0}/${l.q} preparados</span>`}</span><span>${eur(T(l.imp*1.21))}</span></div>`).join('');
-    const foot=o.cancelled?`Solicitud cancelada el ${o.cancelled} · no se ha cobrado.`
-      :o.paid?`Envío Paq24 incluido. Todo el detalle (precios sin IVA, descuento, datos fiscales) está en la <a onclick="openInv()">factura</a>.`
-      :`Envío Paq24 incluido. La factura con todo el detalle estará disponible cuando pagues el pedido.`;
-    return `${rows}<div class="stot"><span>Total</span><div><b>${eur(o.total)}</b><small>IVA incluido · ${o.tests} test${o.tests>1?'s':''}</small></div></div><p class="sfoot">${foot}</p>`;
-  }
-  function parties(o){
-    return `<div class="parties">
-      <div class="party"><span class="lbl">Emitida por</span><b>${EMISOR.name}</b><p>${EMISOR.brand}<br>${EMISOR.addr}<br>NIF ${EMISOR.nif}<br>${EMISOR.mail}</p></div>
-      <div class="party"><span class="lbl">Facturar a</span><b>${CLIENTE.name}</b><p>${CLIENTE.brand}<br>${CLIENTE.addr}<br>NIF ${CLIENTE.nif}<br>${CLIENTE.mail}</p></div>
-      <div class="party"><span class="lbl">Enviar a</span><b>${CLIENTE.brand} · Sede ${o.sede}</b><p>${SEDES[o.sede]}<br>Envío Paq24 (24 h laborables)</p></div>
-    </div>`;
-  }
-  function lines(o,withPrep){
-    const done=o.ship==='Entregado';
-    return `<div class="bkwrap"><table class="bk">
-      <tr><th>Descripción</th><th>Cant.</th><th>Precio/ud</th><th>Dto.</th><th>Importe</th></tr>
-      ${o.lines.map(l=>`<tr><td><b>${l.name}</b>${l.enf?` <span class="enf">· Enfoque ${l.enf}</span>`:''}
-          <small>Ref. ${l.ref} · precio unitario sin IVA</small>
-          <ul>${l.incl.map(x=>`<li>${x}</li>`).join('')}</ul>
-          ${withPrep&&!o.cancelled?`<span class="pr ${done?'ok':''}">${done?'✓ ':''}${done?l.q:0}/${l.q} preparados</span>`:''}</td>
-        <td>${l.q}</td><td>${eur(l.pu)}</td><td>−${Math.round(DISC*100)} %</td><td>${eur(l.imp)}</td></tr>`).join('')}
-      <tr><td><b>Envío Paq24 a la sede ${o.sede}</b><small>Entrega en 24 h laborables</small></td><td>1</td><td>${eur(0)}</td><td>—</td><td>Incluido</td></tr>
-    </table></div>`;
-  }
-  function totals(o){
-    const save=T(o.gross-o.base);
-    return `<div class="bkfoot">
-      <div class="bnote"><b>Nota:</b> pedido <b>${o.num}</b> del ${o.id} · ${o.tests} test${o.tests>1?'s':''} para la sede <b>${o.sede}</b>.<br>
-        Precios unitarios sin IVA. El descuento de tu clínica (−${Math.round(DISC*100)} %) se aplica en cada línea: ahorras <b>${eur(save)}</b>.</div>
-      <div class="sums">
-        <div class="row"><span>Importe sin descuento</span><span>${eur(o.gross)}</span></div>
-        <div class="row save"><span>Descuento de la clínica (−${Math.round(DISC*100)} %)</span><span>−${eur(save)}</span></div>
-        <div class="row"><span>Base imponible</span><span>${eur(o.base)}</span></div>
-        <div class="row"><span>IVA (21 %)</span><span>${eur(o.iva)}</span></div>
-        <div class="totbox"><span>TOTAL</span><b>${eur(o.total)}</b></div>
-        ${o.cancelled?`<div class="paidline cx">✕ Solicitud cancelada el ${o.cancelled} · no se ha cobrado</div>`
-          :o.paid?`<div class="paidline ok">✓ Pagado el ${o.paidOn} con tarjeta ···· 4242</div>`:`<div class="paidline pend">Pendiente de pago</div>`}
-      </div>
-    </div>`;
-  }
-  const ORDERS=[
-    mk('18/11/2026',[['nut',4],['muj',2],['vag',1]],'Pendiente','amber',null,'—','—','Pedido confirmado',[['Confirmado','18/11/2026'],['Preparado',null],['Enviado',null],['Entregado',null]]),
-    mk('17/11/2026',[['nut',2]],'Entregado','ok',null,'18/11/2026','20/11/2026','Entregado',[['Confirmado','17/11/2026'],['Preparado','18/11/2026'],['Enviado','18/11/2026'],['Entregado','20/11/2026']]),
-    mk('02/11/2026',[['nut',2],['vag',1]],'Entregado','ok','03/11/2026','04/11/2026','06/11/2026','Entregado',[['Confirmado','02/11/2026'],['Preparado','03/11/2026'],['Enviado','04/11/2026'],['Entregado','06/11/2026']]),
-    mk('20/10/2026',[['nut',3],['muj',2]],'Entregado','ok','21/10/2026','22/10/2026','24/10/2026','Entregado',[['Confirmado','20/10/2026'],['Preparado','21/10/2026'],['Enviado','22/10/2026'],['Entregado','24/10/2026']]),
-    mk('28/09/2026',[['vag',2]],'Entregado','ok','30/09/2026','01/10/2026','03/10/2026','Entregado',[['Confirmado','28/09/2026'],['Preparado','30/09/2026'],['Enviado','01/10/2026'],['Entregado','03/10/2026']]),
-    mk('10/11/2026',[['nut',2]],'Cancelado','red',null,'—','—','Solicitud cancelada',[['Confirmado','10/11/2026'],['Cancelada','11/11/2026'],['Enviado',null],['Entregado',null]])
+  var ORDERS = [
+    mk('18/11/2026', [['nut', 4], ['muj', 2], ['vag', 1]], 'Pendiente', 'ambar', null, '—', '—', 'Pedido confirmado', [['Confirmado', '18/11/2026'], ['Preparado', null], ['Enviado', null], ['Entregado', null]]),
+    mk('17/11/2026', [['nut', 2]], 'Entregado', 'verde', null, '18/11/2026', '20/11/2026', 'Entregado', [['Confirmado', '17/11/2026'], ['Preparado', '18/11/2026'], ['Enviado', '18/11/2026'], ['Entregado', '20/11/2026']]),
+    mk('02/11/2026', [['nut', 2], ['vag', 1]], 'Entregado', 'verde', '03/11/2026', '04/11/2026', '06/11/2026', 'Entregado', [['Confirmado', '02/11/2026'], ['Preparado', '03/11/2026'], ['Enviado', '04/11/2026'], ['Entregado', '06/11/2026']]),
+    mk('20/10/2026', [['nut', 3], ['muj', 2]], 'Entregado', 'verde', '21/10/2026', '22/10/2026', '24/10/2026', 'Entregado', [['Confirmado', '20/10/2026'], ['Preparado', '21/10/2026'], ['Enviado', '22/10/2026'], ['Entregado', '24/10/2026']]),
+    mk('28/09/2026', [['vag', 2]], 'Entregado', 'verde', '30/09/2026', '01/10/2026', '03/10/2026', 'Entregado', [['Confirmado', '28/09/2026'], ['Preparado', '30/09/2026'], ['Enviado', '01/10/2026'], ['Entregado', '03/10/2026']]),
+    mk('10/11/2026', [['nut', 2]], 'Cancelado', 'rojo', null, '—', '—', 'Solicitud cancelada', [['Confirmado', '10/11/2026'], ['Cancelada', '11/11/2026'], ['Enviado', null], ['Entregado', null]])
   ];
-  ORDERS[5].cancelled='11/11/2026';
-  const TODAY=()=>{const d=new Date();return [d.getDate(),d.getMonth()+1,d.getFullYear()].map(n=>String(n).padStart(2,'0')).join('/');};
+  ORDERS[5].cancelled = '11/11/2026';
+  var TODAY = function () { var d = new Date(); return [d.getDate(), d.getMonth() + 1, d.getFullYear()].map(function (n) { return String(n).padStart(2, '0'); }).join('/'); };
   // Solo se puede cancelar mientras no está pagada ni se ha empezado a preparar
-  const canCancel=o=>!o.paid&&!o.cancelled&&o.ship==='Pendiente';
-  const crumb=document.getElementById('crumb');
-  const iso=d=>d?d.split('/').reverse().join('-'):'';   // dd/mm/aaaa → aaaa-mm-dd (para ordenar y filtrar)
+  var canCancel = function (o) { return !o.paid && !o.cancelled && o.ship === 'Pendiente'; };
+  var iso = function (d) { return d ? d.split('/').reverse().join('-') : ''; };   // dd/mm/aaaa → aaaa-mm-dd
+
+  // ===== Resumen del pedido =====
+  function summary(o) {
+    var done = o.ship === 'Entregado', pct = Math.round(DISC * 100), short = function (n) { return n.replace('Test avanzado de microbiota ', 'Microbiota ') + ' Avanzado'; };
+    var items = o.lines.map(function (l) {
+      return '<div class="item"><div><b>' + l.q + ' test' + (l.q > 1 ? 's' : '') + ' · ' + short(l.name) + (l.enf ? ' · ' + l.enf : '') + '</b><small>Envío Paq24 a tu consulta incluido</small></div>' +
+        (o.cancelled ? '' : '<span class="prep' + (done ? ' ok' : '') + '">' + (done ? '✓ ' + l.q + '/' + l.q : '0/' + l.q) + ' preparados</span>') + '</div>';
+    }).join('');
+    var seen = {}, tiles = o.lines.filter(function (l) { var k = l.name + l.pu; if (seen[k]) return false; seen[k] = 1; return true; }).map(function (l) {
+      var net = T(l.pu * (1 - DISC)); return '<div class="tile"><div><small>' + short(l.name) + '</small><em>sin IVA ' + eur(net) + ' · con descuento</em></div><b>' + eur(T(net * 1.21)) + '</b></div>';
+    }).join('');
+    var save = T(o.gross - o.base);
+    return items + '<div class="two"><div><p class="ttl-s">Precio por test (con IVA)</p>' + tiles +
+      '<div class="tile disc"><div><small>Descuento por tu pedido</small><em>ahorras ' + eur(save) + ' (sin IVA) en este pedido</em></div><b>−' + pct + ' %</b></div></div>' +
+      '<div><p class="ttl-s">Desglose</p>' + o.lines.map(function (l) { return '<div class="ln"><span>' + l.q + ' × ' + eur(l.pu) + ' (tarifa)</span><span>' + eur(T(l.q * l.pu)) + '</span></div>'; }).join('') +
+      '<div class="ln d"><span>Descuento por pedido (' + pct + ' %)</span><span>−' + eur(save) + '</span></div>' +
+      '<div class="ln sep"><span>Base imponible</span><span>' + eur(o.base) + '</span></div><div class="ln"><span>IVA (21 %)</span><span>' + eur(o.iva) + '</span></div>' +
+      '<div class="ln"><span>Envío Paq24</span><span class="inc">Incluido</span></div><div class="ln tot"><span>Total</span><span>' + eur(o.total) + '</span></div>' +
+      (o.cancelled ? '<p class="sfoot" style="color:var(--rojo)">Solicitud cancelada el ' + o.cancelled + ' · no se ha cobrado.</p>' : '') + '</div></div>';
+  }
+  // ===== Factura: bloques =====
+  function parties(o) {
+    return '<div class="parties"><div class="party"><span class="lbl">Emitida por</span><b>' + EMISOR.name + '</b><p>' + EMISOR.brand + '<br>' + EMISOR.addr + '<br>NIF ' + EMISOR.nif + '<br>' + EMISOR.mail + '</p></div>' +
+      '<div class="party"><span class="lbl">Facturar a</span><b>' + CLIENTE.name + '</b><p>' + CLIENTE.brand + '<br>' + CLIENTE.addr + '<br>NIF ' + CLIENTE.nif + '<br>' + CLIENTE.mail + '</p></div>' +
+      '<div class="party"><span class="lbl">Enviar a</span><b>' + CLIENTE.brand + ' · Sede ' + o.sede + '</b><p>' + SEDES[o.sede] + '<br>Envío Paq24 (24 h laborables)</p></div></div>';
+  }
+  function lineas(o) {
+    return '<table class="bk"><tr><th>Descripción</th><th>Cant.</th><th>Precio/ud</th><th>Dto.</th><th>Importe</th></tr>' +
+      o.lines.map(function (l) {
+        return '<tr><td><b>' + l.name + '</b>' + (l.enf ? ' <span class="enf">· Enfoque ' + l.enf + '</span>' : '') + '<small>Ref. ' + l.ref + ' · precio unitario sin IVA</small><ul>' + l.incl.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></td>' +
+          '<td>' + l.q + '</td><td>' + eur(l.pu) + '</td><td>−' + Math.round(DISC * 100) + ' %</td><td>' + eur(l.imp) + '</td></tr>';
+      }).join('') + '<tr><td><b>Envío Paq24 a la sede ' + o.sede + '</b><small>Entrega en 24 h laborables</small></td><td>1</td><td>' + eur(0) + '</td><td>—</td><td>Incluido</td></tr></table>';
+  }
+  function totales(o) {
+    var save = T(o.gross - o.base), pct = Math.round(DISC * 100);
+    return '<div class="bkfoot"><div class="bnote"><b>Nota:</b> pedido <b>' + o.num + '</b> del ' + o.id + ' · ' + o.tests + ' test' + (o.tests > 1 ? 's' : '') + ' para la sede <b>' + o.sede + '</b>.<br>Precios unitarios sin IVA. El descuento de tu centro (−' + pct + ' %) se aplica en cada línea: ahorras <b>' + eur(save) + '</b>.</div>' +
+      '<div class="sums"><div class="row"><span>Importe sin descuento</span><span>' + eur(o.gross) + '</span></div><div class="row save"><span>Descuento del centro (−' + pct + ' %)</span><span>−' + eur(save) + '</span></div>' +
+      '<div class="row"><span>Base imponible</span><span>' + eur(o.base) + '</span></div><div class="row"><span>IVA (21 %)</span><span>' + eur(o.iva) + '</span></div><div class="totbox"><span>TOTAL</span><b>' + eur(o.total) + '</b></div>' +
+      (o.cancelled ? '<div class="paidline cx">✕ Solicitud cancelada el ' + o.cancelled + ' · no se ha cobrado</div>' : o.paid ? '<div class="paidline ok">✓ Pagado el ' + o.paidOn + ' con tarjeta ···· 4242</div>' : '<div class="paidline pend">Pendiente de pago</div>') + '</div></div>';
+  }
 
   // ===== Listado: filtros + columnas ordenables =====
-  let sortKey='default', sortDir=-1;   // por defecto: pendientes de pago primero y, dentro, lo más reciente
-  const COLS=[['estado','Estado',''],['req','Fecha de solicitud',''],['pay','Fecha de pago',''],['total','Total','r']];
-  function val(o,k){return k==='estado'?(o.cancelled?2:o.paid?1:0):k==='total'?o.total:k==='req'?iso(o.id):iso(o.paidOn)||'0000';}
-  function renderList(){
-    const fe=document.getElementById('fEstado').value, ft=document.getElementById('fTipo').value,
-          fd=document.getElementById('fDesde').value, fh=document.getElementById('fHasta').value;
-    let rows=ORDERS.map((o,i)=>({o,i})).filter(({o})=>{
-      if(fe==='pend'&&(o.paid||o.cancelled)) return false;
-      if(fe==='paid'&&!o.paid) return false;
-      if(fe==='cx'&&!o.cancelled) return false;
-      const d=ft==='pay'?iso(o.paidOn):iso(o.id);
-      if((fd||fh)&&!d) return false;
-      if(fd&&d<fd) return false;
-      if(fh&&d>fh) return false;
+  var sortKey = 'default', sortDir = -1, fe = '', ft = 'req';
+  var COLS = [['estado', 'Estado', ''], ['req', 'Fecha de solicitud', ''], ['pay', 'Fecha de pago', ''], ['total', 'Total', 'r']];
+  function val(o, k) { return k === 'estado' ? (o.cancelled ? 2 : o.paid ? 1 : 0) : k === 'total' ? o.total : k === 'req' ? iso(o.id) : iso(o.paidOn) || '0000'; }
+  function renderList() {
+    var fd = $('fDesde').value, fh = $('fHasta').value;
+    var rows = ORDERS.map(function (o, i) { return { o: o, i: i }; }).filter(function (r) {
+      var o = r.o;
+      if (fe === 'pend' && (o.paid || o.cancelled)) return false;
+      if (fe === 'paid' && !o.paid) return false;
+      if (fe === 'cx' && !o.cancelled) return false;
+      var d = ft === 'pay' ? iso(o.paidOn) : iso(o.id);
+      if ((fd || fh) && !d) return false; if (fd && d < fd) return false; if (fh && d > fh) return false;
       return true;
     });
-    rows.sort((a,b)=>{
-      if(sortKey==='default'){ const ga=a.o.paid||!!a.o.cancelled, gb=b.o.paid||!!b.o.cancelled; if(ga!==gb) return ga?1:-1; return iso(b.o.id).localeCompare(iso(a.o.id)); }
-      const x=val(a.o,sortKey), y=val(b.o,sortKey);
-      return (x>y?1:x<y?-1:0)*sortDir;
+    rows.sort(function (a, b) {
+      if (sortKey === 'default') { var ga = a.o.paid || !!a.o.cancelled, gb = b.o.paid || !!b.o.cancelled; if (ga !== gb) return ga ? 1 : -1; return iso(b.o.id).localeCompare(iso(a.o.id)); }
+      var x = val(a.o, sortKey), y = val(b.o, sortKey); return (x > y ? 1 : x < y ? -1 : 0) * sortDir;
     });
-    const head=`<div class="lrow lth">`+COLS.map(([k,l,c])=>`<div class="${c}"><button class="sortb ${sortKey===k?'on':''}" data-sort="${k}">${l} <i>${sortKey===k?(sortDir>0?'▲':'▼'):'↕'}</i></button></div>`).join('')+`<div></div></div>`;
-    document.getElementById('list').innerHTML=head+(rows.length?rows.map(({o,i})=>`<div class="lrow">
-      <div>${o.cancelled
-        ? `<span class="pill red">Solicitud cancelada</span><div class="pcx">Cancelada el ${o.cancelled}</div>`
-        : o.paid
-        ? `<span class="pill ok">Pagado</span>`
-        : o.ship==='Entregado'
-        ? `<span class="pill ok">Entregado</span><div class="pc">Pendiente de pago</div>`
-        : `<span class="pill grey">Pendiente de pago</span>`}</div>
-      <div>${o.id}</div>
-      <div>${o.paidOn||'<span class="muted">—</span>'}</div>
-      <div class="r">${eur(o.total)}<small>${o.tests} test${o.tests>1?'s':''}</small></div>
-      <div class="r"><a class="lnk" onclick="showDetail(${i})">Ver</a></div></div>`).join('')
-      :`<div class="empty-l">Ningún pedido coincide con los filtros.</div>`);
-    document.getElementById('count').textContent=`${rows.length} de ${ORDERS.length} pedidos`;
-    document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{
-      const k=b.dataset.sort;
-      if(sortKey===k) sortDir=-sortDir; else {sortKey=k; sortDir=(k==='estado')?1:-1;}
-      renderList();
-    });
+    var head = '<thead><tr>' + COLS.map(function (c) { return '<th class="' + c[2] + '"><button class="sortb ' + (sortKey === c[0] ? 'on' : '') + '" data-sort="' + c[0] + '" type="button">' + c[1] + ' <i>' + (sortKey === c[0] ? (sortDir > 0 ? '▲' : '▼') : '↕') + '</i></button></th>'; }).join('') + '<th></th></tr></thead>';
+    $('list').innerHTML = head + '<tbody>' + (rows.length ? rows.map(function (r) {
+      var o = r.o, est = o.cancelled ? '<span class="est rojo">Solicitud cancelada</span><span class="cx-t">Cancelada el ' + o.cancelled + '</span>'
+        : o.paid ? '<span class="est verde">Pagado</span>'
+        : o.ship === 'Entregado' ? '<span class="est verde">Entregado</span><span class="pc-t">Pendiente de pago</span>' : '<span class="est ambar">Pendiente de pago</span>';
+      return '<tr class="click" data-i="' + r.i + '"><td>' + est + '</td><td>' + o.id + '</td><td>' + (o.paidOn || '<span class="gr">—</span>') + '</td><td class="r">' + eur(o.total) + '<span class="sub">' + o.tests + ' test' + (o.tests > 1 ? 's' : '') + '</span></td><td class="r"><span class="lnk">Ver →</span></td></tr>';
+    }).join('') : '<tr><td colspan="5" class="gr" style="text-align:center;padding:30px 0">Ningún pedido coincide con los filtros.</td></tr>') + '</tbody>';
+    $('count').textContent = rows.length + ' de ' + ORDERS.length + ' pedidos';
   }
-  ['fEstado','fTipo','fDesde','fHasta'].forEach(id=>document.getElementById(id).addEventListener('change',renderList));
-  document.getElementById('fClear').onclick=()=>{['fEstado','fDesde','fHasta'].forEach(id=>document.getElementById(id).value='');document.getElementById('fTipo').value='req';sortKey='default';sortDir=-1;renderList();};
+  $('list').addEventListener('click', function (e) {
+    var s = e.target.closest('[data-sort]');
+    if (s) { var k = s.dataset.sort; if (sortKey === k) sortDir = -sortDir; else { sortKey = k; sortDir = k === 'estado' ? 1 : -1; } renderList(); return; }
+    var tr = e.target.closest('tr[data-i]'); if (tr) showDetail(+tr.dataset.i);
+  });
+  $('fEstado').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; fe = b.dataset.e; this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); }); renderList(); });
+  $('fTipo').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; ft = b.dataset.t; this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); }); renderList(); });
+  ['fDesde', 'fHasta'].forEach(function (id) { $(id).addEventListener('change', renderList); });
+  $('fClear').addEventListener('click', function () {
+    fe = ''; ft = 'req'; $('fDesde').value = ''; $('fHasta').value = ''; sortKey = 'default'; sortDir = -1;
+    $('fEstado').querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x.dataset.e === ''); });
+    $('fTipo').querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x.dataset.t === 'req'); }); renderList();
+  });
+  function showList() { renderList(); $('vList').hidden = false; $('vDetail').hidden = true; window.scrollTo(0, 0); }
+  $('backList').addEventListener('click', showList);
 
-  function showList(){
-    renderList();
-    document.getElementById('vList').classList.remove('hidden');
-    document.getElementById('vDetail').classList.add('hidden');
-    crumb.innerHTML='Inicio<span>›</span><b>Pedidos</b>';
+  // ===== Modales =====
+  function openM(id) { $('velo').hidden = false; $(id).hidden = false; }
+  function closeM() { $('velo').hidden = true; $('invOv').hidden = true; $('cxOv').hidden = true; }
+  $('velo').addEventListener('click', closeM);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeM(); });
+  var curOrder = 0;
+  function openInv() {
+    var o = ORDERS[curOrder], nf = 'BTS-2026-' + String(40 + curOrder).padStart(4, '0');
+    $('invDoc').innerHTML = '<div class="dh"><div class="lg"><img src="' + Tema.base + 'assets/logo.svg" alt="Biotasmart"><small>Interpretación avanzada de microbiota para profesionales sanitarios.</small></div>' +
+      '<div class="num"><small>FACTURA</small><b>' + nf + '</b><span class="est verde">Pagada</span></div></div>' +
+      '<div class="dmeta"><div><span class="lbl">Fecha de emisión</span>' + o.paidOn + '</div><div><span class="lbl">Fecha de pago</span>' + o.paidOn + '</div><div><span class="lbl">Nº de pedido</span>' + o.num + '</div><div><span class="lbl">Fecha del pedido</span>' + o.id + '</div><div><span class="lbl">Forma de pago</span>Tarjeta</div></div>' +
+      parties(o) + lineas(o) + totales(o) +
+      '<div class="dfoot">Precios unitarios sin IVA; IVA al tipo general (21 %). Para cualquier consulta sobre esta factura, escribe a ' + EMISOR.mail + ' indicando su número (' + nf + ').</div>';
+    openM('invOv');
   }
-  // ===== Factura =====
-  let curOrder=0;
-  function openInv(){
-    const o=ORDERS[curOrder], nf='BTS-2026-'+String(40+curOrder).padStart(4,'0');
-    document.getElementById('invDoc').innerHTML=`
-      <div class="dh">
-        <div class="lg">⁂ BIOTASMART<small>Interpretación avanzada de microbiota para profesionales sanitarios.</small></div>
-        <div class="num"><small>FACTURA</small><b>${nf}</b><span class="pill ok">Pagada</span></div>
-      </div>
-      <div class="dmeta">
-        <div><span class="lbl">Fecha de emisión</span>${o.paidOn}</div>
-        <div><span class="lbl">Fecha de pago</span>${o.paidOn}</div>
-        <div><span class="lbl">Nº de pedido</span>${o.num}</div>
-        <div><span class="lbl">Fecha del pedido</span>${o.id}</div>
-        <div><span class="lbl">Forma de pago</span>Tarjeta</div>
-      </div>
-      ${parties(o)}${lines(o,false)}${totals(o)}
-      <div class="dfoot">Precios unitarios sin IVA; IVA al tipo general (21 %). Para cualquier consulta sobre esta factura, escribe a ${EMISOR.mail} indicando su número (${nf}).</div>`;
-    document.getElementById('invOv').classList.add('show');
-  }
-  function closeInv(){document.getElementById('invOv').classList.remove('show');}
-  document.getElementById('invOv').addEventListener('click',e=>{if(e.target.id==='invOv')closeInv();});
-  function toast(t){const e=document.getElementById('toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',2200);}
+  $('invBtn').addEventListener('click', openInv); $('invClose').addEventListener('click', closeM);
+  $('invPdf').addEventListener('click', function () { Tema.toast('Descargando factura en PDF…'); });
 
-  function showDetail(i){
-    const o=ORDERS[i];
-    curOrder=i;
-    document.getElementById('invBtn').hidden=!o.paid;
-    document.getElementById('cxBtn').hidden=!canCancel(o);
-    document.getElementById('vList').classList.add('hidden');
-    document.getElementById('vDetail').classList.remove('hidden');
-    crumb.innerHTML=`Inicio<span>›</span><a onclick="showList()">Pedidos</a><span>›</span><b>Pedido del ${o.id}</b>`;
-    document.getElementById('dMeta').innerHTML=`<span class="pill ${o.shipCls}">Envío: ${o.ship}</span> Clínica Demo · Pedido emitido el ${o.id}`;
-    const pay=document.getElementById('dPay');
-    pay.classList.toggle('paid',o.paid);
-    pay.classList.toggle('cancel',!!o.cancelled);
-    pay.innerHTML=o.cancelled
-      ? `<div class="l"><div class="ic">✕</div><div><h2>Solicitud cancelada</h2><p>Cancelada el ${o.cancelled}. No se enviarán los tests ni se cobrará nada.</p></div></div><div class="amt"><b>${eur(o.total)}</b><small>No se cobra</small></div>`
+  function showDetail(i) {
+    var o = ORDERS[i]; curOrder = i;
+    $('invBtn').hidden = !o.paid; $('cxBtn').hidden = !canCancel(o);
+    $('vList').hidden = true; $('vDetail').hidden = false; window.scrollTo(0, 0);
+    $('crumbN').textContent = 'Pedido del ' + o.id;
+    $('dMeta').innerHTML = '<span class="est ' + o.shipCls + '">Envío: ' + o.ship + '</span> &nbsp;Centro Demo · Pedido emitido el ' + o.id;
+    var pay = $('dPay');
+    pay.className = 'banda' + (o.cancelled ? ' rojo' : o.paid ? ' verde' : '');
+    pay.innerHTML = o.cancelled
+      ? '<span class="ico">✕</span><div><h2>Solicitud cancelada</h2><p>Cancelada el ' + o.cancelled + '. No se enviarán los tests ni se cobrará nada.</p></div><div class="fin"><b style="font:500 28px var(--display)">' + eur(o.total) + '</b><small>No se cobra</small></div>'
       : o.paid
-      ? `<div class="l"><div class="ic">✅</div><div><h2>Pagado</h2><p>Gracias, el pago está registrado.</p></div></div><div class="amt"><b>${eur(o.total)}</b><small>IVA incluido</small></div>`
-      : `<div class="l"><div class="ic">💳</div><div><h2>Pendiente de pago</h2><p>La factura llegará con la entrega.</p></div></div>
-         <div class="payr"><div class="amt"><b>${eur(o.total)}</b><small>IVA incluido</small></div>
-         <button class="paybtn" id="payBtn" onclick="payNow(${i})">Pagar ${eur(o.total)} →</button>
-         <span class="secure">🔒 Pago seguro con tarjeta</span></div>`;
-    document.getElementById('dNum').textContent=o.num;
-    document.getElementById('dBreak').innerHTML=classicSummary(o);
-    document.getElementById('dFacts').innerHTML=`
-      <div class="fact"><span class="fi">📍</span><div><small>Sede</small><b>${o.sede}</b></div></div>
-      <div class="fact"><span class="fi">📤</span><div><small>Enviada</small><b>${o.sent}</b></div></div>
-      ${o.cancelled
-        ?`<div class="fact"><span class="fi">✕</span><div><small>Cancelada</small><b style="color:var(--red)">${o.cancelled}</b></div></div>`
-        :`<div class="fact"><span class="fi">✅</span><div><small>Completada</small><b>${o.done}</b></div></div>`}`;
-    const st=document.getElementById('dShipSt');
-    st.textContent=o.shipSt; st.style.color=o.cancelled?'var(--red)':'';
-    const last=o.tl.map(e=>!!e[1]).lastIndexOf(true);
-    document.getElementById('dTl').innerHTML=`<span class="fill ${o.cancelled?'cx':''}" style="width:${last/3*75}%"></span>`+
-      o.tl.map((e,k)=>{
-        const cx=o.cancelled&&e[0]==='Cancelada', na=o.cancelled&&!e[1];
-        return `<div class="ev ${cx?'cx':na?'na':!e[1]?'pend':''} ${k===last&&!cx?'now':''}"><i></i><b>${e[0]}</b><small>${e[1]||(na?'No aplica':'Pendiente')}</small></div>`;
-      }).join('');
+      ? '<span class="ico">✓</span><div><h2>Pagado</h2><p>Gracias, el pago está registrado.</p></div><div class="fin"><div style="text-align:right"><b style="font:500 28px var(--display);display:block">' + eur(o.total) + '</b><small>IVA incluido</small></div></div>'
+      : '<span class="ico">▤</span><div><h2>Pendiente de pago</h2><p>La factura llegará con la entrega.</p></div><div class="fin"><div style="text-align:right"><b style="font:500 28px var(--display);display:block">' + eur(o.total) + '</b><small>IVA incluido</small></div>' +
+        '<button class="btn blanco grande" id="payBtn" type="button">Pagar ' + eur(o.total) + ' →</button></div>';
+    if ($('payBtn')) $('payBtn').addEventListener('click', function () { payNow(i); });
+    $('dNum').textContent = o.num;
+    $('dBreak').innerHTML = summary(o);
+    $('dFacts').innerHTML = '<div class="mini"><span class="ico az">⌂</span><div><small>Sede</small><b>' + o.sede + '</b></div></div>' +
+      '<div class="mini"><span class="ico os">↗</span><div><small>Enviada</small><b>' + o.sent + '</b></div></div>' +
+      (o.cancelled ? '<div class="mini"><span class="ico" style="background:var(--rojo)">✕</span><div><small>Cancelada</small><b style="color:var(--rojo)">' + o.cancelled + '</b></div></div>'
+        : '<div class="mini"><span class="ico ve">✓</span><div><small>Completada</small><b>' + o.done + '</b></div></div>');
+    var st = $('dShipSt'); st.textContent = o.shipSt; st.className = 'est ' + (o.cancelled ? 'rojo' : o.shipCls === 'verde' ? 'verde' : 'azul');
+    var last = o.tl.map(function (e) { return !!e[1]; }).lastIndexOf(true);
+    $('dTl').innerHTML = o.tl.map(function (e, k) {
+      var cx = o.cancelled && e[0] === 'Cancelada', na = o.cancelled && !e[1];
+      return '<li class="' + (cx ? 'cx' : na ? '' : e[1] ? (k === last ? 'ya' : 'ok') : '') + '">' + e[0] + '<small>' + (e[1] || (na ? 'No aplica' : 'Pendiente')) + '</small></li>';
+    }).join('');
   }
   // ===== Cancelar la solicitud (solo antes de pagar y de preparar el pedido) =====
-  function askCancel(){
-    const o=ORDERS[curOrder];
-    document.getElementById('cxTxt').innerHTML=`Vas a cancelar el pedido <b>${o.num}</b> del ${o.id}: ${o.tests} test${o.tests>1?'s':''} por <b>${eur(o.total)}</b>.`;
-    document.getElementById('cxOv').classList.add('show');
-  }
-  function closeCancel(){document.getElementById('cxOv').classList.remove('show');}
-  document.getElementById('cxOv').addEventListener('click',e=>{if(e.target.id==='cxOv')closeCancel();});
-  function doCancel(){
-    const o=ORDERS[curOrder], t=TODAY();
-    Object.assign(o,{cancelled:t,ship:'Cancelado',shipCls:'red',shipSt:'Solicitud cancelada',
-      tl:[['Confirmado',o.id],['Cancelada',t],['Enviado',null],['Entregado',null]]});
-    closeCancel(); showDetail(curOrder); toast('Solicitud cancelada');
-  }
+  $('cxBtn').addEventListener('click', function () {
+    var o = ORDERS[curOrder];
+    $('cxTxt').innerHTML = 'Vas a cancelar el pedido <b>' + o.num + '</b> del ' + o.id + ': ' + o.tests + ' test' + (o.tests > 1 ? 's' : '') + ' por <b>' + eur(o.total) + '</b>.';
+    openM('cxOv');
+  });
+  $('cxBack').addEventListener('click', closeM);
+  $('cxDo').addEventListener('click', function () {
+    var o = ORDERS[curOrder], t = TODAY();
+    Object.assign(o, { cancelled: t, ship: 'Cancelado', shipCls: 'rojo', shipSt: 'Solicitud cancelada', tl: [['Confirmado', o.id], ['Cancelada', t], ['Enviado', null], ['Entregado', null]] });
+    closeM(); showDetail(curOrder); Tema.toast('Solicitud cancelada');
+  });
   // Simulación del pago (en la plataforma real abriría la pasarela de pago)
-  function payNow(i){
-    const b=document.getElementById('payBtn');
-    b.disabled=true; b.textContent='Abriendo pago seguro…';
-    setTimeout(()=>{const d=new Date();ORDERS[i].paid=true;ORDERS[i].paidOn=[d.getDate(),d.getMonth()+1,d.getFullYear()].map(n=>String(n).padStart(2,'0')).join('/');showDetail(i)},1200);
+  function payNow(i) {
+    var b = $('payBtn'); b.disabled = true; b.textContent = 'Abriendo pago seguro…';
+    setTimeout(function () { ORDERS[i].paid = true; ORDERS[i].paidOn = TODAY(); showDetail(i); }, 1200);
   }
   showList();
 </script>
+</body>
+</html>

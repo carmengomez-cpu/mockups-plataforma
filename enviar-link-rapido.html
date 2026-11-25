@@ -4,112 +4,35 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Flujo · Enviar link en 2 clics</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Flujo · Enlace de pago en 2 clics</title>
+<link rel="stylesheet" href="tema.css">
 <style>
-  :root {
-    --text: #1B1B1B; --muted: #555; --muted-2: #6B6B6B; --line: #E6E6E4; --border: #DADADA;
-    --page: #F4F4F3; --side: #F7F7F6; --soft: #ECECEA; --pill: #EEEEEE;
-    --green: #1E6B3C; --green-bg: #EAF6EE;
-    --amber: #8A4B00; --amber-bg: #FFF4E0; --amber-line: #E9C07A;
-    --blue: #2B6F86; --blue-bg: #E6F0F5;
-    --red: #A3362E;
-    --cta: #9CC5D8; --cta-soft: #CFE3EC; --cta-disabled: #D6E6EE;
-    --intestinal: #2B6F86; --vaginal: #C0605A;
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: Inter, system-ui, sans-serif; color: var(--text); background: var(--page); }
-  button { font: inherit; cursor: pointer; }
-  a { color: inherit; }
-  [hidden] { display: none !important; }
-
-  /* ===== Barra de demo (fuera del producto) ===== */
-  .demo-bar { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; background: #1F2326; color: #FFF; font-size: 14px; }
-  .demo-bar .label { color: #C9CED3; margin-right: 6px; }
-  .demo-step { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; border: 1px solid #3A4045; background: transparent; color: #C9CED3; font-size: 13px; }
-  .demo-step b { width: 20px; height: 20px; border-radius: 50%; background: #3A4045; color: #FFF; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; }
-  .demo-step[aria-current="step"] { background: #FFF; color: #1F2326; border-color: #FFF; }
-  .demo-step[aria-current="step"] b { background: #1F2326; }
-  .demo-reset { margin-left: 8px; border: 0; background: transparent; color: #C9CED3; text-decoration: underline; font-size: 13px; }
-
-  /* ===== Plataforma del profesional ===== */
-  .app { display: flex; min-height: calc(100vh - 48px); }
-  .sidebar { width: 250px; flex: none; background: var(--side); border-right: 1px solid var(--line); padding: 28px 18px 24px; display: flex; flex-direction: column; gap: 22px; }
-  .brand { display: flex; align-items: center; gap: 10px; font-size: 16px; letter-spacing: 0.12em; font-weight: 500; }
-  .account { font-size: 14px; color: var(--muted); margin: -8px 0 0 4px; }
-  .nav { display: flex; flex-direction: column; gap: 4px; }
-  .nav a { padding: 12px 14px; border-radius: 12px; font-size: 16px; color: #333; text-decoration: none; cursor: pointer; }
-  .nav a:hover { background: #EFEFED; }
-  .nav a[aria-current="page"] { background: #FFF; color: var(--text); font-weight: 500; box-shadow: 0 0 0 1px var(--line); }
-  .sidebar-foot { margin-top: auto; font-size: 15px; color: var(--muted); padding: 0 4px; }
-  .content { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-  .topbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 40px; border-bottom: 1px solid var(--line); }
-  .crumbs { font-size: 16px; color: var(--muted); }
-  .crumbs strong { color: var(--text); font-weight: 500; }
-  .user-area { display: flex; align-items: center; gap: 18px; }
-  .user-area select { font: inherit; font-size: 15px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: #FFF; }
-  .user { display: flex; align-items: center; gap: 12px; }
-  .user-text { text-align: right; line-height: 1.25; }
-  .user-text div:last-child { font-size: 13px; color: var(--muted); }
-  .avatar { width: 46px; height: 46px; border-radius: 50%; background: #8FB4C6; color: #12313D; display: flex; align-items: center; justify-content: center; font-weight: 600; }
-  .page { padding: 32px 40px 40px; display: flex; flex-direction: column; gap: 22px; width: 100%; }
-
-  .card { background: #FFF; border-radius: 26px; padding: 26px 28px; display: flex; flex-direction: column; gap: 16px; }
-  .card h2 { margin: 0; font-size: 21px; font-weight: 600; }
-
-  /* Inicio */
-  .hello h1 { margin: 0; font-size: 30px; }
-  .hello p { margin: 6px 0 0; color: var(--muted); font-size: 17px; }
-  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
-  .stat { background: #FFF; border-radius: 22px; padding: 22px 24px; }
-  .stat small { font-size: 15px; color: #444; }
-  .stat div { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 14px; }
-  .stat b { font-size: 34px; font-weight: 600; }
-  .stat span { font-size: 13px; padding: 5px 10px; border-radius: 999px; background: var(--soft); color: #444; }
-  .home-grid { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 22px; align-items: start; }
-  .col { display: flex; flex-direction: column; gap: 22px; }
-  .muted { color: var(--muted); font-size: 15px; margin: 0; }
-  .qa { display: flex; flex-direction: column; gap: 12px; }
-  .qa button { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--line); background: #FFF; font-size: 16px; text-align: left; }
-  .qa button.main { background: var(--cta); border-color: var(--cta); }
-  .qa button.new { border: 2px solid var(--blue); background: var(--blue-bg); font-weight: 600; position: relative; }
-  .qa button.new::after { content: 'Nuevo'; position: absolute; right: 14px; font-size: 11px; font-weight: 600; letter-spacing: .04em; padding: 3px 8px; border-radius: 999px; background: var(--blue); color: #FFF; }
-  .qa button[disabled] { color: #9A9A9A; cursor: default; }
-
-  /* Pacientes */
-  .ptable { width: 100%; border-collapse: collapse; font-size: 15px; }
-  .ptable th { text-align: left; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 0 12px 12px 0; border-bottom: 1px solid var(--line); }
-  .ptable td { padding: 16px 12px 16px 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
-  .ptable td small { display: block; color: var(--muted-2); font-size: 13px; margin-top: 2px; }
-  .ptable tr.hl td { background: #F7FBFD; }
-  .ptable tr.hl td:first-child { box-shadow: inset 3px 0 0 var(--blue); padding-left: 12px; }
-  .st { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; font-size: 13px; font-weight: 600; white-space: nowrap; }
-  .st.amber { background: var(--amber-bg); color: var(--amber); }
-  .st.blue { background: var(--blue-bg); color: var(--blue); }
-  .st.grey { background: var(--soft); color: #444; }
-  .st.green { background: var(--green-bg); color: var(--green); }
-  .link-btn { border: 0; background: transparent; color: var(--blue); text-decoration: underline; text-underline-offset: 3px; font-size: 14px; padding: 0; }
-  .note-box { display: flex; gap: 10px; padding: 12px 16px; border-radius: 14px; background: var(--blue-bg); color: #1F4E60; font-size: 14px; line-height: 1.5; }
-
-  /* ===== Envío rápido (2 clics) ===== */
-  .quick { border: 2px solid var(--blue); gap: 14px; }
-  .quick-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-  .quick-head small { color: var(--muted); font-size: 14px; }
-  .q-row { display: flex; gap: 12px; align-items: stretch; flex-wrap: wrap; }
-  .q-row input { flex: 1 1 260px; min-width: 0; font: inherit; font-size: 16px; min-height: 52px; padding: 0 16px; border: 1px solid var(--border); border-radius: 14px; }
-  .q-row input:focus { outline: 2px solid #6FA3BA; outline-offset: 1px; }
-  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
-  .chip { min-height: 52px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--border); background: #FFF; font-size: 15px; display: flex; align-items: center; gap: 6px; }
-  .chip[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-bg); box-shadow: 0 0 0 1px var(--blue); font-weight: 600; }
-  .q-send { min-height: 52px; padding: 0 26px; border-radius: 999px; border: 0; background: var(--cta); font-size: 16px; font-weight: 600; }
-  .q-send:disabled { background: var(--cta-disabled); color: #777; cursor: not-allowed; }
-  .q-who { font-size: 14px; color: var(--muted); min-height: 20px; }
-  .q-who b { color: var(--text); }
-  .q-who.ok { color: var(--green); }
-  .clicks { margin-left: 10px; padding: 4px 10px; border-radius: 999px; background: #3A4045; color: #FFF; font-size: 12.5px; }
-
-  /* ===== Página de pago de Stripe (la ve el paciente) ===== */
+  .quick{box-shadow:0 0 0 2px var(--cobalto),var(--blk-sombra);margin-bottom:16px}
+  .q-row{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+  .q-row input{flex:1 1 260px;min-width:0;font:inherit;font-size:15px;min-height:48px;padding:0 18px;border:0;border-radius:999px;background:var(--blanco);box-shadow:inset 0 0 0 1px var(--linea2)}
+  .q-row input:focus{outline:2px solid var(--cobalto);outline-offset:1px}
+  .chips-e{display:flex;gap:8px;flex-wrap:wrap}
+  .chip-e{min-height:48px;padding:0 16px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--linea2);background:var(--blanco);font-size:14px;display:flex;align-items:center;gap:7px;font-family:var(--display);font-weight:500;text-align:center}
+  .chip-e i{width:8px;height:8px;border-radius:50%}
+  .chip-e[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--cobalto);background:var(--menta2)}
+  .q-who{font-size:13.5px;color:var(--gris);min-height:20px;margin-top:10px}
+  .q-who b{color:var(--tinta);font-weight:500}.q-who.ok{color:var(--verde-tinta)}
+  .acc-fila{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .acc-fila .pie-a{margin-left:auto;font-size:13.5px;color:var(--gris)}
+  .who{display:flex;gap:12px;align-items:center}.who b{font-family:var(--display);font-weight:500;display:block}.who small{display:block;font-size:12.5px;color:var(--gris)}
+  tr.hl td{background:var(--menta2)}tr.hl td:first-child{box-shadow:inset 3px 0 0 var(--cobalto)}
+  .ext{min-height:calc(100vh - 38px);padding:26px 20px 48px}
+  .pt-tag{margin:0 auto 14px;max-width:700px;font-size:13px;color:var(--gris);text-align:center}
+  .mail{max-width:620px;margin:0 auto;background:var(--blanco);border-radius:22px;overflow:hidden;box-shadow:var(--blk-sombra)}
+  .mail-meta{padding:14px 22px;border-bottom:1px solid var(--linea);font-size:13.5px;color:var(--gris);line-height:1.7}.mail-meta b{color:var(--tinta);font-weight:500}
+  .mail-body{padding:30px 34px 34px;display:flex;flex-direction:column;gap:16px;font-size:16px;line-height:1.6}
+  .mail-body h1{font-size:26px}.mail-foot{font-size:13px;color:var(--gris)}
+  .done-c{max-width:560px;margin:30px auto 0;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;padding:40px 34px}
+  .done-ic{width:64px;height:64px;border-radius:50%;background:var(--verde2);color:var(--verde-tinta);display:grid;place-items:center;font-size:30px}
+  .done-c h1{font-size:26px}.done-c p{color:var(--gris);line-height:1.55}
+  .seg-m{margin:2px 0 10px}
+  .clicks{border:1px solid rgba(255,255,255,.35)!important;background:#3A4045!important}
+/* ===== Página de pago de Stripe (la ve el paciente) ===== */
   #v-shop { background: #FFF; padding: 0; }
   #v-shop.is-done { background: #F4F4F3; padding: 32px 20px 48px; }
   #v-shop .pt-tag { margin: 0; max-width: none; padding: 8px 12px; background: #F4F4F3; }
@@ -155,196 +78,96 @@
   .st-foot { margin: 22px 0 0; font-size: 13px; color: #777; text-align: center; }
   @media (max-width: 900px) { .stx { grid-template-columns: minmax(0, 1fr); } .st-l, .st-r { padding: 28px 20px; box-shadow: none; } .st-l .in { margin-left: 0; } }
 
-  /* ===== Pop-up enviar link ===== */
-  .backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(20,20,20,.45); display: flex; align-items: center; justify-content: center; padding: 24px; }
-  .modal { width: 100%; max-width: 620px; max-height: calc(100vh - 48px); overflow: auto; background: #FFF; border-radius: 28px; padding: 30px 32px 26px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 24px 60px rgba(0,0,0,.18); }
-  .m-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-  .m-head h2 { margin: 0; font-size: 24px; }
-  .m-head p { margin: 6px 0 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
-  .close { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--soft); font-size: 18px; flex: none; }
-  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .seg label { display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--border); border-radius: 16px; cursor: pointer; }
-  .seg label:has(input:checked) { border-color: #6FA3BA; background: #F3F9FC; }
-  .seg input { margin-top: 3px; accent-color: var(--blue); }
-  .seg b { display: block; font-size: 15.5px; }
-  .seg small { font-size: 13px; color: var(--muted); }
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label, .field .lbl { font-size: 14px; font-weight: 600; color: #333; }
-  .field input, .field select { font: inherit; font-size: 16px; min-height: 48px; padding: 0 14px; border: 1px solid var(--border); border-radius: 12px; background: #FFF; color: var(--text); }
-  .field input[readonly] { background: #F6F6F5; color: #444; }
-  .field input:focus, .field select:focus { outline: 2px solid #6FA3BA; outline-offset: 1px; }
-  .field .err { font-size: 13px; color: var(--red); }
-  .field.invalid input, .field.invalid select { border-color: var(--red); }
-  .enf { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-  .enf label { display: flex; flex-direction: column; gap: 4px; padding: 14px; border: 1px solid var(--border); border-radius: 16px; cursor: pointer; font-size: 14px; }
-  .enf label:has(input:checked) { border-color: #6FA3BA; background: #F3F9FC; box-shadow: 0 0 0 1px #6FA3BA; }
-  .enf input { accent-color: var(--blue); margin: 0 0 4px; }
-  .enf b { font-size: 15px; }
-  .enf small { color: var(--muted); font-size: 12.5px; }
-  .one { display: block; padding: 12px 16px; line-height: 1.5; border-radius: 14px; background: var(--soft); font-size: 14px; color: #333; }
-  .m-foot { display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
-  .btn { min-height: 52px; padding: 0 24px; border-radius: 999px; font-size: 16px; border: 1px solid var(--border); background: #FFF; color: var(--text); }
-  .btn.primary { border: 0; background: var(--cta); font-weight: 600; padding: 0 30px; }
-  .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 50; background: #1F2326; color: #FFF; padding: 12px 20px; border-radius: 14px; font-size: 15px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
-
-  /* ===== Lo que ve el paciente ===== */
-  .patient { min-height: calc(100vh - 48px); background: #F4F4F3; padding: 32px 20px 48px; }
-  .pt-tag { max-width: 720px; margin: 0 auto 14px; font-size: 13px; color: var(--muted); text-align: center; }
-  .mail { max-width: 620px; margin: 0 auto; background: #FFF; border-radius: 18px; overflow: hidden; box-shadow: 0 6px 24px rgba(0,0,0,.06); }
-  .mail-meta { padding: 14px 22px; border-bottom: 1px solid var(--line); font-size: 13.5px; color: var(--muted); line-height: 1.7; }
-  .mail-meta b { color: var(--text); font-weight: 500; }
-  .mail-body { padding: 30px 34px 34px; display: flex; flex-direction: column; gap: 16px; font-size: 16px; line-height: 1.6; }
-  .mail-body h1 { margin: 0; font-size: 24px; }
-  .mail-body p { margin: 0; }
-  .mail-btn { align-self: flex-start; min-height: 52px; padding: 0 30px; border-radius: 999px; border: 0; background: var(--cta); font-size: 16px; font-weight: 600; }
-  .mail-foot { font-size: 13px; color: var(--muted); }
-
-  .shop { max-width: 980px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 22px; align-items: start; }
-  .shop-head { max-width: 980px; margin: 0 auto 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  .shop-head .brand { font-size: 15px; }
-  .shop-head small { color: var(--muted); font-size: 14px; }
-  .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-  .form-grid .full { grid-column: 1 / -1; }
-  .sec-t { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 6px 0 -4px; }
-  .prod { display: flex; gap: 14px; align-items: flex-start; }
-  .prod .ic { width: 54px; height: 54px; border-radius: 14px; background: var(--blue-bg); display: grid; place-items: center; font-size: 24px; flex: none; }
-  .prod b { display: block; font-size: 16px; }
-  .prod small { color: var(--muted); font-size: 13.5px; }
-  .sum-row { display: flex; justify-content: space-between; font-size: 15px; color: var(--muted); padding: 6px 0; }
-  .sum-row.tot { color: var(--text); font-weight: 700; font-size: 20px; border-top: 1px solid var(--line); padding-top: 12px; }
-  .lock { font-size: 13px; color: var(--muted); text-align: center; margin: 0; }
-  .pay-btn { min-height: 56px; border-radius: 999px; border: 0; background: var(--cta); font-size: 17px; font-weight: 600; }
-  .card-fields { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
-  .field input { min-width: 0; width: 100%; }
-  .field input[type="radio"] { min-height: 0; width: 18px; height: 18px; padding: 0; flex: none; }
-
-  .done { max-width: 560px; margin: 30px auto 0; text-align: center; align-items: center; padding: 40px 34px; }
-  .done-ic { width: 64px; height: 64px; border-radius: 50%; background: var(--green-bg); color: var(--green); display: grid; place-items: center; font-size: 30px; }
-  .done h1 { margin: 0; font-size: 26px; }
-  .done p { margin: 0; color: var(--muted); line-height: 1.55; }
-
-  @media (max-width: 1100px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .home-grid, .shop { grid-template-columns: minmax(0, 1fr); } }
-  @media (max-width: 900px) { .app { flex-direction: column; } .sidebar { width: auto; } .page, .topbar { padding-left: 16px; padding-right: 16px; } .seg, .enf, .form-grid { grid-template-columns: minmax(0, 1fr); } }
+  
 </style>
 </head>
 <body>
+<div id="demobar"></div>
 
-<!-- ===== Barra de demo: no forma parte del producto ===== -->
-<nav class="demo-bar" aria-label="Pasos de la demo">
-  <span class="label">Flujo de demo:</span>
-  <button class="demo-step" data-step="home"><b>1</b>Inicio: enviar link</button>
-  <button class="demo-step" data-step="pending"><b>2</b>Pacientes: pendiente</button>
-  <button class="demo-step" data-step="mail"><b>3</b>Email del paciente</button>
-  <button class="demo-step" data-step="shop"><b>4</b>Pago en Stripe</button>
-  <button class="demo-step" data-step="paid"><b>5</b>Pacientes: cuestionario enviado</button>
-  <span class="clicks" id="clicks">Clics para enviar: 0</span>
-  <button class="demo-reset" id="reset">Reiniciar</button>
-</nav>
+<div class="shell" id="pro">
+  <aside class="side" id="side"></aside>
+  <main class="main">
 
-<!-- ===================== PLATAFORMA DEL PROFESIONAL ===================== -->
-<div class="app" id="pro">
-  <aside class="sidebar">
-    <div class="brand">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="12" r="3"/><circle cx="8" cy="18" r="3"/><path d="M8.5 7.5l7 3M9.5 16.5l6-3"/></svg>
-      BIOTASMART
-    </div>
-    <div class="account">Mi consulta</div>
-    <nav class="nav">
-      <a data-nav="home">Inicio</a>
-      <a data-nav="patients">Pacientes</a>
-      <a>Stock de tests</a>
-      <a>Pedidos</a>
-      <a>Ajustes</a>
-    </nav>
-    <div class="sidebar-foot">Preferencias de cookies</div>
-  </aside>
-
-  <div class="content">
-    <header class="topbar">
-      <div class="crumbs" id="crumbs"></div>
-      <div class="user-area">
-        <select aria-label="Idioma"><option>Español</option></select>
-        <div class="user"><div class="user-text"><div>Mi consulta</div><div>Profesional</div></div><div class="avatar">MC</div></div>
-      </div>
-    </header>
-
-    <!-- Inicio -->
-    <main class="page" id="v-home">
-      <div class="hello"><h1>Hola, Marta 👋</h1><p>Esto es lo que necesita tu atención hoy.</p></div>
-      <div class="stats">
-        <div class="stat"><small>Tests en stock</small><div><b>0</b><span>En stock</span></div></div>
-        <div class="stat"><small>Tests en laboratorio</small><div><b>0</b><span>En proceso</span></div></div>
-        <div class="stat"><small>Informes sin ver</small><div><b>0</b><span>Al día</span></div></div>
-        <div class="stat"><small>Pacientes activos</small><div><b id="activeCount">2</b><span>Total</span></div></div>
-      </div>
-      <section class="card quick" id="quick">
-        <div class="quick-head"><h2>Enviar link de compra</h2><small>1 link = 1 test para 1 paciente</small></div>
+    <!-- ===== Inicio ===== -->
+    <section id="v-home">
+      <span class="cel cel-doble" aria-hidden="true"></span>
+      <p class="migas">Miércoles, 25 de noviembre · Centro Demo</p>
+      <h1 class="titular">Hola, Marta.<span>Esto es lo que necesita tu atención hoy.</span></h1>
+      <div class="card quick" id="quick" hidden>
+        <div class="card-h"><h2>Nuevo enlace de pago</h2><small>1 enlace = 1 test para 1 usuario</small></div>
         <div class="q-row">
-          <input id="qEmail" type="email" list="plist" placeholder="Email del paciente" autocomplete="off" aria-label="Email del paciente">
-          <datalist id="plist">
-            <option value="lucia.martin@ejemplo.com">Lucía Martín</option>
-            <option value="pedro.gomez@ejemplo.com">Pedro Gómez</option>
-          </datalist>
-          <div class="chips" role="group" aria-label="Enfoque del test">
-            <button type="button" class="chip" data-enf="nut" aria-pressed="false"><span class="dot" style="background:var(--intestinal)"></span>Intestinal · Nutrición</button>
-            <button type="button" class="chip" data-enf="muj" aria-pressed="false"><span class="dot" style="background:var(--intestinal)"></span>Intestinal · Mujer</button>
-            <button type="button" class="chip" data-enf="vag" aria-pressed="false"><span class="dot" style="background:var(--vaginal)"></span>Vaginal</button>
+          <input id="qEmail" type="email" list="plist" placeholder="Email del usuario" autocomplete="off" aria-label="Email del usuario">
+          <datalist id="plist"><option value="lucia.martin@ejemplo.com">Lucía Martín</option><option value="pedro.gomez@ejemplo.com">Pedro Gómez</option></datalist>
+          <div class="chips-e" role="group" aria-label="Enfoque del test">
+            <button type="button" class="chip-e" data-enf="nut" aria-pressed="false"><i style="background:var(--cobalto)"></i>Intestinal · Nutrición</button>
+            <button type="button" class="chip-e" data-enf="muj" aria-pressed="false"><i style="background:var(--cobalto)"></i>Intestinal · Mujer</button>
+            <button type="button" class="chip-e" data-enf="vag" aria-pressed="false"><i style="background:var(--coral)"></i>Vaginal</button>
           </div>
-          <button type="button" class="q-send" id="qSend" disabled>Enviar link</button>
+          <button type="button" class="btn negro grande" id="qSend" disabled>Enviar enlace</button>
         </div>
-        <div class="q-who" id="qWho">Escribe el email: si ya es tu paciente, se asigna a su ficha; si no, se crea uno nuevo.</div>
-      </section>
-      <div class="home-grid">
-        <div class="col">
-          <section class="card"><h2>Novedades de tus pacientes</h2><p class="muted" id="news">🔔 Sin novedades esta semana</p></section>
-          <section class="card"><h2>Recomendado para hoy</h2><p class="muted">2 pacientes sin test en curso. No tienen test, o tienen el tubo y aún falta su cuestionario.</p></section>
-        </div>
-        <section class="card">
-          <h2>Acciones rápidas</h2>
-          <div class="qa">
-            <button class="main">＋ Nuevo paciente</button>
-            <button>＋ Activar test a paciente</button>
-            <button>📦 Pedir más tests</button>
-            <button disabled>🚚 Solicitar recogida</button>
-          </div>
-        </section>
+        <div class="q-who" id="qWho"></div>
       </div>
-    </main>
+      <div class="kpis cuatro">
+        <div class="kpi"><b>0</b><span>Tests en stock</span></div><div class="kpi"><b>0</b><span>Tests en laboratorio</span></div>
+        <div class="kpi"><b>0</b><span>Informes sin ver</span></div><div class="kpi"><b id="nAct">2</b><span>Usuarios activos</span></div>
+      </div>
+      <div class="card" id="accCard">
+        <div class="acc-fila"><h2 style="margin-right:6px">Acciones rápidas</h2>
+          <a class="btn borde" href="alta-paciente.html">Nuevo usuario</a><a class="btn borde" href="activar-test.html">Entregar un test</a>
+          <button class="btn negro" type="button" id="openSend">Nuevo enlace de pago</button><a class="btn borde" href="pedir-tests.html">Pedir más tests</a>
+          <span class="pie-a" id="news">Sin novedades esta semana</span></div>
+      </div>
+    </section>
 
-    <!-- Pacientes -->
-    <main class="page" id="v-patients" hidden>
-      <div class="hello"><h1>Pacientes</h1></div>
-      <section class="card">
-        <table class="ptable">
-          <thead><tr><th>Paciente</th><th>Test</th><th>Estado</th><th>Último movimiento</th><th></th></tr></thead>
-          <tbody id="prows"></tbody>
-        </table>
-        <div class="note-box" id="pnote"></div>
-      </section>
-    </main>
-  </div>
+    <!-- ===== Usuarios ===== -->
+    <section id="v-patients" hidden>
+      <span class="cel cel-racimo" aria-hidden="true"></span><span class="cel cel-flor2" aria-hidden="true"></span>
+      <div class="cabecera"><div><h1>Usuarios</h1><p class="meta" id="pmeta"></p></div></div>
+      <div class="card">
+        <div class="tabla-wrap"><table class="tabla-min"><thead><tr><th>Usuario</th><th>Test</th><th>Estado</th><th>Último movimiento</th><th></th></tr></thead><tbody id="prows"></tbody></table></div>
+        <div class="aviso" id="pnote" style="margin-top:16px"></div>
+      </div>
+    </section>
+  </main>
 </div>
 
-<!-- ===================== LO QUE VE EL PACIENTE ===================== -->
-<div class="patient" id="v-mail" hidden>
-  <p class="pt-tag">Así le llega el email al paciente</p>
+<!-- ===== Pop-up: Nuevo enlace de pago ===== -->
+<div class="velo" id="velo" hidden></div>
+<form class="modal sm" id="m-send" hidden novalidate role="dialog" aria-modal="true" aria-labelledby="sendTitle">
+  <div class="m-cab"><span class="ico az">↗</span><div><h2 id="sendTitle">Nuevo enlace de pago</h2><p>Tu usuario recibirá un email para comprar y pagar su test. Lo verás en Usuarios desde ahora.</p></div><button type="button" class="cerrar" data-close aria-label="Cerrar">×</button></div>
+  <div class="m-cuerpo">
+    <div class="m-paso"><span class="m-num">1</span><div><h4>¿Para quién es?</h4>
+      <div class="seg seg-m" id="who"><button type="button" class="on" data-w="existing">Usuario ya creado</button><button type="button" data-w="new">Usuario nuevo</button></div>
+      <div class="campo" id="f-patient"><span>Usuario</span><select id="patientSel"><option value="">Selecciona un usuario…</option><option value="0">Lucía Martín · lucia.martin@ejemplo.com</option><option value="1">Pedro Gómez · pedro.gomez@ejemplo.com</option></select></div>
+      <div class="campo" id="f-email" style="margin-top:10px"><span>Email del usuario</span><input id="email" type="email" placeholder="nombre@ejemplo.com" autocomplete="off"></div></div></div>
+    <div class="m-paso"><span class="m-num">2</span><div><h4>Enfoque del test</h4>
+      <div class="opc-grid" id="enfs">
+        <button type="button" class="opc-big on" data-enf="nut"><span><b>Intestinal</b><small>Enfoque Nutrición</small></span><span class="chk"></span></button>
+        <button type="button" class="opc-big" data-enf="muj"><span><b>Intestinal</b><small>Enfoque Mujer</small></span><span class="chk"></span></button>
+        <button type="button" class="opc-big" data-enf="vag"><span><b>Vaginal</b><small>Salud vaginal</small></span><span class="chk"></span></button>
+      </div>
+      <p class="nota" style="margin-top:10px">Cada enlace es para <b>1 test y 1 usuario</b>. Si otra persona también lo necesita, envíale su propio enlace.</p></div></div>
+  </div>
+  <div class="m-pie"><span class="res"></span><div class="bots"><button type="button" class="btn borde" data-close>Cancelar</button><button type="submit" class="btn negro">Enviar enlace</button></div></div>
+</form>
+
+<!-- ===== Lo que ve el usuario: email ===== -->
+<div class="ext" id="v-mail" hidden>
+  <p class="pt-tag">Así le llega el email al usuario</p>
   <div class="mail">
-    <div class="mail-meta">
-      <div>De: <b>Biotasmart</b> en nombre de <b>Mi consulta</b></div>
-      <div>Para: <b data-b="email"></b></div>
-      <div>Asunto: <b>Tu profesional te ha recomendado un test de microbiota</b></div>
-    </div>
+    <div class="mail-meta"><div>De: <b>Biotasmart</b> en nombre de <b>Centro Demo</b></div><div>Para: <b data-b="email"></b></div><div>Asunto: <b>Tu profesional te ha recomendado un test de microbiota</b></div></div>
     <div class="mail-body">
       <h1>Hola 👋</h1>
-      <p><b>Mi consulta</b> te ha recomendado el <b data-b="testName"></b>. Desde este enlace puedes comprarlo; te lo enviamos a casa en 24 h laborables.</p>
-      <button class="mail-btn" id="toShop">Comprar mi test</button>
+      <p><b>Centro Demo</b> te ha recomendado el <b data-b="testName"></b>. Desde este enlace puedes comprarlo; te lo enviamos a casa en 24 h laborables.</p>
+      <button class="btn negro grande" id="toShop" type="button" style="align-self:flex-start">Comprar mi test</button>
       <p class="mail-foot">Este enlace es personal: sirve para un único test a tu nombre y caduca el 25/12/2026.</p>
     </div>
   </div>
 </div>
 
+<!-- ===== Lo que ve el usuario: página de pago de Stripe ===== -->
 <div class="patient" id="v-shop" hidden>
-  <p class="pt-tag">Página de pago de Stripe que abre el paciente desde el email (datos de ejemplo)</p>
+  <p class="pt-tag">Página de pago de Stripe que abre el usuario desde el email (datos de ejemplo)</p>
   <form class="stx" id="shopForm" novalidate>
     <div class="st-l"><div class="in">
       <div class="st-back"><span class="arr" aria-hidden="true">←</span><span class="logo" aria-hidden="true">🏪</span><b>biotasmart</b></div>
@@ -394,31 +217,30 @@
       <p class="st-foot">Con tecnología de <b>Stripe</b> · Términos · Privacidad</p>
     </div></div>
   </form>
-  <section class="card done" id="shopDone" hidden>
+  
+  <section class="card done-c" id="shopDone" hidden>
     <div class="done-ic">✓</div>
     <h1>¡Gracias, <span data-b="name"></span>!</h1>
     <p>Hemos recibido tu pago. Te enviamos el test a casa y te acabamos de mandar el <b>cuestionario</b> a <b data-b="email"></b>. Rellénalo antes de tomar la muestra.</p>
-    <button class="btn primary" data-step="paid">Ver cómo lo ve el profesional →</button>
+    <button class="btn negro" type="button" data-step="paid">Ver cómo lo ve el profesional →</button>
   </section>
 </div>
 
-<div class="toast" id="toast" hidden></div>
-
+<script>var MODE = 'rapido';</script>
+<script src="tema.js"></script>
 <script>
-  var PATIENTS_BASE = [
-    { name: 'Lucía Martín', email: 'lucia.martin@ejemplo.com', test: '—', st: ['grey', 'Sin test'], last: '12/11/2026' },
-    { name: 'Pedro Gómez', email: 'pedro.gomez@ejemplo.com', test: '—', st: ['grey', 'Sin test'], last: '05/11/2026' }
+  var $ = function (id) { return document.getElementById(id); };
+  var POPUP = MODE === 'popup';
+  var BASE = [
+    { name: 'Lucía Martín', email: 'lucia.martin@ejemplo.com', test: '—', st: ['gris', 'Sin test'], last: '12/11/2026' },
+    { name: 'Pedro Gómez', email: 'pedro.gomez@ejemplo.com', test: '—', st: ['gris', 'Sin test'], last: '05/11/2026' }
   ];
   var ENF = { nut: 'Test intestinal avanzado · Enfoque Nutrición', muj: 'Test intestinal avanzado · Enfoque Mujer', vag: 'Test vaginal avanzado' };
   var ENF_SHORT = { nut: 'Intestinal · Nutrición', muj: 'Intestinal · Mujer', vag: 'Vaginal' };
   var STRIPE_NAME = { nut: 'Test de microbiota intestinal · Avanzado', muj: 'Test de microbiota intestinal · Avanzado', vag: 'Test de microbiota vaginal · Avanzado' };
   var STRIPE_DESC = { nut: 'Enfoque Nutrición', muj: 'Enfoque Mujer', vag: '' };
-  // Estado del ejemplo: a quién se manda el link y en qué punto está
-  var link = null;        // { who:'new'|'existing', idx, email, enf, paid, name }
-  var DEFAULT_LINK = { who: 'new', idx: null, email: 'ana.ejemplo@correo.com', enf: 'nut', paid: false, name: '' };
-
-  var $ = function (id) { return document.getElementById(id); };
-  function toast(t) { var e = $('toast'); e.textContent = t; e.hidden = false; clearTimeout(e._t); e._t = setTimeout(function () { e.hidden = true; }, 2600); }
+  var link = null, clicks = 0, qEnf = null, step = 'home';
+  var DEFAULT_LINK = { who: 'new', idx: null, email: 'ana.ejemplo@correo.com', enf: 'nut', paid: false, name: '', fullName: '' };
 
   function bind() {
     var l = link || DEFAULT_LINK;
@@ -429,116 +251,127 @@
     document.querySelectorAll('[data-b="stripeDesc"]').forEach(function (e) { e.textContent = STRIPE_DESC[l.enf]; e.hidden = !STRIPE_DESC[l.enf]; });
     document.querySelectorAll('[data-b="name"]').forEach(function (e) { e.textContent = l.name || 'Ana'; });
   }
-
   function renderPatients() {
     var l = link || DEFAULT_LINK;
-    var rows = PATIENTS_BASE.map(function (p) { return Object.assign({}, p); });
-    var target;
-    if (l.who === 'existing' && l.idx !== null) { target = rows[l.idx]; }
-    else { target = { name: '', email: l.email, test: '', st: null, last: '' }; rows.unshift(target); }
-    target.hl = true;
-    target.test = ENF_SHORT[l.enf];
-    if (l.paid) {
-      if (!target.name) target.name = l.fullName || 'Ana Ejemplo Ruiz';
-      target.st = ['green', '✓ Cuestionario enviado'];
-      target.last = 'Pagado hoy · datos completados';
-    } else {
-      target.st = ['amber', '⏳ Link enviado · pendiente de pago'];
-      target.last = 'Link enviado hoy · caduca el 25/12/2026';
-    }
+    var rows = BASE.map(function (p) { return Object.assign({}, p); }), target;
+    if (l.who === 'existing' && l.idx !== null) target = rows[l.idx]; else { target = { name: '', email: l.email }; rows.unshift(target); }
+    target.hl = true; target.test = ENF_SHORT[l.enf];
+    if (l.paid) { if (!target.name) target.name = l.fullName || 'Ana Ejemplo Ruiz'; target.st = ['verde', '✓ Cuestionario enviado']; target.last = 'Pagado hoy · datos completados'; }
+    else { target.st = ['ambar', 'Enlace enviado · pendiente de pago']; target.last = 'Enlace enviado hoy · caduca el 25/12/2026'; }
     $('prows').innerHTML = rows.map(function (p) {
-      var who = p.name ? '<b>' + p.name + '</b><small>' + p.email + '</small>' : '<b>' + p.email + '</b><small>Faltan sus datos: los rellenará al pagar</small>';
-      var act = p.hl && !l.paid ? '<button class="link-btn" onclick="toast(\'Link reenviado a ' + p.email + '\')">Reenviar link</button>' : '';
-      return '<tr class="' + (p.hl ? 'hl' : '') + '"><td>' + who + '</td><td>' + p.test + '</td><td><span class="st ' + p.st[0] + '">' + p.st[1] + '</span></td><td>' + p.last + '</td><td>' + act + '</td></tr>';
+      var who = p.name ? '<div class="who"><span class="av">' + p.name.split(' ').map(function (x) { return x[0]; }).slice(0, 2).join('') + '</span><div><b>' + p.name + '</b><small>' + p.email + '</small></div></div>'
+        : '<div class="who"><span class="av">@</span><div><b>' + p.email + '</b><small>Faltan sus datos: los rellenará al pagar</small></div></div>';
+      var act = p.hl && !l.paid ? '<button class="lnk" type="button" data-resend="' + p.email + '">Reenviar enlace</button>' : '';
+      return '<tr class="' + (p.hl ? 'hl' : '') + '"><td>' + who + '</td><td>' + (p.test === '—' ? '—' : '<span class="ba ' + (p.test === 'Vaginal' ? 'vag' : 'int') + '">' + p.test + '</span>') + '</td><td><span class="est ' + p.st[0] + '">' + p.st[1] + '</span></td><td class="gr">' + p.last + '</td><td class="r">' + act + '</td></tr>';
     }).join('');
+    $('pmeta').textContent = rows.length + ' usuarios con test en curso o reciente';
+    $('nAct').textContent = l.who === 'new' && link ? 3 : 2;
     $('pnote').innerHTML = l.paid
-      ? '✅ Al pagar, el paciente ha dado su nombre, teléfono y dirección en la página de pago de Stripe. La ficha se ha completado sola y se le ha enviado el cuestionario.'
-      : 'ℹ️ Desde que envías el link ya puedes seguir a este paciente. Cuando pague, se completarán sus datos y el estado pasará a «Cuestionario enviado».';
-    $('activeCount').textContent = (link && link.who === 'new' ? 3 : 2);
-    $('news').textContent = l.paid ? '✅ ' + (l.fullName || 'Ana Ejemplo Ruiz') + ' ha pagado su test. Cuestionario enviado.' : '🔔 Sin novedades esta semana';
+      ? '<span>Al pagar, el usuario ha dado su nombre, teléfono y dirección en la página de pago de Stripe. La ficha se ha completado sola y se le ha enviado el cuestionario.</span>'
+      : '<span>Desde que envías el enlace ya puedes seguir a este usuario. Cuando pague, se completarán sus datos y el estado pasará a «Cuestionario enviado».</span>';
+    $('news').textContent = l.paid ? (l.fullName || 'Ana Ejemplo Ruiz') + ' ha pagado su test. Cuestionario enviado.' : 'Sin novedades esta semana';
   }
 
   /* ---------- Navegación de la demo ---------- */
-  var CRUMB = { home: '<strong>Inicio</strong>', patients: 'Inicio › <strong>Pacientes</strong>' };
-  function show(step) {
-    var proView = { home: 'home', pending: 'patients', paid: 'patients' }[step];
-    $('pro').hidden = !proView;
-    $('v-mail').hidden = step !== 'mail';
-    $('v-shop').hidden = step !== 'shop';
-    if (proView) {
-      $('v-home').hidden = proView !== 'home';
-      $('v-patients').hidden = proView !== 'patients';
-      $('crumbs').innerHTML = CRUMB[proView];
-      document.querySelectorAll('.nav a[data-nav]').forEach(function (a) { a.toggleAttribute('aria-current', a.dataset.nav === proView); if (a.dataset.nav === proView) a.setAttribute('aria-current', 'page'); });
-    }
-    if (step === 'pending' || step === 'paid' || step === 'mail' || step === 'shop') { if (!link) link = Object.assign({}, DEFAULT_LINK); }
-    if (step === 'paid') link.paid = true;
-    if (step === 'pending' || step === 'mail' || step === 'shop') link.paid = false;
-    if (step === 'shop') { $('shopForm').hidden = false; $('shopDone').hidden = true; $('v-shop').classList.remove('is-done'); }
-    bind(); renderPatients();
-    document.querySelectorAll('.demo-step').forEach(function (b) { if (b.dataset.step === step) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+  function show(s) {
+    step = s;
+    var pro = { home: 'home', send: 'home', pending: 'patients', paid: 'patients' }[s];
+    $('pro').hidden = !pro; $('v-mail').hidden = s !== 'mail'; $('v-shop').hidden = s !== 'shop';
+    $('velo').hidden = s !== 'send'; $('m-send').hidden = s !== 'send';
+    if (pro) { $('v-home').hidden = pro !== 'home'; $('v-patients').hidden = pro !== 'patients'; Tema.setNav(pro === 'home' ? 'inicio' : 'usuarios'); }
+    if (s === 'pending' || s === 'paid' || s === 'mail' || s === 'shop') { if (!link) link = Object.assign({}, DEFAULT_LINK); }
+    if (s === 'paid') link.paid = true;
+    if (s === 'pending' || s === 'mail' || s === 'shop') link.paid = false;
+    if (s === 'shop') { $('shopForm').hidden = false; $('shopDone').hidden = true; $('v-shop').classList.remove('is-done'); }
+    if (s === 'send') openSend();
+    bind(); renderPatients(); Tema.setStep(s);
     window.scrollTo(0, 0);
   }
   document.addEventListener('click', function (e) {
-    var s = e.target.closest('[data-step]'); if (s) { e.preventDefault(); show(s.dataset.step); return; }
-    var n = e.target.closest('.nav a[data-nav]'); if (n) show(n.dataset.nav === 'home' ? 'home' : (link && link.paid ? 'paid' : 'pending'));
+    var b = e.target.closest('[data-step]');
+    if (b && !b.closest('#demobar')) { e.preventDefault(); show(b.dataset.step); return; }
+    var r = e.target.closest('[data-resend]'); if (r) Tema.toast('Enlace reenviado a ' + r.dataset.resend);
   });
 
-  /* ---------- Envío rápido: email + enfoque + Enviar ---------- */
-  var qEnf = null, clicks = 0;
-  function countClick() { clicks++; $('clicks').textContent = 'Clics para enviar: ' + clicks; }
+  /* ---------- Envío rápido (2 clics): email + enfoque + Enviar ---------- */
+  function countClick() { clicks++; var c = $('clicks'); if (c) c.textContent = 'Clics para enviar: ' + clicks; }
   function qState() {
-    var email = $('qEmail').value.trim();
-    var idx = PATIENTS_BASE.findIndex(function (p) { return p.email === email; });
-    var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    var who = $('qWho');
+    var email = $('qEmail').value.trim(), idx = BASE.findIndex(function (p) { return p.email === email; });
+    var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), who = $('qWho');
     who.className = 'q-who' + (idx >= 0 ? ' ok' : '');
-    who.innerHTML = !email ? 'Escribe el email: si ya es tu paciente, se asigna a su ficha; si no, se crea uno nuevo.'
-      : idx >= 0 ? '✓ Ya es tu paciente: <b>' + PATIENTS_BASE[idx].name + '</b>. El link se asigna a su ficha.'
-      : valid ? '＋ Paciente nuevo: se crea con este email y completará sus datos al pagar.'
-      : 'Escribe un email válido.';
+    who.innerHTML = !email ? 'Escribe el email: si ya es tu usuario, se asigna a su ficha; si no, se crea uno nuevo.'
+      : idx >= 0 ? '✓ Ya es tu usuario: <b>' + BASE[idx].name + '</b>. El enlace se asigna a su ficha.'
+      : valid ? '＋ Usuario nuevo: se crea con este email y completará sus datos al pagar.' : 'Escribe un email válido.';
     $('qSend').disabled = !(valid && qEnf);
     return { email: email, idx: idx };
   }
   $('qEmail').addEventListener('input', qState);
-  document.querySelectorAll('.chip').forEach(function (b) {
-    b.addEventListener('click', function () {
-      countClick();
-      qEnf = b.dataset.enf;
-      document.querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
-      qState();
-    });
+  document.querySelectorAll('.chip-e').forEach(function (b) {
+    b.addEventListener('click', function () { countClick(); qEnf = b.dataset.enf; document.querySelectorAll('.chip-e').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); qState(); });
   });
   $('qSend').addEventListener('click', function () {
-    countClick();
-    var st = qState();
-    link = { who: st.idx >= 0 ? 'existing' : 'new', idx: st.idx >= 0 ? st.idx : null, email: st.email, enf: qEnf, paid: false, name: '' };
-    toast('Link enviado a ' + st.email + ' · ' + clicks + ' clics');
-    show('pending');
+    countClick(); var st = qState();
+    link = { who: st.idx >= 0 ? 'existing' : 'new', idx: st.idx >= 0 ? st.idx : null, email: st.email, enf: qEnf, paid: false, name: '', fullName: '' };
+    show('pending'); Tema.toast('Enlace enviado a ' + st.email + ' · ' + clicks + ' clics');
   });
-  function resetQuick() {
-    $('qEmail').value = ''; qEnf = null; clicks = 0; $('clicks').textContent = 'Clics para enviar: 0';
-    document.querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
-    qState();
-  }
 
-  /* ---------- Pago en Stripe ---------- */
-  document.querySelectorAll('input[name="pm"]').forEach(function (r) {
-    r.addEventListener('change', function () { $('stCard').hidden = document.querySelector('input[name="pm"]:checked').value !== 'card'; });
+  /* ---------- Pop-up (versión completa) ---------- */
+  var form = $('m-send'), popEnf = 'nut', popWho = 'existing';
+  function syncWho() {
+    $('f-patient').hidden = popWho !== 'existing'; var email = $('email');
+    if (popWho === 'existing') { var i = $('patientSel').value; email.value = i === '' ? '' : BASE[i].email; email.readOnly = true; email.placeholder = 'Se rellena al elegir el usuario'; }
+    else { if (email.readOnly) email.value = ''; email.readOnly = false; email.placeholder = 'nombre@ejemplo.com'; }
+    clearErr();
+  }
+  function clearErr() { form.querySelectorAll('.error').forEach(function (e) { e.remove(); }); form.querySelectorAll('.err').forEach(function (e) { e.classList.remove('err'); }); }
+  function err(id, msg) { var f = $(id); f.classList.add('err'); f.insertAdjacentHTML('beforeend', '<span class="error">' + msg + '</span>'); }
+  function openSend() {
+    popWho = 'existing'; popEnf = 'nut'; $('patientSel').value = ''; $('email').value = '';
+    $('who').querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x.dataset.w === 'existing'); });
+    $('enfs').querySelectorAll('.opc-big').forEach(function (x) { x.classList.toggle('on', x.dataset.enf === 'nut'); });
+    syncWho();
+  }
+  $('openSend').addEventListener('click', function () { show('send'); });
+  $('who').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; popWho = b.dataset.w; this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); }); syncWho(); });
+  $('enfs').addEventListener('click', function (e) { var b = e.target.closest('.opc-big'); if (!b) return; popEnf = b.dataset.enf; this.querySelectorAll('.opc-big').forEach(function (x) { x.classList.toggle('on', x === b); }); });
+  $('patientSel').addEventListener('change', syncWho);
+  document.querySelectorAll('[data-close]').forEach(function (b) { b.addEventListener('click', function () { show('home'); }); });
+  $('velo').addEventListener('click', function () { show('home'); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && step === 'send') show('home'); });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault(); clearErr();
+    var email = $('email').value.trim();
+    if (popWho === 'existing' && $('patientSel').value === '') { err('f-patient', 'Elige un usuario.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err('f-email', 'Escribe un email válido.'); return; }
+    if (popWho === 'new' && BASE.some(function (p) { return p.email === email; })) { err('f-email', 'Este email ya es de un usuario. Elige «Usuario ya creado».'); return; }
+    link = { who: popWho, idx: popWho === 'existing' ? +$('patientSel').value : null, email: email, enf: popEnf, paid: false, name: '', fullName: '' };
+    show('pending'); Tema.toast('Enlace enviado a ' + email);
   });
+
+  /* ---------- Pago del usuario en Stripe ---------- */
+  document.querySelectorAll('input[name="pm"]').forEach(function (r) { r.addEventListener('change', function () { $('stCard').hidden = document.querySelector('input[name="pm"]:checked').value !== 'card'; }); });
   $('toShop').addEventListener('click', function () { show('shop'); });
   $('shopForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    var fn = $('s-name').value.trim() || 'Ana Ejemplo Ruiz'; link.fullName = fn; link.name = fn.split(' ')[0];
-    link.paid = true;
-    if (link.who === 'existing') PATIENTS_BASE[link.idx].name = PATIENTS_BASE[link.idx].name; // los datos de la ficha se actualizan con lo que pide el pago
-    bind();
-    $('shopForm').hidden = true; $('shopDone').hidden = false; $('v-shop').classList.add('is-done');
-    window.scrollTo(0, 0);
+    var fn = $('s-name').value.trim() || 'Ana Ejemplo Ruiz'; link.fullName = fn; link.name = fn.split(' ')[0]; link.paid = true;
+    bind(); $('shopForm').hidden = true; $('shopDone').hidden = false; $('v-shop').classList.add('is-done'); window.scrollTo(0, 0);
   });
 
-  $('reset').addEventListener('click', function () { link = null; resetQuick(); show('home'); });
-  show('home');
+  /* ---------- Barra de demo ---------- */
+  var STEPS = POPUP
+    ? [['home', '1 Inicio'], ['send', '2 Nuevo enlace de pago'], ['pending', '3 Usuarios: pendiente'], ['mail', '4 Email del usuario'], ['shop', '5 Pago en Stripe'], ['paid', '6 Usuarios: cuestionario enviado']]
+    : [['home', '1 Inicio: enviar enlace'], ['pending', '2 Usuarios: pendiente'], ['mail', '3 Email del usuario'], ['shop', '4 Pago en Stripe'], ['paid', '5 Usuarios: cuestionario enviado']];
+  $('quick').hidden = POPUP;
+  $('openSend').className = POPUP ? 'btn negro' : 'btn borde';
+  if (!POPUP) $('openSend').hidden = true;
+  Tema.shell({ nav: 'inicio', badges: { usuarios: 2 }, handlers: { inicio: function () { show('home'); }, usuarios: function () { show(link ? (link.paid ? 'paid' : 'pending') : 'pending'); } },
+    demo: { title: POPUP ? 'Enlace de pago · versión completa' : 'Enlace de pago · versión rápida (2 clics)', label: '', current: 'home', steps: STEPS, onStep: function (s) { show(s); },
+      extra: (POPUP ? [] : [{ id: 'clicks', label: 'Clics para enviar: 0', cls: 'clicks' }]).concat([{ id: 'reset', label: 'Reiniciar', cls: 'r' }]) } });
+  $('reset').addEventListener('click', function () {
+    link = null; clicks = 0; qEnf = null; $('qEmail').value = ''; document.querySelectorAll('.chip-e').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+    var c = $('clicks'); if (c) c.textContent = 'Clics para enviar: 0'; qState(); show('home');
+  });
+  qState(); show('home');
 </script>
 </body>
 </html>
