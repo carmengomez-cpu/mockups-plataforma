@@ -63,7 +63,7 @@
     (d.steps || []).forEach(function (s) {
       html += '<button type="button" data-step="' + s[0] + '"' + (s[0] === d.current ? ' class="on"' : '') + '>' + s[1] + '</button>';
     });
-    (d.extra || []).forEach(function (x) { html += '<button type="button" class="' + (x.cls || '') + '" id="' + x.id + '">' + x.label + '</button>'; });
+    (d.extra || []).forEach(function (x) { html += x.text ? '<span class="k">' + x.label + '</span>' : '<button type="button" class="' + (x.cls || '') + '" id="' + x.id + '">' + x.label + '</button>'; });
     el.className = 'demobar'; el.innerHTML = html;
     el.addEventListener('click', function (e) {
       var b = e.target.closest('[data-step]'); if (!b) return;

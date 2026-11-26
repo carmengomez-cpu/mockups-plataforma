@@ -19,6 +19,16 @@
   .ulist .opc-big{align-items:center;padding:10px 14px}
   .chips-s{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
   .chips-s span{font-size:12.5px;padding:3px 11px;border-radius:999px;background:var(--papel2)}
+  /* Acciones arriba y pequeñas; métricas estrechas y alargadas debajo */
+  .acciones-st{gap:8px;margin-bottom:10px}
+  .acciones-st .acc-st{padding:9px 14px;gap:10px;border-radius:14px}
+  .acciones-st .acc-st .ico{width:30px;height:30px;font-size:14px}
+  .acciones-st .acc-st b{font-size:14px}
+  .acciones-st .acc-st small{font-size:11.5px}
+  .kpis{gap:10px;margin-bottom:14px}
+  .kpis .kpi{display:flex;align-items:center;gap:12px;padding:10px 18px;border-radius:14px}
+  .kpis .kpi b{font-size:28px}
+  .kpis .kpi span{margin:0;font-size:13px}
 </style>
 </head>
 <body>
@@ -28,12 +38,6 @@
     <span class="cel cel-capA" aria-hidden="true"></span>
     <div class="cabecera">
       <div><h1>Stock</h1><p class="meta">Cada tubo, del cajón del centro al laboratorio.</p></div>
-    </div>
-
-    <div class="kpis">
-      <div class="kpi"><b id="kLibres"></b><span id="kLibresT">Libres en el centro</span></div>
-      <div class="kpi"><b id="kEnt"></b><span>Vinculados a usuarios</span></div>
-      <div class="kpi"><b>20</b><span>En camino</span></div>
     </div>
 
     <div class="acciones-st">
@@ -46,6 +50,12 @@
       <a class="acc-st" href="pedir-tests.html" style="text-decoration:none">
         <span class="ico os">＋</span><span><b>Pedir más</b><small>Sin mínimo · llega en 3-4 días laborables</small></span>
       </a>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><b id="kLibres"></b><span id="kLibresT">Libres en el centro</span></div>
+      <div class="kpi"><b id="kEnt"></b><span>Vinculados a usuarios</span></div>
+      <div class="kpi"><b>20</b><span>En camino</span></div>
     </div>
 
     <div class="card">

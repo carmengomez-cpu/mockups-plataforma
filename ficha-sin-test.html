@@ -49,6 +49,8 @@
   .tab-f{font-family:var(--display);font-weight:500;font-size:13.5px;padding:8px 18px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--linea2);background:var(--blanco);color:var(--tinta)}
   .tab-f.on{background:var(--tinta);color:#fff;box-shadow:none}
   .tools{display:flex;gap:8px;flex-wrap:wrap}
+  .btns-f{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+  .btn[disabled]{cursor:not-allowed}
   .panel{display:flex;flex-direction:column;gap:16px}
   .muestra{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
   .muestra h2{margin-bottom:6px}.muestra p{color:var(--gris);max-width:44ch}
@@ -97,8 +99,12 @@
             </div>
             <div>
               <p class="ttl-m">Formulario</p>
-              <button class="btn borde chico" type="button" data-toast="Formulario enviado por correo.">✉ Enviar</button>
+              <div class="btns-f">
+                <button class="btn borde chico" type="button" data-toast="Formulario enviado por correo.">✉ Enviar</button>
+                <button class="btn borde chico" type="button" id="bRellenar" title="Rellenar el formulario aquí, en la clínica">✎ Rellenar en clínica</button>
+              </div>
               <div class="sub-st" id="formSt"></div>
+              <div class="sub-st nn" id="formHint"></div>
             </div>
           </div>
         </div>
@@ -122,9 +128,9 @@
             <button class="tab-f on" data-tab="informe">Informe</button><button class="tab-f" data-tab="microbiota">Microbiota</button><button class="tab-f" data-tab="cuestionario">Cuestionario</button><button class="tab-f" data-tab="notas">Notas</button>
           </div>
           <div class="tools" id="tools">
-            <button class="btn borde chico" type="button" data-toast="Modo consulta: la pantalla para enseñar el informe al usuario.">Modo consulta</button>
-            <button class="btn borde chico" type="button" data-toast="Aquí se descargaría el PDF.">Descargar PDF</button>
-            <button class="btn negro chico" type="button" data-toast="PDF enviado a tu correo.">Enviarme el PDF por correo</button>
+            <button class="btn borde chico" type="button" id="bConsulta" data-toast="Modo consulta: la pantalla para enseñar el informe al usuario.">Modo consulta</button>
+            <button class="btn borde chico solo-informe" type="button" data-toast="Aquí se descargaría el PDF.">Descargar PDF</button>
+            <button class="btn negro chico solo-informe" type="button" data-toast="PDF enviado a tu correo.">Enviarme el PDF por correo</button>
           </div>
         </div>
         <div id="panel" class="panel"></div>
@@ -158,6 +164,21 @@
 </div>
 
 <script>var FICHA = 'sin';</script>
+<!-- Rellenar el formulario en la clínica (solo presencial e híbrido) -->
+<div class="modal" id="mForm" hidden role="dialog" aria-modal="true" aria-labelledby="fmT">
+  <div class="m-cab"><span class="ico az">✎</span><div><h2 id="fmT">Formulario de Lucía Martín</h2><p>Se rellena aquí, en la clínica, con el usuario delante.</p></div></div>
+  <div class="m-cuerpo">
+    <div class="m-paso"><span class="m-num">1</span><div><h4>Datos generales</h4><div class="campos">
+      <label class="campo"><span>Fecha de nacimiento</span><input placeholder="dd/mm/aaaa"></label>
+      <label class="campo"><span>Sexo</span><select><option>Mujer</option><option>Hombre</option><option>Otro</option></select></label></div></div></div>
+    <div class="m-paso"><span class="m-num">2</span><div><h4>Salud y hábitos</h4><div class="campos">
+      <label class="campo"><span>¿Toma medicación?</span><select><option>No</option><option>Sí</option></select></label>
+      <label class="campo"><span>Alimentación</span><select><option>Omnívora</option><option>Vegetariana</option><option>Vegana</option></select></label>
+      <label class="campo"><span>Observaciones</span><input placeholder="Opcional"></label></div></div></div>
+  </div>
+  <div class="m-pie"><span class="res">Al guardar se solicita la recogida de la muestra.</span><div class="bots"><button type="button" class="btn borde" id="formCancel">Cancelar</button><button type="button" class="btn negro" id="formOk">Guardar formulario</button></div></div>
+</div>
+
 <script src="tema.js"></script>
 <script>
   var $ = function (id) { return document.getElementById(id); };
@@ -165,8 +186,12 @@
   Tema.shell({
     nav: 'usuarios', badges: { usuarios: 2 },
     demo: { title: CON ? 'Ficha con test' : 'Ficha sin test', label: 'Simular cuenta:', current: 'stock', steps: [['stock', 'Con stock'], ['nostock', 'Sin stock']],
-      onStep: function (s) { hasStock = s === 'stock'; Tema.setStep(s); renderPago(); } }
+      onStep: function (s) { hasStock = s === 'stock'; Tema.setStep(s); renderPago(); },
+      extra: [{ text: true, label: 'Tipo de consulta:' }, { id: 'm-presencial', label: 'Presencial' }, { id: 'm-online', label: 'Online' }, { id: 'm-hibrido', label: 'Híbrido' }] }
   });
+  function pintarModo() { ['presencial', 'online', 'hibrido'].forEach(function (m) { $('m-' + m).classList.toggle('on', Tema.modo() === m); }); }
+  ['presencial', 'online', 'hibrido'].forEach(function (m) { $('m-' + m).addEventListener('click', function () { Tema.setModo(m); pintarModo(); renderAll(); }); });
+  pintarModo();
 
   // ===== Estados del test (F12) =====
   var FLOW_ONLINE = ['Sin tubo', 'Pendiente de pago', 'Envío del test', 'Cuestionario enviado', 'Recogida solicitada', 'Procesando', 'Informe listo'];
@@ -215,18 +240,34 @@
       }).join('') + '</ol>';
   }
   function renderPanel() {
-    var p = $('panel'); $('tools').style.visibility = 'hidden';
-    if (!CON) { $('tools').style.display = 'none'; p.innerHTML = '<div class="card vacio-c"><div class="e">▣</div><h2>Este usuario aún no tiene ningún test</h2><p>Vincula su primer test para empezar el proceso. Aquí aparecerá su informe cuando esté listo.</p><button class="btn negro" id="bLink2" type="button">＋ Vincular test</button></div>'; $('bLink2').addEventListener('click', openLink); return; }
+    var p = $('panel'); document.querySelectorAll('.solo-informe').forEach(function (b) { b.hidden = true; });
+    if (!CON) { p.innerHTML = '<div class="card vacio-c"><div class="e">▣</div><h2>Este usuario aún no tiene ningún test</h2><p>Vincula su primer test para empezar el proceso. Aquí aparecerá su informe cuando esté listo.</p><button class="btn negro" id="bLink2" type="button">＋ Vincular test</button></div>'; $('bLink2').addEventListener('click', openLink); return; }
     var t = TESTS[curTest];
     if (curTab !== 'informe') { p.innerHTML = '<div class="card vacio-c"><p>Contenido de «' + curTab + '» del test ' + t.code + ' (no incluido en este mockup).</p></div>'; return; }
     if (!t.done) { p.innerHTML = '<div class="card vacio-c"><div class="e">▣</div><h2>Informe pendiente</h2><p>Este test todavía está en proceso. El informe aparecerá aquí cuando esté listo.</p></div>'; return; }
-    $('tools').style.visibility = 'visible';
+    document.querySelectorAll('.solo-informe').forEach(function (b) { b.hidden = false; });
     p.innerHTML = '<div class="card muestra"><div><h2>La muestra</h2><p>Firmicutes (59,84 %) y Bacteroidota (32,71 %) son los filos principales.</p></div><div class="kp"><div><b>4,07</b><small>Diversidad</small></div><div><b>193</b><small>Riqueza</small></div><div><b>0,77</b><small>Uniformidad</small></div></div></div>' +
       '<div class="card fuera"><div class="t"><span class="n">18</span><div><h3>Fuera del rango</h3><p class="nota">de la población de referencia</p></div></div><div class="f"><span>Alistipes</span><b>15,9 %</b></div></div>';
   }
   function bindToast() { document.querySelectorAll('[data-toast]').forEach(function (b) { if (b._t) return; b._t = 1; b.addEventListener('click', function () { Tema.toast(b.dataset.toast); }); }); }
   function renderPago() { $('paySede').hidden = !hasStock; $('payOnline').hidden = hasStock; $('paySedeT').textContent = CON ? 'Cobra el test en el centro.' : 'Vincula uno y cóbralo en el centro.'; }
-  function renderAll() { renderPerfil(); renderProceso(); renderPanel(); renderPago(); bindToast(); $('bLink').onclick = openLink; }
+  function hoy() { var d = new Date(); return [d.getDate(), d.getMonth() + 1, d.getFullYear()].map(function (n) { return String(n).padStart(2, '0'); }).join('/'); }
+  function formRelleno() { return CON && !!TESTS[curTest].dates['Recogida solicitada']; }   // al responder el cuestionario se solicita la recogida
+  function renderForm() {
+    var m = Tema.modo(), b = $('bRellenar');
+    b.hidden = m === 'online';                       // online: no hay consulta física donde rellenarlo
+    b.disabled = !CON || formRelleno();              // sin test no se puede rellenar; si ya está rellenado, tampoco
+    b.textContent = formRelleno() ? '✓ Formulario rellenado' : '✎ Rellenar en clínica';
+    $('formHint').textContent = (m !== 'online' && !CON) ? 'Vincula un test para poder rellenarlo.' : '';
+  }
+  function cerrarForm() { $('mForm').hidden = true; $('velo').hidden = true; }
+  $('bRellenar').addEventListener('click', function () { $('velo').hidden = false; $('mForm').hidden = false; });
+  $('formCancel').addEventListener('click', cerrarForm);
+  $('formOk').addEventListener('click', function () {
+    var t = TESTS[curTest]; t.dates['Recogida solicitada'] = hoy(); t.state = 'Recogida solicitada'; t.cues = 'Rellenado en la clínica el ' + hoy();
+    cerrarForm(); renderAll(); Tema.toast('Formulario guardado. Se ha solicitado la recogida.');
+  });
+  function renderAll() { renderPerfil(); renderProceso(); renderPanel(); renderPago(); renderForm(); bindToast(); $('bLink').onclick = openLink; }
   document.querySelectorAll('.tab-f').forEach(function (t) {
     t.addEventListener('click', function () { document.querySelectorAll('.tab-f').forEach(function (x) { x.classList.toggle('on', x === t); }); curTab = t.dataset.tab; renderPanel(); });
   });
@@ -235,7 +276,7 @@
   var sel = $('sede');
   $('dirTxt').innerHTML = CON ? 'C/ Ejemplo 8, 2ºB · 28010 Madrid' : '<span class="vacio">Sin dirección</span>';
   function openM(id) { $('velo').hidden = false; $(id).hidden = false; }
-  function closeM() { $('velo').hidden = true; ['mSede', 'mStock', 'mNo'].forEach(function (i) { $(i).hidden = true; }); }
+  function closeM() { $('velo').hidden = true; ['mSede', 'mStock', 'mNo', 'mForm'].forEach(function (i) { $(i).hidden = true; }); }
   sel.addEventListener('change', function () { $('from').textContent = current; $('to').textContent = sel.value; openM('mSede'); });
   $('cancel').addEventListener('click', function () { sel.value = current; closeM(); });
   $('confirm').addEventListener('click', function () { current = sel.value; closeM(); Tema.toast('Usuario movido a ' + current); });

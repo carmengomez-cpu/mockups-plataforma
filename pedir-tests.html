@@ -218,6 +218,7 @@
       <h4>¿A quién?</h4>
       <div class="campo"><select id="act-patient" aria-label="Usuario"></select></div>
       <p style="margin-top:8px"><button type="button" class="lnk" id="act-new">Nuevo usuario</button></p>
+      <label class="campo" id="act-test-wrap" style="margin-top:12px"><span>Test a vincular</span><select id="act-test" aria-label="Test a vincular"></select></label>
       <div class="aviso amb" id="act-empty" style="margin-top:12px;display:block"><b>No tienes tests por vincular en tu stock.</b><br><span id="act-empty-sub"></span></div>
       <div class="aviso verde" id="act-ok" hidden style="margin-top:12px"></div>
     </div></div>
@@ -260,6 +261,8 @@
   var sede = Object.assign({}, SEDE_START);
   var origin = ACT ? 'home' : 'stock', current = origin, stockCount = 0, pendingPatient = null, method = 'card';
   var PATIENTS = ['Lucía Martín', 'Pedro Gómez', 'Elena Ruiz'];
+  var ALL_TUBES = ['#999001006012', '#999001006013'], free = [];
+  function setStock(n) { free = ALL_TUBES.slice(0, n); stockCount = free.length; }
 
   function eur(n) {
     var parts = n.toFixed(2).split('.');
@@ -319,7 +322,7 @@
     var plural = stockCount === 1 ? ' test' : ' tests';
     document.querySelectorAll('.n-stock').forEach(function (e) { e.textContent = stockCount; });
     document.querySelectorAll('.n-stock2').forEach(function (e) { e.textContent = stockCount + plural; });
-    $('stock-rows').innerHTML = stockCount ? ['#999001006012', '#999001006013'].slice(0, stockCount).map(function (c) {
+    $('stock-rows').innerHTML = stockCount ? free.map(function (c) {
       return '<tr><td class="cod">' + c + '</td><td><span class="ba int">Intestinal · Avanzado</span></td><td>Libre</td><td class="gr">hoy</td></tr>';
     }).join('') : '<tr><td colspan="4" class="gr" style="text-align:center;padding:30px 0">No tienes tubos en stock. Pide más para tenerlos.</td></tr>';
     var has = stockCount > 0, who = $('act-patient').value;
@@ -327,6 +330,10 @@
     $('act-ok').textContent = 'Tienes ' + stockCount + plural + ' por vincular en tu stock.';
     $('act-empty-sub').textContent = 'Pídelos aquí mismo: llegan en 3-4 días laborables y entonces podrás vincular el test a ' + who + '.';
     $('act-order').hidden = has; $('act-go').hidden = !has;
+    var ts = $('act-test'), prev = ts.value;
+    ts.innerHTML = free.map(function (c) { return '<option>' + c + ' · Intestinal Avanzado</option>'; }).join('');
+    for (var i = 0; i < ts.options.length; i++) if (ts.options[i].text.indexOf(prev) === 0 && prev) ts.selectedIndex = i;
+    $('act-test-wrap').hidden = !has;
     var t = $('stock-toggle'); if (t) t.textContent = 'Stock en la demo: ' + stockCount + ' · cambiar';
   }
 
@@ -398,7 +405,11 @@
   actSel.innerHTML = PATIENTS.map(function (n) { return '<option>' + n + '</option>'; }).join('');
   actSel.addEventListener('change', renderStock);
   $('act-order').addEventListener('click', function () { pendingPatient = actSel.value; go('order'); });
-  $('act-go').addEventListener('click', function () { var n = actSel.value; stockCount--; go(origin); Tema.toast('Test vinculado a ' + n); });
+  $('act-go').addEventListener('click', function () {
+    var n = actSel.value, code = $('act-test').value.split(' ')[0];
+    free = free.filter(function (c) { return c !== code; }); stockCount = free.length;
+    go(origin); Tema.toast('Test ' + code + ' vinculado a ' + n);
+  });
   document.querySelectorAll('[data-close-act]').forEach(function (b) { b.addEventListener('click', function () { go(origin); }); });
   $('act-new').addEventListener('click', function () { Tema.toast('Aquí se abriría «Nuevo usuario».'); });
 
@@ -423,13 +434,15 @@
       extra: (ACT ? [{ id: 'stock-toggle', label: '' }] : []).concat([{ id: 'demo-reset', label: 'Reiniciar', cls: 'r' }])
     }
   });
-  if ($('stock-toggle')) $('stock-toggle').addEventListener('click', function () { stockCount = stockCount ? 0 : 2; renderStock(); });
+  if ($('stock-toggle')) $('stock-toggle').addEventListener('click', function () { setStock(stockCount ? 0 : 2); renderStock(); });
   $('demo-reset').addEventListener('click', function () {
-    qty = Object.assign({}, START); sede = Object.assign({}, SEDE_START); stockCount = 0; pendingPatient = null; method = 'card'; origin = ACT ? 'home' : 'stock';
+    qty = Object.assign({}, START); sede = Object.assign({}, SEDE_START); setStock(0); pendingPatient = null; method = 'card'; origin = ACT ? 'home' : 'stock';
     $('m-sede').hidden = true; $('view-review').hidden = true; update(); go(origin);
   });
   update();
   go(origin);
+  // Llegada desde «Vincular test» (Inicio, Usuarios): se abre directamente el pop-up, con 2 tests en stock
+  if (ACT && /[?&]abrir=vincular/.test(location.search)) { setStock(2); go('activate'); }
 </script>
 </body>
 </html>
