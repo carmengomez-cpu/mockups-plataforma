@@ -15,7 +15,6 @@ const ROWS = [
   ['Aviso al cambiar de sede con recogida solicitada (F19)', 'aviso-cambio-sede.html', T('BTV-42')],
   ['Aviso F19 sobre la ficha completa del usuario (variante)', 'aviso-cambio-sede-ficha.html', T('BTV-42')],
   ['Enlace de pago en 2 clics (F20, la que se desarrolla)', 'enviar-link-rapido.html', T('BTV-43')],
-  ['Enlace de pago, versión completa con pop-up (F20, alternativa)', 'enviar-link.html', T('BTV-43')],
   ['Estados vacíos', 'vacios/index.html', ''],
   ['Emails de entrega de la muestra (F13)', 'emails-recordatorio.html', T('BTV-36')]
 ];

@@ -19,7 +19,6 @@ Abre cualquier mockup desde la tabla. Todos comparten `tema.css`, `tema.js` y la
 | Aviso al cambiar de sede con recogida solicitada (F19) | [aviso-cambio-sede.html](aviso-cambio-sede.html) | [BTV-42](https://biotasmart.atlassian.net/browse/BTV-42) | 25/11/2026 |
 | Aviso F19 sobre la ficha completa del usuario (variante) | [aviso-cambio-sede-ficha.html](aviso-cambio-sede-ficha.html) | [BTV-42](https://biotasmart.atlassian.net/browse/BTV-42) | 26/11/2026 |
 | Enlace de pago en 2 clics (F20, la que se desarrolla) | [enviar-link-rapido.html](enviar-link-rapido.html) | [BTV-43](https://biotasmart.atlassian.net/browse/BTV-43) | 26/11/2026 |
-| Enlace de pago, versión completa con pop-up (F20, alternativa) | [enviar-link.html](enviar-link.html) | [BTV-43](https://biotasmart.atlassian.net/browse/BTV-43) | 26/11/2026 |
 | Estados vacíos | [vacios/index.html](vacios/index.html) | — | 26/11/2026 |
 | Emails de entrega de la muestra (F13) | [emails-recordatorio.html](emails-recordatorio.html) | [BTV-36](https://biotasmart.atlassian.net/browse/BTV-36) | 25/11/2026 |
 
