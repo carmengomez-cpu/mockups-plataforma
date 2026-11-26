@@ -11,6 +11,13 @@
   var toastEl, toastT;
   var area = 'todo';   // qué test ver (menú lateral): todo | int | vag; se recuerda entre páginas
   try { area = sessionStorage.getItem('tema-area') || 'todo'; } catch (e) {}
+  var modo = 'hibrido';   // tipo de consulta del profesional: presencial | online | hibrido; se recuerda entre páginas
+  try { modo = sessionStorage.getItem('tema-modo') || 'hibrido'; } catch (e) {}
+  function aplicarModo() {
+    var st = document.querySelector('#side .nav-it[data-nav="stock"]'), vo = document.querySelector('#side .nav-it[data-nav="venta"]');
+    if (st) st.hidden = modo === 'online';        // sin consulta física no hay stock de tests
+    if (vo) vo.hidden = modo === 'presencial';    // solo presencial: no vende online
+  }
 
   function toast(msg) {
     if (!toastEl) { toastEl = document.createElement('div'); toastEl.className = 'toast'; toastEl.setAttribute('role', 'status'); document.body.appendChild(toastEl); }
@@ -39,6 +46,7 @@
       if (o.nav === k) { e.preventDefault(); return; }
       if (!LINKS[k] && !(o.links && o.links[k])) { e.preventDefault(); toast('Esta sección no está en este mockup.'); }
     });
+    aplicarModo();
     el.querySelectorAll('.area-sel button').forEach(function (b) {
       b.addEventListener('click', function () {
         area = b.dataset.a; try { sessionStorage.setItem('tema-area', area); } catch (e) {}
@@ -66,6 +74,8 @@
   window.Tema = {
     base: base,
     area: function () { return area; },
+    modo: function () { return modo; },
+    setModo: function (m) { modo = m; try { sessionStorage.setItem('tema-modo', m); } catch (e) {} aplicarModo(); document.dispatchEvent(new CustomEvent('tema-modo', { detail: m })); },
     toast: toast,
     shell: function (o) { o = o || {}; renderSide(o); renderDemo(o.demo); },
     setStep: function (id) {

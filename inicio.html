@@ -7,7 +7,7 @@
 <title>Mockup · Inicio</title>
 <link rel="stylesheet" href="tema.css">
 <style>
-  .etapas{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+  .etapas{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
   .etapa{display:flex;flex-direction:column;gap:2px;padding:14px 16px;border-radius:16px;box-shadow:inset 0 0 0 1px var(--linea);text-decoration:none;transition:box-shadow .15s,transform .15s}
   .etapa:hover{box-shadow:inset 0 0 0 1.5px var(--cobalto),0 8px 22px rgba(22,22,22,.06);transform:translateY(-1px)}
   .etapa b{font:500 42px/1 var(--display)}.etapa:hover b{color:var(--cobalto)}
@@ -28,6 +28,7 @@
 </style>
 </head>
 <body>
+<div id="demobar"></div>
 <div class="shell">
   <aside class="side" id="side"></aside>
   <main class="main">
@@ -39,13 +40,14 @@
       <div class="acc-fila">
         <h2 style="margin-right:6px">Acciones rápidas</h2>
         <a class="btn negro" href="alta-paciente.html">Nuevo usuario</a>
-        <a class="btn borde" href="activar-test.html">Vincular test</a>
-        <a class="btn borde" href="pedir-tests.html">Pedir más tests</a>
+        <a class="btn borde" id="accVincular" href="activar-test.html">Vincular test</a>
+        <a class="btn borde" id="accPedir" href="pedir-tests.html">Pedir más tests</a>
       </div>
     </div>
 
-    <div class="card quick">
+    <div class="card quick" id="quickCard">
       <div class="card-h"><h2>Nuevo enlace de pago</h2><small>1 enlace = 1 test para 1 usuario</small></div>
+      <p class="aviso amb" id="quickNota" hidden style="display:block;margin-bottom:12px"><b>Solo para cuando el usuario compra online.</b> Si le das el test en mano, usa «Vincular test»: con este enlace se cobraría otra vez.</p>
       <div class="q-row">
         <input id="qEmail" type="email" list="plist" placeholder="Email del usuario" autocomplete="off" aria-label="Email del usuario">
         <datalist id="plist"></datalist>
@@ -63,7 +65,7 @@
     <div class="card" style="margin-top:16px">
       <div class="card-h"><h2>Dónde están tus test</h2><small>Toca una etapa para ver quién está en ella</small></div>
       <div class="etapas">
-        <a class="etapa" href="stock-tests.html"><b>8</b><strong>En tu centro</strong><span>Listos para dar</span></a>
+        <a class="etapa" id="etapaStock" href="stock-tests.html"><b>8</b><strong>En tu centro</strong><span>Listos para dar</span></a>
         <a class="etapa" href="listado-pacientes.html?estado=usu"><b>2</b><strong>Cuestionario enviado</strong><span>Pendiente de rellenar</span></a>
         <a class="etapa" href="listado-pacientes.html?estado=lab"><b>2</b><strong>En el laboratorio</strong><span>Unos 15 días hasta el informe</span></a>
         <a class="etapa" href="listado-pacientes.html?estado=listo"><b>3</b><strong>Informe listo</strong><span>Para revisar y compartir</span></a>
@@ -88,7 +90,19 @@
 </div>
 <script src="tema.js"></script>
 <script>
-  Tema.shell({ nav: 'inicio', badges: { usuarios: 2 } });
+  // Tipo de consulta del profesional: cambia qué se ve en Inicio y en el menú
+  function aplicarModoInicio(m) {
+    var online = m === 'online', presencial = m === 'presencial', hibrido = m === 'hibrido';
+    document.getElementById('quickCard').hidden = presencial;     // solo presencial: no hay enlace de pago
+    document.getElementById('quickNota').hidden = !hibrido;       // híbrido: aclarar que es solo para compras online
+    document.getElementById('accVincular').hidden = online;        // online: sin stock físico
+    document.getElementById('accPedir').hidden = online;
+    document.getElementById('etapaStock').hidden = online;
+  }
+  Tema.shell({ nav: 'inicio', badges: { usuarios: 2 },
+    demo: { title: 'Inicio', label: 'Tipo de consulta:', current: Tema.modo(), steps: [['presencial', 'Presencial'], ['online', 'Online'], ['hibrido', 'Híbrido']],
+      onStep: function (m) { Tema.setModo(m); aplicarModoInicio(m); Tema.setStep(m); } } });
+  aplicarModoInicio(Tema.modo());
   var $ = function (id) { return document.getElementById(id); };
   var USERS = [['Lucía Martín', 'lucia.martin@ejemplo.com'], ['Pablo Ruiz', 'pablo.ruiz@ejemplo.com'], ['Elena Torres', 'elena.torres@ejemplo.com'], ['Marta Gil', 'marta.gil@ejemplo.com'], ['Jorge Sanz', 'jorge.sanz@ejemplo.com'], ['Nerea Cano', 'nerea.cano@ejemplo.com'], ['Alba Domínguez', 'alba.dominguez@ejemplo.com'], ['Hugo Sáez', 'hugo.saez@ejemplo.com'], ['Diego Alonso', 'diego.alonso@ejemplo.com']];
   $('plist').innerHTML = USERS.map(function (u) { return '<option value="' + u[1] + '">' + u[0] + '</option>'; }).join('');
