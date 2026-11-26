@@ -74,11 +74,13 @@
   .f-una{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
   .f-una .f-fila{margin-top:0;gap:10px}
   .f-una .btn.negro{margin-left:auto}
-  .f-una{gap:10px 10px}
+  .f-una{gap:10px 8px}
   .f-una #fClear{padding:0 4px;font-size:13px}
   .f-una .f-fila{gap:8px;flex-wrap:nowrap}
-  .f-una .f-fila input[type=date]{padding:6px 10px;font-size:13px;width:118px;padding:6px 8px}
-  .f-una .flt-seg button{padding:5px 10px;font-size:13px}
+  .f-una .f-fila input[type=date]{padding:6px 10px;font-size:13px;width:112px;padding:6px 6px 6px 8px;font-size:12.5px}
+  .f-una .flt-est button{padding:5px 10px;font-size:12.5px}
+  .f-una .flt-est{gap:5px}
+  .f-una .flt-seg button{padding:5px 9px;font-size:12.5px}
   .f-una .f-fila .flt-k,.f-una .f-fila label{white-space:nowrap}
 </style>
 </head>
@@ -96,10 +98,10 @@
       <div class="card">
         <div class="flt">
           <div class="f-una">
-          <div class="flt-est" style="margin-top:0" id="fEstado" role="group" aria-label="Estado"><span class="flt-k">Estado</span>
+          <div class="flt-est" style="margin-top:0" id="fEstado" role="group" aria-label="Estado">
             <button type="button" data-e="" class="on">Todos</button><button type="button" data-e="pend">Pendiente de pago</button><button type="button" data-e="paid">Pagado</button><button type="button" data-e="cx">Solicitud cancelada</button></div>
           <div class="f-fila">
-            <span class="flt-seg" id="fTipo" role="group" aria-label="Filtrar por"><button type="button" data-t="req" class="on" title="Filtrar por fecha de solicitud">Solicitud</button><button type="button" data-t="pay" title="Filtrar por fecha de pago">Pago</button></span>
+            <span class="flt-seg" id="fTipo" role="group" aria-label="Filtrar por"><button type="button" data-t="req" class="on" >Fecha de solicitud</button><button type="button" data-t="pay">Fecha de pago</button></span>
             <input type="date" id="fDesde" title="Desde" aria-label="Desde"><span aria-hidden="true" style="color:var(--gris)">–</span><input type="date" id="fHasta" title="Hasta" aria-label="Hasta">
             <button type="button" class="lnk" id="fClear" title="Limpiar filtros" aria-label="Limpiar filtros">✕</button>
           </div>
