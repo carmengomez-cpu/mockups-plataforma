@@ -49,6 +49,8 @@
   .tab-f{font-family:var(--display);font-weight:500;font-size:13.5px;padding:8px 18px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--linea2);background:var(--blanco);color:var(--tinta)}
   .tab-f.on{background:var(--tinta);color:#fff;box-shadow:none}
   .tools{display:flex;gap:8px;flex-wrap:wrap}
+  .tab-f .alerta{display:inline-grid;place-items:center;width:18px;height:18px;margin-left:7px;border-radius:50%;background:var(--ambar-tinta,#a8630a);color:#fff;font:600 12px/1 var(--display);vertical-align:1px}
+  .tab-f.on .alerta{background:#F5B94A;color:#161616}
   .btns-f{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
   .btn[disabled]{cursor:not-allowed}
   .panel{display:flex;flex-direction:column;gap:16px}
@@ -103,7 +105,7 @@
                 <button class="btn borde chico" type="button" data-toast="Formulario enviado por correo.">✉ Enviar</button>
               </div>
               <div class="sub-st" id="formSt"></div>
-              <a class="lnk" href="#" id="formLink" hidden>Rellenar en consulta →</a>
+              
             </div>
           </div>
         </div>
@@ -265,11 +267,11 @@
     if (!ok && m !== 'online') h += '<button class="btn negro" type="button" id="bRellenar">✎ Rellenar en consulta</button>';
     return h + '</div></div>';
   }
-  function renderForm() {   // enlace de la columna izquierda: solo si se puede rellenar en consulta
-    var l = $('formLink'); l.hidden = !(CON && !formRelleno() && Tema.modo() !== 'online');
+  function renderForm() {   // el formulario no es opcional: mientras falte, la pestaña lleva un aviso
+    var pend = CON && !formRelleno(), tab = document.querySelector('.tab-f[data-tab="formulario"]');
+    tab.innerHTML = 'Formulario' + (pend ? '<span class="alerta" title="Formulario pendiente" aria-label="Formulario pendiente">!</span>' : '');
     if (curTab === 'formulario') renderPanel();
   }
-  $('formLink').addEventListener('click', function (e) { e.preventDefault(); document.querySelector('.tab-f[data-tab="formulario"]').click(); });
   function cerrarForm() { $('mForm').hidden = true; $('velo').hidden = true; }
   $('formCancel').addEventListener('click', cerrarForm);
   $('formOk').addEventListener('click', function () {
