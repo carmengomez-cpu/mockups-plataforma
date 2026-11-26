@@ -69,6 +69,8 @@
   .inv-a{display:flex;justify-content:flex-end;gap:10px;padding:14px 24px;border-top:1px solid var(--linea);background:var(--blanco);border-radius:0 0 24px 24px;position:sticky;bottom:0}
   #vDetail .minis+.card{margin-top:16px}
   @media (max-width:900px){.two,.bkfoot,.parties,.minis{grid-template-columns:minmax(0,1fr)}.dmeta{grid-template-columns:repeat(2,auto)}}
+  /* La célula va en el plano de atrás: los bloques se pintan por encima */
+  #vList>*:not(.cel),#vDetail>*:not(.cel){position:relative;z-index:1}
 </style>
 </head>
 <body>
@@ -92,7 +94,6 @@
             <label>Desde <input type="date" id="fDesde"></label><label>Hasta <input type="date" id="fHasta"></label>
             <button type="button" class="lnk" id="fClear">Limpiar filtros</button>
           </div>
-          <div class="flt-act"><span></span><b id="count"></b></div>
         </div>
         <div class="tabla-wrap"><table class="tabla-min" id="list"></table></div>
       </div>
@@ -237,7 +238,6 @@
         : o.ship === 'Entregado' ? '<span class="est verde">Entregado</span><span class="pc-t">Pendiente de pago</span>' : '<span class="est ambar">Pendiente de pago</span>';
       return '<tr class="click" data-i="' + r.i + '"><td>' + est + '</td><td>' + o.id + '</td><td>' + (o.paidOn || '<span class="gr">—</span>') + '</td><td class="r">' + eur(o.total) + '<span class="sub">' + o.tests + ' test' + (o.tests > 1 ? 's' : '') + '</span></td><td class="r"><span class="lnk">Ver →</span></td></tr>';
     }).join('') : '<tr><td colspan="5" class="gr" style="text-align:center;padding:30px 0">Ningún pedido coincide con los filtros.</td></tr>') + '</tbody>';
-    $('count').textContent = rows.length + ' de ' + ORDERS.length + ' pedidos';
   }
   $('list').addEventListener('click', function (e) {
     var s = e.target.closest('[data-sort]');
