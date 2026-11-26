@@ -40,7 +40,6 @@
           <select class="flt-sel" aria-label="Fecha"><option>Cualquier fecha</option><option>Últimos 7 días</option><option>Últimos 30 días</option><option>Últimos 3 meses</option></select>
         </div>
         <div class="flt-est" id="est" role="group" aria-label="Estado"><span class="flt-k">Estado</span></div>
-        <div class="flt-act" style="justify-content:flex-end"><b id="n"></b></div>
       </div>
       <div class="tabla-wrap">
         <table class="tabla-min">
@@ -101,7 +100,6 @@
         '<td><select class="sede-sel" data-i="' + d.i + '" aria-label="Sede de ' + d[0] + '">' + SEDES.map(function (x) { return '<option' + (x === d[5] ? ' selected' : '') + '>' + x + '</option>'; }).join('') + '</select></td>' +
         '<td class="gr">' + d[4] + '</td></tr>';
     }).join('') : '<tr class="vacio-f"><td colspan="6">Ningún usuario con estos filtros.</td></tr>';
-    $('n').textContent = rows.length + ' de ' + D.length;
   }
   $('q').addEventListener('input', function (e) { q = e.target.value.trim().toLowerCase(); render(); });
   // El tipo de test (Intestinal / Vaginal) se elige arriba del menú lateral
