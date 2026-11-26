@@ -101,10 +101,9 @@
               <p class="ttl-m">Formulario</p>
               <div class="btns-f">
                 <button class="btn borde chico" type="button" data-toast="Formulario enviado por correo.">✉ Enviar</button>
-                <button class="btn borde chico" type="button" id="bRellenar" title="Rellenar el formulario aquí, en la clínica">✎ Rellenar en clínica</button>
               </div>
               <div class="sub-st" id="formSt"></div>
-              <div class="sub-st nn" id="formHint"></div>
+              <a class="lnk" href="#" id="formLink" hidden>Rellenar en consulta →</a>
             </div>
           </div>
         </div>
@@ -125,7 +124,7 @@
         <div class="card proceso" id="proceso"></div>
         <div class="tabsbar">
           <div class="tabs-f" role="tablist">
-            <button class="tab-f on" data-tab="informe">Informe</button><button class="tab-f" data-tab="microbiota">Microbiota</button><button class="tab-f" data-tab="cuestionario">Cuestionario</button><button class="tab-f" data-tab="notas">Notas</button>
+            <button class="tab-f on" data-tab="informe">Informe</button><button class="tab-f" data-tab="microbiota">Microbiota</button><button class="tab-f" data-tab="formulario">Formulario</button><button class="tab-f" data-tab="notas">Notas</button>
           </div>
           <div class="tools" id="tools">
             <button class="btn borde chico" type="button" id="bConsulta" data-toast="Modo consulta: la pantalla para enseñar el informe al usuario.">Modo consulta</button>
@@ -166,7 +165,7 @@
 <script>var FICHA = 'con';</script>
 <!-- Rellenar el formulario en la clínica (solo presencial e híbrido) -->
 <div class="modal" id="mForm" hidden role="dialog" aria-modal="true" aria-labelledby="fmT">
-  <div class="m-cab"><span class="ico az">✎</span><div><h2 id="fmT">Formulario de Lucía Martín</h2><p>Se rellena aquí, en la clínica, con el usuario delante.</p></div></div>
+  <div class="m-cab"><span class="ico az">✎</span><div><h2 id="fmT">Formulario de Lucía Martín</h2><p>Se rellena aquí, en consulta, con el usuario delante.</p></div></div>
   <div class="m-cuerpo">
     <div class="m-paso"><span class="m-num">1</span><div><h4>Datos generales</h4><div class="campos">
       <label class="campo"><span>Fecha de nacimiento</span><input placeholder="dd/mm/aaaa"></label>
@@ -243,6 +242,7 @@
     var p = $('panel'); document.querySelectorAll('.solo-informe').forEach(function (b) { b.hidden = true; });
     if (!CON) { p.innerHTML = '<div class="card vacio-c"><div class="e">▣</div><h2>Este usuario aún no tiene ningún test</h2><p>Vincula su primer test para empezar el proceso. Aquí aparecerá su informe cuando esté listo.</p><button class="btn negro" id="bLink2" type="button">＋ Vincular test</button></div>'; $('bLink2').addEventListener('click', openLink); return; }
     var t = TESTS[curTest];
+    if (curTab === 'formulario') { p.innerHTML = panelForm(t); bindToast(); var bf = $('bRellenar'); if (bf) bf.addEventListener('click', abrirForm); return; }
     if (curTab !== 'informe') { p.innerHTML = '<div class="card vacio-c"><p>Contenido de «' + curTab + '» del test ' + t.code + ' (no incluido en este mockup).</p></div>'; return; }
     if (!t.done) { p.innerHTML = '<div class="card vacio-c"><div class="e">▣</div><h2>Informe pendiente</h2><p>Este test todavía está en proceso. El informe aparecerá aquí cuando esté listo.</p></div>'; return; }
     document.querySelectorAll('.solo-informe').forEach(function (b) { b.hidden = false; });
@@ -253,18 +253,27 @@
   function renderPago() { $('paySede').hidden = !hasStock; $('payOnline').hidden = hasStock; $('paySedeT').textContent = CON ? 'Cobra el test en el centro.' : 'Vincula uno y cóbralo en el centro.'; }
   function hoy() { var d = new Date(); return [d.getDate(), d.getMonth() + 1, d.getFullYear()].map(function (n) { return String(n).padStart(2, '0'); }).join('/'); }
   function formRelleno() { return CON && !!TESTS[curTest].dates['Recogida solicitada']; }   // al responder el cuestionario se solicita la recogida
-  function renderForm() {
-    var m = Tema.modo(), b = $('bRellenar');
-    b.hidden = m === 'online';                       // online: no hay consulta física donde rellenarlo
-    b.disabled = !CON || formRelleno();              // sin test no se puede rellenar; si ya está rellenado, tampoco
-    b.textContent = formRelleno() ? '✓ Formulario rellenado' : '✎ Rellenar en clínica';
-    $('formHint').textContent = (m !== 'online' && !CON) ? 'Vincula un test para poder rellenarlo.' : '';
+  function abrirForm() { $('velo').hidden = false; $('mForm').hidden = false; }
+  function panelForm(t) {
+    var m = Tema.modo(), ok = formRelleno();
+    var h = '<div class="card vacio-c"><div class="e">' + (ok ? '✓' : '✎') + '</div><h2>' + (ok ? 'Formulario rellenado' : 'Formulario pendiente') + '</h2>';
+    if (ok) h += '<p>' + t.cues + '. Ya se ha solicitado la recogida de la muestra.</p>';
+    else if (m === 'online') h += '<p>El usuario lo rellena desde el enlace del correo. Si no lo ha recibido, puedes volver a enviárselo.</p>';
+    else h += '<p>Puedes enviárselo por correo o rellenarlo aquí mismo, con el usuario delante.</p>';
+    h += '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px">';
+    if (!ok) h += '<button class="btn borde" type="button" data-toast="Formulario enviado por correo.">✉ Enviar por correo</button>';
+    if (!ok && m !== 'online') h += '<button class="btn negro" type="button" id="bRellenar">✎ Rellenar en consulta</button>';
+    return h + '</div></div>';
   }
+  function renderForm() {   // enlace de la columna izquierda: solo si se puede rellenar en consulta
+    var l = $('formLink'); l.hidden = !(CON && !formRelleno() && Tema.modo() !== 'online');
+    if (curTab === 'formulario') renderPanel();
+  }
+  $('formLink').addEventListener('click', function (e) { e.preventDefault(); document.querySelector('.tab-f[data-tab="formulario"]').click(); });
   function cerrarForm() { $('mForm').hidden = true; $('velo').hidden = true; }
-  $('bRellenar').addEventListener('click', function () { $('velo').hidden = false; $('mForm').hidden = false; });
   $('formCancel').addEventListener('click', cerrarForm);
   $('formOk').addEventListener('click', function () {
-    var t = TESTS[curTest]; t.dates['Recogida solicitada'] = hoy(); t.state = 'Recogida solicitada'; t.cues = 'Rellenado en la clínica el ' + hoy();
+    var t = TESTS[curTest]; t.dates['Recogida solicitada'] = hoy(); t.state = 'Recogida solicitada'; t.cues = 'Rellenado en consulta el ' + hoy();
     cerrarForm(); renderAll(); Tema.toast('Formulario guardado. Se ha solicitado la recogida.');
   });
   function renderAll() { renderPerfil(); renderProceso(); renderPanel(); renderPago(); renderForm(); bindToast(); $('bLink').onclick = openLink; }
