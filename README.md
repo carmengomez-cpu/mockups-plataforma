@@ -7,8 +7,8 @@ Abre cualquier mockup desde la tabla. Todos comparten `tema.css`, `tema.js` y la
 
 | Módulo / flujo | Mockup | Ticket | Actualizado |
 |---|---|---|---|
-| Inicio | [inicio.html](inicio.html) | — | 25/11/2026 |
-| Usuarios (listado) | [listado-pacientes.html](listado-pacientes.html) | — | 25/11/2026 |
+| Inicio | [inicio.html](inicio.html) | [BTV-14](https://biotasmart.atlassian.net/browse/BTV-14) | 26/11/2026 |
+| Usuarios (listado) | [listado-pacientes.html](listado-pacientes.html) | — | 26/11/2026 |
 | Nuevo usuario | [alta-paciente.html](alta-paciente.html) | — | 25/11/2026 |
 | Ficha del usuario (con test) | [ficha-con-test.html](ficha-con-test.html) | — | 26/11/2026 |
 | Ficha del usuario (sin test) | [ficha-sin-test.html](ficha-sin-test.html) | — | 26/11/2026 |

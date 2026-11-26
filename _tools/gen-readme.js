@@ -3,7 +3,7 @@
 const fs = require('fs'), cp = require('child_process');
 const T = id => `[${id}](https://biotasmart.atlassian.net/browse/${id})`;
 const ROWS = [
-  ['Inicio', 'inicio.html', ''],
+  ['Inicio', 'inicio.html', T('BTV-14')],
   ['Usuarios (listado)', 'listado-pacientes.html', ''],
   ['Nuevo usuario', 'alta-paciente.html', ''],
   ['Ficha del usuario (con test)', 'ficha-con-test.html', ''],
