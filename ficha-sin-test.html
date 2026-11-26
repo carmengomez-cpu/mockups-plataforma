@@ -198,15 +198,17 @@
   var FLOW_ONLINE = ['Sin tubo', 'Pendiente de pago', 'Envío del test', 'Cuestionario enviado', 'Recogida solicitada', 'Procesando', 'Informe listo'];
   var FLOW_STOCK = ['Sin tubo', 'Cuestionario enviado', 'Recogida solicitada', 'Procesando', 'Informe listo'];
   var TESTS = CON ? [
-    { code: '#999001002824', type: 'Microbiota intestinal', modo: 'stock', recogida: 'En el domicilio del usuario', done: true, state: 'Informe listo · sin ver', cues: 'Enviado el 24 sept',
+    { code: '#999001002824', type: 'Microbiota intestinal', modo: 'stock', recogida: 'En el domicilio del usuario', done: true, state: 'Informe listo · sin ver', cues: 'Enviado el 17 sept',
       dates: { 'Sin tubo': '15/09/2026', 'Cuestionario enviado': '17/09/2026', 'Recogida solicitada': '25/09/2026', 'Procesando': '07/10/2026', 'Informe listo': '20/10/2026' } },
-    { code: '#999001007140', type: 'Microbiota intestinal (repetición)', modo: 'online', recogida: 'En el domicilio del usuario', done: false, state: 'Cuestionario enviado', cues: 'Enviado el 24 sept',
-      dates: { 'Sin tubo': '01/11/2026', 'Pendiente de pago': '01/11/2026', 'Envío del test': '03/11/2026', 'Cuestionario enviado': '05/11/2026' } }
+    { code: '#999001007140', type: 'Microbiota intestinal (repetición)', modo: 'online', recogida: 'En el domicilio del usuario', done: false, state: 'Cuestionario enviado', cues: 'Enviado el 5 nov',
+      dates: { 'Sin tubo': '01/11/2026', 'Pendiente de pago': '01/11/2026', 'Envío del test': '03/11/2026', 'Cuestionario enviado': '05/11/2026' } },
+    { code: '#999001009001', type: 'Microbiota intestinal (nuevo)', modo: 'stock', recogida: 'En el domicilio del usuario', done: false, state: 'Sin tubo', cues: 'Sin enviar',
+      dates: { 'Sin tubo': '26/11/2026' } }
   ] : [];
   var MODO_TXT = { stock: 'Presencial · test del stock del centro: se entrega y se cobra en el centro, sin «Pendiente de pago» ni «Envío del test».',
     online: 'Online · el usuario paga con el enlace y le enviamos el test a casa.' };
   if (CON) curTest = 1;
-  var ORDER = [1, 0];   // del más reciente al más antiguo
+  var ORDER = [2, 1, 0];   // del más reciente al más antiguo
 
   function renderPerfil() {
     if (CON) {
@@ -217,7 +219,7 @@
       $('testSel').addEventListener('change', function () { curTest = +this.value; renderAll(); });
       $('estado').className = 'est ' + (t.done ? 'verde' : 'ambar'); $('estado').textContent = t.state;
       $('bLink').textContent = '＋ Vincular nuevo test';
-      $('recogida').textContent = t.recogida; $('recRow').hidden = false; $('formSt').className = 'sub-st ok'; $('formSt').textContent = '✓ ' + t.cues;
+      $('recogida').textContent = t.recogida; $('recRow').hidden = false; var env = !!t.dates['Cuestionario enviado']; $('formSt').className = 'sub-st ' + (env ? 'ok' : 'nn'); $('formSt').textContent = env ? '✓ ' + t.cues : 'Sin enviar';
     } else {
       $('codeWrap').innerHTML = '';
       $('estado').className = 'est gris'; $('estado').textContent = 'Sin test vinculado';
@@ -260,8 +262,10 @@
     var m = Tema.modo(), ok = formRelleno();
     var h = '<div class="card vacio-c"><div class="e">' + (ok ? '✓' : '✎') + '</div><h2>' + (ok ? 'Formulario rellenado' : 'Formulario pendiente') + '</h2>';
     if (ok) h += '<p>' + t.cues + '. Ya se ha solicitado la recogida de la muestra.</p>';
-    else if (m === 'online') h += '<p>El usuario lo rellena desde el enlace del correo. Si no lo ha recibido, puedes volver a enviárselo.</p>';
+    else if (t.dates['Cuestionario enviado']) h = '<div class="card vacio-c"><div class="e">✉</div><h2>Formulario enviado el ' + t.dates['Cuestionario enviado'] + '</h2><p>El usuario lo tiene en su correo. Si necesita que se lo reenvíen, usa «Enviar» en la columna de la izquierda.</p></div>';
+    else if (m === 'online') h += '<p>El usuario lo rellena desde el enlace del correo.</p>';
     else h += '<p>Puedes enviárselo por correo o rellenarlo aquí mismo, con el usuario delante.</p>';
+    if (!ok && t.dates['Cuestionario enviado']) return h;   // ya enviado: sin botones
     h += '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px">';
     if (!ok) h += '<button class="btn borde" type="button" data-toast="Formulario enviado por correo.">✉ Enviar por correo</button>';
     if (!ok && m !== 'online') h += '<button class="btn negro" type="button" id="bRellenar">✎ Rellenar en consulta</button>';
@@ -275,7 +279,7 @@
   function cerrarForm() { $('mForm').hidden = true; $('velo').hidden = true; }
   $('formCancel').addEventListener('click', cerrarForm);
   $('formOk').addEventListener('click', function () {
-    var t = TESTS[curTest]; t.dates['Recogida solicitada'] = hoy(); t.state = 'Recogida solicitada'; t.cues = 'Rellenado en consulta el ' + hoy();
+    var t = TESTS[curTest]; if (!t.dates['Cuestionario enviado']) t.dates['Cuestionario enviado'] = hoy(); t.dates['Recogida solicitada'] = hoy(); t.state = 'Recogida solicitada'; t.cues = 'Rellenado en consulta el ' + hoy();
     cerrarForm(); renderAll(); Tema.toast('Formulario guardado. Se ha solicitado la recogida.');
   });
   function renderAll() { renderPerfil(); renderProceso(); renderPanel(); renderPago(); renderForm(); bindToast(); $('bLink').onclick = openLink; }
