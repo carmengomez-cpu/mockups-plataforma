@@ -20,7 +20,7 @@
   .chips-s{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
   .chips-s span{font-size:12.5px;padding:3px 11px;border-radius:999px;background:var(--papel2)}
   /* Acciones arriba y pequeñas; métricas estrechas y alargadas debajo */
-  .acciones-st{gap:8px;margin-bottom:10px}
+  .acciones-st{gap:8px;margin-bottom:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
   .acciones-st .acc-st{padding:9px 14px;gap:10px;border-radius:14px}
   .acciones-st .acc-st .ico{width:30px;height:30px;font-size:14px}
   .acciones-st .acc-st b{font-size:14px}
@@ -41,9 +41,6 @@
     </div>
 
     <div class="acciones-st">
-      <button type="button" class="acc-st" data-toast="Aquí se confirmaría un pedido o se escanearía un tubo.">
-        <span class="ico az">▣</span><span><b>Añadir al stock</b><small>Confirma un pedido o escanea un tubo</small></span>
-      </button>
       <button type="button" class="acc-st" id="accEntregar">
         <span class="ico ve">⇢</span><span><b>Vincular a un usuario</b><small>Sale del stock en cuanto lo das</small></span>
       </button>
