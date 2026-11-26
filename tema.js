@@ -9,6 +9,8 @@
     ['venta', 'Venta online'], ['investigacion', 'Investigación'], ['ajustes', 'Ajustes del centro']
   ];
   var toastEl, toastT;
+  var area = 'todo';   // qué test ver (menú lateral): todo | int | vag; se recuerda entre páginas
+  try { area = sessionStorage.getItem('tema-area') || 'todo'; } catch (e) {}
 
   function toast(msg) {
     if (!toastEl) { toastEl = document.createElement('div'); toastEl.className = 'toast'; toastEl.setAttribute('role', 'status'); document.body.appendChild(toastEl); }
@@ -21,8 +23,8 @@
     var badges = o.badges || {};
     var html = '<img class="logo" src="' + base + 'assets/logo.svg" alt="Biotasmart">' +
       '<button class="centro-sel" type="button"><b>Centro Demo · Valencia</b><small>Grupo Demo · cambiar de centro</small></button>' +
-      '<div class="area-sel" role="group" aria-label="Qué test ver"><button type="button" class="on">Todo</button>' +
-      '<button type="button"><i style="background:#396a7f"></i>Intestinal</button><button type="button"><i style="background:#D49A8E"></i>Vaginal</button></div>';
+      '<div class="area-sel" role="group" aria-label="Qué test ver"><button type="button" data-a="todo" class="' + (area === 'todo' ? 'on' : '') + '">Todo</button>' +
+      '<button type="button" data-a="int" class="' + (area === 'int' ? 'on' : '') + '"><i style="background:#396a7f"></i>Intestinal</button><button type="button" data-a="vag" class="' + (area === 'vag' ? 'on' : '') + '"><i style="background:#D49A8E"></i>Vaginal</button></div>';
     NAV.forEach(function (n) {
       var k = n[0], href = o.links && o.links[k] ? o.links[k] : (LINKS[k] ? base + LINKS[k] : '#');
       html += '<a class="nav-it' + (o.nav === k ? ' on' : '') + '" data-nav="' + k + '" href="' + href + '">' + n[1] +
@@ -38,7 +40,11 @@
       if (!LINKS[k] && !(o.links && o.links[k])) { e.preventDefault(); toast('Esta sección no está en este mockup.'); }
     });
     el.querySelectorAll('.area-sel button').forEach(function (b) {
-      b.addEventListener('click', function () { el.querySelectorAll('.area-sel button').forEach(function (x) { x.classList.toggle('on', x === b); }); });
+      b.addEventListener('click', function () {
+        area = b.dataset.a; try { sessionStorage.setItem('tema-area', area); } catch (e) {}
+        el.querySelectorAll('.area-sel button').forEach(function (x) { x.classList.toggle('on', x === b); });
+        document.dispatchEvent(new CustomEvent('tema-area', { detail: area }));
+      });
     });
   }
 
@@ -59,6 +65,7 @@
 
   window.Tema = {
     base: base,
+    area: function () { return area; },
     toast: toast,
     shell: function (o) { o = o || {}; renderSide(o); renderDemo(o.demo); },
     setStep: function (id) {
