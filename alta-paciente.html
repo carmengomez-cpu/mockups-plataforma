@@ -104,7 +104,7 @@
       if (!i.value.trim()) { ok = false; var c = i.closest('.campo'); c.classList.add('err'); c.insertAdjacentHTML('beforeend', '<span class="error">Este campo es obligatorio.</span>'); }
     });
     if (!home && !document.getElementById('ok').checked) { ok = false; Tema.toast('Confirma que la dirección es correcta.'); }
-    if (ok) Tema.toast('✓ Usuario creado (solo maqueta)');
+    if (ok) { Tema.toast('✓ Usuario creado'); setTimeout(function () { location.href = 'ficha-sin-test.html'; }, 1100); }
   });
 </script>
 </body>

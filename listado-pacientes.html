@@ -92,7 +92,7 @@
         (!q || (d[0] + ' ' + d[1]).toLowerCase().indexOf(q) !== -1);
     });
     $('rows').innerHTML = rows.length ? rows.map(function (d) {
-      return '<tr class="click" data-toast="En este mockup no está abierta la ficha de ' + d[0] + '. Mira «Ficha con test» y «Ficha sin test».">' +
+      return '<tr class="click" data-href="ficha-con-test.html">' +
         '<td><div class="who"><span class="av' + (d[2] === 'vag' ? ' vag' : '') + '">' + d[0].split(' ').map(function (x) { return x[0]; }).slice(0, 2).join('') + '</span><div><b>' + d[0] + '</b><small>' + d[1] + '</small></div></div></td>' +
         '<td>' + badge(d[2]) + '</td>' +
         '<td><span class="est ' + CLS[d[3]] + '">' + LABEL[d[3]] + '</span></td>' +
@@ -112,7 +112,7 @@
   });
   $('rows').addEventListener('click', function (e) {
     if (e.target.closest('a,select')) return;
-    var tr = e.target.closest('tr[data-toast]'); if (tr) Tema.toast(tr.dataset.toast);
+    var tr = e.target.closest('tr[data-href]'); if (tr) location.href = tr.dataset.href;
   });
   /* ---------- Cambio de sede desde la lista (igual que en la ficha) ---------- */
   var pend = null;
