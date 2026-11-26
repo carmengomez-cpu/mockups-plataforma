@@ -68,6 +68,23 @@
   .ulist .opc-big{align-items:center;padding:10px 14px}.ulist .cad{margin-left:auto;font-size:12px;color:var(--gris)}
   .conf-sede{display:flex;gap:10px;align-items:center;font-size:15px;padding:12px 14px;border-radius:14px;background:var(--papel2);font-family:var(--display)}
   @media (max-width:1100px){.ficha{grid-template-columns:minmax(0,1fr)}}
+  .pickup{border-radius:14px;background:var(--papel2);padding:12px 14px;font-size:14px}
+  .pickup b{display:block;font-family:var(--display);font-weight:500}
+  .pickup small{display:block;color:var(--gris);font-size:12.5px;margin-top:2px;line-height:1.5}
+  .pickup.changed{background:var(--verde2)}
+  .pickup.warn{background:var(--ambar2)}
+  .conf-sede{display:flex;gap:10px;align-items:center;font-size:15px;padding:12px 14px;border-radius:14px;background:var(--papel2);font-family:var(--display)}
+  .conf-sede b{color:var(--cobalto);font-weight:500}
+  .dlg-av{border-top:6px solid var(--rojo)}
+  .a-cab{display:flex;gap:14px;align-items:center;padding:22px 24px 8px}
+  .a-ic{width:44px;height:44px;border-radius:50%;background:var(--rojo2);color:var(--rojo);display:grid;place-items:center;font:500 24px var(--display);flex:none}
+  .a-cab small{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--rojo);font-family:var(--display);font-weight:500}
+  .a-cab h2{font-size:22px}
+  .a-txt{padding:6px 24px 4px;font-size:15px;line-height:1.55}
+  .a-ops{padding:8px 24px;display:flex;flex-direction:column;gap:10px}
+  .a-nota{padding:4px 24px 16px;font-size:12.5px;color:var(--gris)}
+  .opc-big input{display:none}
+  .tag-rec{font-size:11px;background:var(--cobalto);color:#fff;padding:1px 8px;border-radius:999px;margin-left:6px;font-family:var(--display);font-weight:500}
 </style>
 </head>
 <body>
@@ -180,6 +197,21 @@
   <div class="m-pie"><span class="res">Al guardar se solicita la recogida de la muestra.</span><div class="bots"><button type="button" class="btn borde" id="formCancel">Cancelar</button><button type="button" class="btn negro" id="formOk">Guardar formulario</button></div></div>
 </div>
 
+<!-- Paso 2: aviso de la recogida (F19) -->
+<div class="modal sm dlg-av" id="ovPick" hidden role="dialog" aria-modal="true" aria-labelledby="pkT">
+  <div class="a-cab"><span class="a-ic">!</span><div><small>Aviso importante</small><h2 id="pkT">La recogida ya estaba solicitada</h2></div></div>
+  <p class="a-txt">Has movido a <b>Lucía Martín</b> a la sede <b class="to"></b>, pero su recogida estaba solicitada en <b class="from"></b>. ¿Qué quieres hacer?</p>
+  <div class="a-ops">
+    <div class="aviso amb" id="pkAccepted" hidden style="display:block"><b>La recogida en <span class="from"></span> ya está confirmada con la empresa de transporte.</b><br>No podemos cambiarla desde aquí. Si eliges recogerla en <span class="to"></span>, avisaremos al equipo de Biotasmart para que la cambie.</div>
+    <label class="opc-big on" data-v="new"><input type="radio" name="pk" value="new" checked>
+      <span><b>Solicitar la recogida en <span class="to"></span> <span class="tag-rec">Recomendado</span></b><small id="pkNewTxt"></small></span><span class="chk"></span></label>
+    <label class="opc-big" data-v="keep"><input type="radio" name="pk" value="keep">
+      <span><b>Mantener la recogida en <span class="from"></span></b><small>El usuario cambia de sede, pero el mensajero sigue recogiendo la muestra en <span class="from"></span> (por ejemplo, si la muestra ya está allí).</small></span><span class="chk"></span></label>
+  </div>
+  <p class="a-nota">Esta elección solo afecta a la recogida de este test. Los próximos tests del usuario se recogerán ya en su sede nueva.</p>
+  <div class="m-pie"><span class="res"></span><div class="bots"><button type="button" class="btn borde" onclick="backPick()">Volver</button><button type="button" class="btn negro" onclick="donePick()">Confirmar</button></div></div>
+</div>
+
 <script src="tema.js"></script>
 <script>
   var $ = function (id) { return document.getElementById(id); };
@@ -188,10 +220,15 @@
     nav: 'usuarios', badges: { usuarios: 2 },
     demo: { title: CON ? 'Ficha con test' : 'Ficha sin test', label: 'Simular cuenta:', current: 'stock', steps: [['stock', 'Con stock'], ['nostock', 'Sin stock']],
       onStep: function (s) { hasStock = s === 'stock'; Tema.setStep(s); renderPago(); },
-      extra: [{ text: true, label: 'Tipo de consulta:' }, { id: 'm-presencial', label: 'Presencial' }, { id: 'm-online', label: 'Online' }, { id: 'm-hibrido', label: 'Híbrido' }] }
+      extra: [{ text: true, label: 'Tipo de consulta:' }, { id: 'm-presencial', label: 'Presencial' }, { id: 'm-online', label: 'Online' }, { id: 'm-hibrido', label: 'Híbrido' }, { text: true, label: 'Recogida en Packlink:' }, { id: 'pl-draft', label: 'Borrador' }, { id: 'pl-acc', label: 'Ya aceptada' }] }
   });
   function pintarModo() { ['presencial', 'online', 'hibrido'].forEach(function (m) { $('m-' + m).classList.toggle('on', Tema.modo() === m); }); }
   ['presencial', 'online', 'hibrido'].forEach(function (m) { $('m-' + m).addEventListener('click', function () { Tema.setModo(m); pintarModo(); renderAll(); }); });
+  var plMode = 'draft';
+  function pintarPl() { $('pl-draft').classList.toggle('on', plMode === 'draft'); $('pl-acc').classList.toggle('on', plMode === 'accepted'); }
+  $('pl-draft').addEventListener('click', function () { plMode = 'draft'; pintarPl(); });
+  $('pl-acc').addEventListener('click', function () { plMode = 'accepted'; pintarPl(); });
+  pintarPl();
   pintarModo();
 
   // ===== Estados del test (F12) =====
@@ -203,12 +240,14 @@
     { code: '#999001007140', type: 'Microbiota intestinal (repetición)', modo: 'online', recogida: 'En el domicilio del usuario', done: false, state: 'Cuestionario enviado', cues: 'Enviado el 5 nov',
       dates: { 'Sin tubo': '01/11/2026', 'Pendiente de pago': '01/11/2026', 'Envío del test': '03/11/2026', 'Cuestionario enviado': '05/11/2026' } },
     { code: '#999001009001', type: 'Microbiota intestinal (nuevo)', modo: 'stock', recogida: 'En el domicilio del usuario', done: false, state: 'Sin tubo', cues: 'Sin enviar',
-      dates: { 'Sin tubo': '26/11/2026' } }
+      dates: { 'Sin tubo': '26/11/2026' } },
+    { code: '#999001008850', type: 'Microbiota intestinal (recogida pedida)', modo: 'stock', recogida: 'En la sede de Madrid', pickupAt: 'Madrid', done: false, state: 'Recogida solicitada', cues: 'Enviado el 12 nov',
+      dates: { 'Sin tubo': '12/11/2026', 'Cuestionario enviado': '12/11/2026', 'Recogida solicitada': '20/11/2026' } }
   ] : [];
   var MODO_TXT = { stock: 'Presencial · test del stock del centro: se entrega y se cobra en el centro, sin «Pendiente de pago» ni «Envío del test».',
     online: 'Online · el usuario paga con el enlace y le enviamos el test a casa.' };
   if (CON) curTest = 1;
-  var ORDER = [2, 1, 0];   // del más reciente al más antiguo
+  var ORDER = [3, 2, 1, 0];   // del más reciente al más antiguo
 
   function renderPerfil() {
     if (CON) {
@@ -279,7 +318,7 @@
   function cerrarForm() { $('mForm').hidden = true; $('velo').hidden = true; }
   $('formCancel').addEventListener('click', cerrarForm);
   $('formOk').addEventListener('click', function () {
-    var t = TESTS[curTest]; if (!t.dates['Cuestionario enviado']) t.dates['Cuestionario enviado'] = hoy(); t.dates['Recogida solicitada'] = hoy(); t.state = 'Recogida solicitada'; t.cues = 'Rellenado en consulta el ' + hoy();
+    var t = TESTS[curTest]; if (!t.dates['Cuestionario enviado']) t.dates['Cuestionario enviado'] = hoy(); t.dates['Recogida solicitada'] = hoy(); if (t.modo === 'stock') { t.pickupAt = current; t.recogida = 'En la sede de ' + current; } t.state = 'Recogida solicitada'; t.cues = 'Rellenado en consulta el ' + hoy();
     cerrarForm(); renderAll(); Tema.toast('Formulario guardado. Se ha solicitado la recogida.');
   });
   function renderAll() { renderPerfil(); renderProceso(); renderPanel(); renderPago(); renderForm(); bindToast(); $('bLink').onclick = openLink; }
@@ -291,13 +330,40 @@
   var sel = $('sede');
   $('dirTxt').innerHTML = CON ? 'C/ Ejemplo 8, 2ºB · 28010 Madrid' : '<span class="vacio">Sin dirección</span>';
   function openM(id) { $('velo').hidden = false; $(id).hidden = false; }
-  function closeM() { $('velo').hidden = true; ['mSede', 'mStock', 'mNo', 'mForm'].forEach(function (i) { $(i).hidden = true; }); }
-  sel.addEventListener('change', function () { $('from').textContent = current; $('to').textContent = sel.value; openM('mSede'); });
+  function closeM() { $('velo').hidden = true; ['mSede', 'mStock', 'mNo', 'mForm', 'ovPick'].forEach(function (i) { $(i).hidden = true; }); }
+  var pendingTo = null;
+  sel.addEventListener('change', function () { pendingTo = sel.value; $('from').textContent = current; $('to').textContent = sel.value; openM('mSede'); });
   $('cancel').addEventListener('click', function () { sel.value = current; closeM(); });
-  $('confirm').addEventListener('click', function () { current = sel.value; closeM(); Tema.toast('Usuario movido a ' + current); });
+  // F10 confirma el cambio; F19 avisa si el test está en «Recogida solicitada» en la sede de antes
+  $('confirm').addEventListener('click', function () {
+    var t = CON ? TESTS[curTest] : null;
+    if (t && t.state === 'Recogida solicitada' && t.pickupAt && t.pickupAt !== pendingTo) { $('mSede').hidden = true; openPick(t); return; }
+    current = pendingTo; closeM(); Tema.toast('Usuario movido a ' + current);
+  });
+  function openPick(t) {
+    document.querySelectorAll('#ovPick .from').forEach(function (x) { x.textContent = t.pickupAt; });
+    document.querySelectorAll('#ovPick .to').forEach(function (x) { x.textContent = pendingTo; });
+    $('pkAccepted').hidden = plMode !== 'accepted';
+    $('pkNewTxt').textContent = plMode === 'accepted' ? 'Avisamos al equipo de Biotasmart para que cambie la recogida a la sede de ' + pendingTo + '.' : 'Anulamos la recogida en ' + t.pickupAt + ' y pedimos una nueva en ' + pendingTo + '.';
+    document.querySelector('input[name="pk"][value="new"]').checked = true; syncOpts();
+    $('ovPick').hidden = false;
+  }
+  document.querySelectorAll('.opc-big[data-v]').forEach(function (l) { l.addEventListener('click', function () { l.querySelector('input').checked = true; syncOpts(); }); });
+  function syncOpts() { document.querySelectorAll('#ovPick .opc-big').forEach(function (o) { o.classList.toggle('on', o.querySelector('input').checked); }); }
+  function backPick() { $('ovPick').hidden = true; $('mSede').hidden = false; }
+  function donePick() {
+    var v = document.querySelector('input[name="pk"]:checked').value, t = TESTS[curTest], d = hoy();
+    var antes = t.pickupAt; current = pendingTo;
+    if (v === 'new') {
+      t.pickupAt = pendingTo;
+      if (plMode === 'accepted') { t.recogida = 'Cambio pendiente: el equipo de Biotasmart está cambiando la recogida a ' + pendingTo; Tema.toast('Avisamos al equipo para cambiar la recogida a ' + current); }
+      else { t.recogida = 'En la sede de ' + pendingTo + ' · solicitada el ' + d; t.dates['Recogida solicitada'] = d; Tema.toast('Recogida solicitada en ' + current); }
+    } else { t.recogida = 'Se mantiene en la sede de ' + antes; Tema.toast('Usuario movido a ' + current + ' · la recogida sigue en ' + antes); }
+    closeM(); renderAll();
+  }
   document.querySelectorAll('[data-close]').forEach(function (b) { b.addEventListener('click', closeM); });
-  $('velo').addEventListener('click', function () { if (!$('mSede').hidden) sel.value = current; closeM(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if (!$('mSede').hidden) sel.value = current; closeM(); } });
+  $('velo').addEventListener('click', function () { if (!$('mSede').hidden || !$('ovPick').hidden) sel.value = current; closeM(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if (!$('mSede').hidden || !$('ovPick').hidden) sel.value = current; closeM(); } });
 
   // ===== Vincular test =====
   var STOCK = [['#999001006012', 'Intestinal · Avanzado', 'Caduca 03/2027'], ['#999001006013', 'Intestinal · Avanzado', 'Caduca 03/2027'], ['#999001006027', 'Vaginal · Avanzado', 'Caduca 05/2027'], ['#999001006031', 'Intestinal · Avanzado', 'Caduca 05/2027'], ['#999004000215', 'Vaginal · Avanzado', 'Caduca 08/2027']];
