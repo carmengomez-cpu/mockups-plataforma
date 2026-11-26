@@ -6,7 +6,7 @@
   var LINKS = { inicio: 'inicio.html', usuarios: 'listado-pacientes.html', pedidos: 'pagos.html', stock: 'stock-tests.html' };
   var NAV = [
     ['inicio', 'Inicio'], ['usuarios', 'Usuarios'], ['pedidos', 'Pedidos'], ['stock', 'Stock'],
-    ['venta', 'Venta online'], ['investigacion', 'Investigación'], ['ajustes', 'Ajustes del centro']
+    ['venta', 'Venta online'], ['investigacion', 'Investigación']
   ];
   var toastEl, toastT;
   var area = 'todo';   // qué test ver (menú lateral): todo | int | vag; se recuerda entre páginas
@@ -29,7 +29,8 @@
     var el = document.getElementById('side'); if (!el) return;
     var badges = o.badges || {};
     var html = '<img class="logo" src="' + base + 'assets/logo.svg" alt="Biotasmart">' +
-      '<button class="centro-sel" type="button"><b>Centro Demo · Valencia</b><small>Grupo Demo · cambiar de centro</small></button>' +
+      '<div class="centro-wrap"><button class="centro-sel" type="button" aria-haspopup="menu" aria-expanded="false"><b>Centro Demo · Valencia</b><small>Grupo Demo · cambiar de centro</small></button>' +
+      '<div class="centro-menu" role="menu" hidden><button type="button" role="menuitem" data-m="cuenta">Editar cuenta</button><button type="button" role="menuitem" data-m="ajustes">Ajustes</button></div></div>' +
       '<div class="area-sel" role="group" aria-label="Qué test ver"><button type="button" data-a="todo" class="' + (area === 'todo' ? 'on' : '') + '">Todo</button>' +
       '<button type="button" data-a="int" class="' + (area === 'int' ? 'on' : '') + '"><i style="background:#396a7f"></i>Intestinal</button><button type="button" data-a="vag" class="' + (area === 'vag' ? 'on' : '') + '"><i style="background:#D49A8E"></i>Vaginal</button></div>';
     NAV.forEach(function (n) {
@@ -47,6 +48,15 @@
       if (!LINKS[k] && !(o.links && o.links[k])) { e.preventDefault(); toast('Esta sección no está en este mockup.'); }
     });
     aplicarModo();
+    var cs = el.querySelector('.centro-sel'), cm = el.querySelector('.centro-menu');
+    function menu(abrir) { cm.hidden = !abrir; cs.setAttribute('aria-expanded', String(abrir)); cs.classList.toggle('abierto', abrir); }
+    cs.addEventListener('click', function (e) { e.stopPropagation(); menu(cm.hidden); });
+    cm.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return; menu(false);
+      var h = o.handlers && o.handlers[b.dataset.m]; if (h) h(); else toast('«' + b.textContent + '» no está en este mockup.');
+    });
+    document.addEventListener('click', function () { menu(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') menu(false); });
     el.querySelectorAll('.area-sel button').forEach(function (b) {
       b.addEventListener('click', function () {
         area = b.dataset.a; try { sessionStorage.setItem('tema-area', area); } catch (e) {}
