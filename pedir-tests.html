@@ -76,10 +76,13 @@
   .q-who b{color:var(--tinta);font-weight:500}.q-who.ok{color:var(--verde-tinta)}
 
   .n-stock2{display:none}
+  /* La página de origen (real) queda detrás del pop-up */
+  .bg-frame{position:fixed;inset:0;width:100%;height:100%;border:0;z-index:0;background:var(--papel,#f7f5f2);pointer-events:none}
 </style>
 </head>
 <body>
 <div id="demobar"></div>
+<iframe id="bgFrame" class="bg-frame" hidden tabindex="-1" aria-hidden="true" title="Página de origen"></iframe>
 <div class="shell">
   <aside class="side" id="side"></aside>
   <main class="main">
@@ -302,6 +305,9 @@
   var REQUIRED = ['name', 'street', 'cp', 'city', 'province', 'phone'];
   var FIELD_NAMES = { name: 'nombre', street: 'dirección', cp: 'código postal', city: 'ciudad', province: 'provincia', phone: 'teléfono' };
   var sede = Object.assign({}, SEDE_START);
+  var DESDE = new URLSearchParams(location.search).get('desde') || 'stock';
+  var ORIGENES = { inicio: ['inicio.html', 'Inicio', 'inicio'], stock: ['stock-tests.html', 'Stock', 'stock'], ficha: ['ficha-con-test.html', 'la ficha', 'usuarios'], pedidos: ['pagos.html', 'Pedidos', 'pedidos'] };
+  var OR = ORIGENES[DESDE] || ORIGENES.stock, ORIGIN_URL = OR[0], ORIGIN_NAME = OR[1], NAV_KEY = OR[2];
   var origin = ACT ? 'home' : 'stock', current = origin, stockCount = 0, pendingPatient = null, method = 'card';
   var PATIENTS = ['Lucía Martín', 'Pedro Gómez', 'Elena Ruiz'];
   var ALL_TUBES = ['#999001006012', '#999001006013'], free = [];
@@ -382,6 +388,8 @@
 
   /* ---------- Navegación entre pasos ---------- */
   function go(step) {
+    // Pedir más tests: salir del flujo = volver a la página real de la que se viene
+    if (!ACT && (step === 'back' || step === 'home' || step === 'stock')) { location.href = ORIGIN_URL; return; }
     if (step === 'back') step = origin;
     if (step === 'order' && $('view-review').hidden) { qty = { intestinal: 0, vaginal: 0 }; update(); }  // una solicitud nueva empieza siempre a 0
     if (step === 'home' || step === 'stock') { origin = step; pendingPatient = null; }
@@ -392,10 +400,13 @@
     $('m-order').hidden = step !== 'order'; $('m-activate').hidden = step !== 'activate';
     $('velo').hidden = !(step === 'order' || step === 'activate' || !$('m-sede').hidden);
     renderStock();
-    Tema.setNav(origin === 'home' ? 'inicio' : 'stock'); Tema.setStep(step);
+    var bg = !ACT && step === 'order' && $('view-review').hidden;   // el pop-up se abre sobre la página real
+    $('bgFrame').hidden = !bg; document.querySelector('.shell').hidden = bg;
+    if (bg && !$('bgFrame').getAttribute('src')) $('bgFrame').src = ORIGIN_URL;
+    Tema.setNav(ACT ? (origin === 'home' ? 'inicio' : 'stock') : NAV_KEY); Tema.setStep(step);
     $('order-for').hidden = !(step === 'order' && pendingPatient);
     $('order-for').textContent = pendingPatient ? 'Pedido para poder vincular un test a ' + pendingPatient + ' cuando llegue.' : '';
-    $('done-back').textContent = origin === 'home' ? 'Volver a Inicio' : 'Volver a Stock';
+    $('done-back').textContent = ACT ? (origin === 'home' ? 'Volver a Inicio' : 'Volver a Stock') : 'Volver a ' + ORIGIN_NAME;
     $('done-activate').hidden = !pendingPatient;
     $('done-activate').textContent = pendingPatient ? 'Cuando lleguen tus tests, vincula uno a ' + pendingPatient + ' desde Acciones rápidas.' : '';
     if (step !== 'order' && step !== 'activate') window.scrollTo(0, 0);
@@ -470,20 +481,20 @@
   /* ---------- Barra de demo y menú ---------- */
   Tema.shell({
     nav: ACT ? 'inicio' : 'stock', badges: { usuarios: 2 },
-    handlers: ACT ? { inicio: function () { go('home'); }, stock: function () { go('stock'); } } : { stock: function () { go('stock'); } },
+    handlers: ACT ? { inicio: function () { go('home'); }, stock: function () { go('stock'); } } : {},
     demo: {
       title: ACT ? 'Vincular test' : 'Pedir más tests', label: 'Flujo de demo:', current: current, onStep: function (s) { go(s); },
-      steps: (ACT ? [['home', '1 Inicio'], ['activate', '2 Vincular test']] : [['stock', '1 Stock']]).concat([['order', ACT ? '3 Elegir tests' : '2 Elegir tests'], ['review', ACT ? '4 Revisar solicitud' : '3 Revisar solicitud'], ['done', ACT ? '5 Confirmación' : '4 Confirmación']]),
+      steps: (ACT ? [['home', '1 Inicio'], ['activate', '2 Vincular test']] : [['stock', '1 ' + ORIGIN_NAME]]).concat([['order', ACT ? '3 Elegir tests' : '2 Elegir tests'], ['review', ACT ? '4 Revisar solicitud' : '3 Revisar solicitud'], ['done', ACT ? '5 Confirmación' : '4 Confirmación']]),
       extra: (ACT ? [{ id: 'stock-toggle', label: '' }] : []).concat([{ id: 'demo-reset', label: 'Reiniciar', cls: 'r' }])
     }
   });
   if ($('stock-toggle')) $('stock-toggle').addEventListener('click', function () { setStock(stockCount ? 0 : 2); renderStock(); });
   $('demo-reset').addEventListener('click', function () {
     qty = Object.assign({}, START); sede = Object.assign({}, SEDE_START); setStock(0); pendingPatient = null; method = 'card'; origin = ACT ? 'home' : 'stock';
-    $('m-sede').hidden = true; $('view-review').hidden = true; update(); go(origin);
+    $('m-sede').hidden = true; $('view-review').hidden = true; update(); go(ACT ? origin : 'order');
   });
   update();
-  go(origin);
+  go(ACT ? origin : 'order');
   // Llegada desde «Vincular test» (Inicio, Usuarios): se abre directamente el pop-up, con 2 tests en stock
   if (ACT && /[?&]abrir=vincular/.test(location.search)) { setStock(2); go('activate'); }
 </script>
