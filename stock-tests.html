@@ -71,11 +71,6 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
             <input type="search" id="q" placeholder="Busca por nombre, correo o código de tubo" aria-label="Buscar tubo" autocomplete="off">
           </label>
-          <div class="flt-seg" id="tipo" role="group" aria-label="Tipo de test">
-            <button type="button" data-t="" class="on">Todos los tipos</button>
-            <button type="button" data-t="int">Intestinal</button>
-            <button type="button" data-t="vag">Vaginal</button>
-          </div>
           <select class="flt-sel" id="sede" aria-label="Sede">
             <option value="all">Todas las sedes</option><option>Madrid</option><option>Barcelona</option><option>Mallorca</option>
           </select>
@@ -184,10 +179,10 @@
   $('aClear').addEventListener('click', function () { selected.clear(); render(); });
   $('q').addEventListener('input', function (e) { q = e.target.value.trim().toLowerCase(); render(); });
   $('sede').addEventListener('change', render);
-  $('tipo').addEventListener('click', function (e) {
-    var b = e.target.closest('button'); if (!b) return; tipo = b.dataset.t;
-    this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); }); render();
-  });
+  // El tipo de test (Intestinal / Vaginal) se elige arriba del menú lateral
+  function aplicarArea(a) { tipo = a === 'int' || a === 'vag' ? a : ''; selected.clear(); render(); }
+  document.addEventListener('tema-area', function (e) { aplicarArea(e.detail); });
+  tipo = Tema.area() === 'int' || Tema.area() === 'vag' ? Tema.area() : '';
   $('est').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return; est = b.dataset.e;
     this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); }); render();
