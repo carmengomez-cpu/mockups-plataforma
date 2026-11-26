@@ -11,6 +11,9 @@
   .who b{font-family:var(--display);font-weight:500;font-size:14.5px;display:block}
   .who small{display:block;font-size:12.5px;color:var(--gris)}
   td .ba{margin:1px 4px 1px 0}
+  .sede-sel{font:inherit;font-size:13px;border:0;border-radius:999px;padding:6px 12px;background:var(--blanco);box-shadow:inset 0 0 0 1px var(--linea2);color:var(--tinta);cursor:pointer}
+  .sede-sel:hover{box-shadow:inset 0 0 0 1px var(--cobalto)}
+  .conf-sede{display:flex;gap:10px;align-items:center;font-size:15px;padding:12px 14px;border-radius:14px;background:var(--papel2);font-family:var(--display)}
   .vacio-f td{text-align:center;color:var(--gris);padding:34px 0}
 </style>
 </head>
@@ -41,13 +44,20 @@
       </div>
       <div class="tabla-wrap">
         <table class="tabla-min">
-          <thead><tr><th>Usuario</th><th>Test</th><th>Estado</th><th>Última novedad</th><th>Sede</th><th>Fecha</th></tr></thead>
+          <thead><tr><th>Usuario</th><th>Test</th><th>Estado</th><th>Fecha</th><th>Sede</th><th>Última novedad</th></tr></thead>
           <tbody id="rows"></tbody>
         </table>
       </div>
     </div>
   </main>
 </div>
+<div class="velo" id="velo" hidden></div>
+<div class="modal sm" id="mSede" hidden role="dialog" aria-modal="true" aria-labelledby="mt">
+  <div class="m-cab"><span class="ico os">⇄</span><div><h2 id="mt">¿Cambiar de sede a este usuario?</h2><p>Sus tests e informes pasarán a gestionarse desde la nueva sede.</p></div></div>
+  <div class="m-cuerpo"><div class="m-paso"><span class="m-num">1</span><div><h4 id="mNom"></h4><div class="conf-sede"><span id="from"></span> → <b id="to"></b></div></div></div></div>
+  <div class="m-pie"><span class="res"></span><div class="bots"><button type="button" class="btn borde" id="cancel">Cancelar</button><button type="button" class="btn negro" id="confirm">Sí, cambiar de sede</button></div></div>
+</div>
+
 <script src="tema.js"></script>
 <script>
   Tema.shell({ nav: 'usuarios', badges: { usuarios: 2 } });
@@ -66,6 +76,8 @@
     ['Hugo Sáez', 'hugo.saez@ejemplo.com', 'int', 'usu', 'Muestra por enviar', 'Madrid', '22 nov'],
     ['Diego Alonso', 'diego.alonso@ejemplo.com', 'int', 'rep', 'Test hecho hace 6 meses', 'Barcelona', '28 may']
   ];
+  var SEDES = ['Madrid', 'Barcelona', 'Valencia'];
+  D.forEach(function (d, i) { d.i = i; });
   var tipo = '', est = '', q = '';
   var $ = function (id) { return document.getElementById(id); };
   $('est').insertAdjacentHTML('beforeend', ESTADOS.map(function (e) {
@@ -85,9 +97,9 @@
         '<td><div class="who"><span class="av' + (d[2] === 'vag' ? ' vag' : '') + '">' + d[0].split(' ').map(function (x) { return x[0]; }).slice(0, 2).join('') + '</span><div><b>' + d[0] + '</b><small>' + d[1] + '</small></div></div></td>' +
         '<td>' + badge(d[2]) + '</td>' +
         '<td><span class="est ' + CLS[d[3]] + '">' + LABEL[d[3]] + '</span></td>' +
-        '<td class="gr">' + d[4] + '</td>' +
-        '<td class="gr">' + d[5] + '<br><a class="lnk" href="aviso-cambio-sede.html">Mover de sede</a></td>' +
-        '<td class="gr">' + d[6] + '</td></tr>';
+        '<td class="gr">' + d[6] + '</td>' +
+        '<td><select class="sede-sel" data-i="' + d.i + '" aria-label="Sede de ' + d[0] + '">' + SEDES.map(function (x) { return '<option' + (x === d[5] ? ' selected' : '') + '>' + x + '</option>'; }).join('') + '</select></td>' +
+        '<td class="gr">' + d[4] + '</td></tr>';
     }).join('') : '<tr class="vacio-f"><td colspan="6">Ningún usuario con estos filtros.</td></tr>';
     $('n').textContent = rows.length + ' de ' + D.length;
   }
@@ -101,8 +113,25 @@
     this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); }); render();
   });
   $('rows').addEventListener('click', function (e) {
-    if (e.target.closest('a')) return;
+    if (e.target.closest('a,select')) return;
     var tr = e.target.closest('tr[data-toast]'); if (tr) Tema.toast(tr.dataset.toast);
+  });
+  /* ---------- Cambio de sede desde la lista (igual que en la ficha) ---------- */
+  var pend = null;
+  function cerrar() { $('velo').hidden = true; $('mSede').hidden = true; }
+  function cancelar() { pend = null; cerrar(); render(); }   // render() devuelve el desplegable a la sede de antes
+  $('rows').addEventListener('change', function (e) {
+    var sel = e.target.closest('.sede-sel'); if (!sel) return;
+    var i = +sel.dataset.i; if (sel.value === D[i][5]) return;
+    pend = { i: i, to: sel.value };
+    $('mNom').textContent = D[i][0]; $('from').textContent = D[i][5]; $('to').textContent = sel.value;
+    $('velo').hidden = false; $('mSede').hidden = false;
+  });
+  $('cancel').addEventListener('click', cancelar);
+  $('velo').addEventListener('click', cancelar);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('mSede').hidden) cancelar(); });
+  $('confirm').addEventListener('click', function () {
+    D[pend.i][5] = pend.to; var nom = D[pend.i][0], to = pend.to; pend = null; cerrar(); render(); Tema.toast(nom + ' movido a ' + to);
   });
   render();
 </script>
