@@ -61,8 +61,8 @@
 <script src="tema.js"></script>
 <script>
   Tema.shell({ nav: 'usuarios', badges: { usuarios: 2 } });
-  var ESTADOS = [['', 'Todos'], ['listo', 'Informe listo'], ['lab', 'En el laboratorio'], ['usu', 'Con el usuario'], ['rec', 'Recogida solicitada'], ['rep', 'Para repetir']];
-  var LABEL = { listo: 'Informe listo', lab: 'En el laboratorio', usu: 'Con el usuario', rec: 'Recogida solicitada', rep: 'Para repetir' };
+  var ESTADOS = [['', 'Todos'], ['listo', 'Informe listo'], ['lab', 'En el laboratorio'], ['usu', 'Cuestionario enviado'], ['rec', 'Recogida solicitada'], ['rep', 'Para repetir']];
+  var LABEL = { listo: 'Informe listo', lab: 'En el laboratorio', usu: 'Cuestionario enviado', rec: 'Recogida solicitada', rep: 'Para repetir' };
   var CLS = { listo: 'listo', lab: 'lab', usu: 'usu', rec: 'ambar', rep: 'rep' };
   // nombre, correo, tipo, estado, novedad, sede, fecha
   var D = [
@@ -73,7 +73,7 @@
     ['Jorge Sanz', 'jorge.sanz@ejemplo.com', 'int', 'lab', 'Muestra recibida en el laboratorio', 'Madrid', '21 nov'],
     ['Nerea Cano', 'nerea.cano@ejemplo.com', 'vag', 'lab', 'Muestra recibida en el laboratorio', 'Barcelona', '20 nov'],
     ['Alba Domínguez', 'alba.dominguez@ejemplo.com', 'vag', 'usu', 'Cuestionario sin rellenar', 'Madrid', '23 nov'],
-    ['Hugo Sáez', 'hugo.saez@ejemplo.com', 'int', 'usu', 'Muestra por enviar', 'Madrid', '22 nov'],
+    ['Hugo Sáez', 'hugo.saez@ejemplo.com', 'int', 'usu', 'Cuestionario enviado el 22 nov', 'Madrid', '22 nov'],
     ['Diego Alonso', 'diego.alonso@ejemplo.com', 'int', 'rep', 'Test hecho hace 6 meses', 'Barcelona', '28 may']
   ];
   var SEDES = ['Madrid', 'Barcelona', 'Valencia'];
