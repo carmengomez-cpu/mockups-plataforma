@@ -55,6 +55,27 @@
   #modal-saving{display:block}
   .act-for{padding:10px 14px;border-radius:12px;background:var(--cobalto2);font-size:14px;margin:4px 0 6px}
   @media (max-width:700px){.fila-q{grid-template-columns:minmax(0,1fr) auto}.fila-q .precio{grid-column:1/-1;text-align:left;order:3}}
+
+  .etapas{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+  .etapa{display:flex;flex-direction:column;gap:2px;padding:14px 16px;border-radius:16px;box-shadow:inset 0 0 0 1px var(--linea);text-decoration:none;transition:box-shadow .15s,transform .15s}
+  .etapa:hover{box-shadow:inset 0 0 0 1.5px var(--cobalto),0 8px 22px rgba(22,22,22,.06);transform:translateY(-1px)}
+  .etapa b{font:500 42px/1 var(--display)}.etapa:hover b{color:var(--cobalto)}
+  .etapa strong{font-family:var(--display);font-weight:500;font-size:14.5px;margin-top:6px}
+  .etapa span{font-size:12.5px;color:var(--gris)}
+  .etapa.ambar{background:var(--ambar2);box-shadow:none}.etapa.ambar b{color:var(--ambar-tinta)}
+  @media (max-width:1100px){.etapas{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .quick{box-shadow:0 0 0 2px var(--cobalto),var(--blk-sombra)}
+  .q-row{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+  .q-row input{flex:1 1 260px;min-width:0;font:inherit;font-size:15px;min-height:48px;padding:0 18px;border:0;border-radius:999px;background:var(--blanco);box-shadow:inset 0 0 0 1px var(--linea2)}
+  .q-row input:focus{outline:2px solid var(--cobalto);outline-offset:1px}
+  .chips-e{display:flex;gap:8px;flex-wrap:wrap}
+  .chip-e{min-height:48px;padding:0 16px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--linea2);background:var(--blanco);font-size:14px;display:flex;align-items:center;gap:7px;font-family:var(--display);font-weight:500;text-align:center}
+  .chip-e i{width:8px;height:8px;border-radius:50%}
+  .chip-e[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--cobalto);background:var(--menta2)}
+  .q-who{font-size:13.5px;color:var(--gris);min-height:20px;margin-top:10px}
+  .q-who b{color:var(--tinta);font-weight:500}.q-who.ok{color:var(--verde-tinta)}
+
+  .n-stock2{display:none}
 </style>
 </head>
 <body>
@@ -65,23 +86,46 @@
 
     <!-- ===== Inicio ===== -->
     <section id="view-home" hidden>
-      <span class="cel cel-doble" aria-hidden="true"></span>
+      <img class="celulas" src="assets/img/celulas-inicio.jpeg" alt="">
       <p class="migas">Miércoles, 25 de noviembre · Centro Demo</p>
-      <h1 class="titular">Hola, Marta.<span>Esto es lo que necesita tu atención hoy.</span></h1>
-      <div class="kpis cuatro">
-        <div class="kpi"><b class="n-stock">0</b><span>Tests en stock</span></div>
-        <div class="kpi"><b>0</b><span>Tests en laboratorio</span></div>
-        <div class="kpi"><b>0</b><span>Informes sin ver</span></div>
-        <div class="kpi"><b>3</b><span>Usuarios activos</span></div>
-      </div>
+      <h1 class="titular">Hola, Marta.<span>Hoy tienes 3 informes nuevos y 2 cosas pendientes.</span></h1>
       <div class="card">
-        <h2 style="margin-bottom:14px">Acciones rápidas</h2>
-        <div class="home-acc">
+        <div class="acc-fila">
+          <h2 style="margin-right:6px">Acciones rápidas</h2>
           <a class="btn negro" href="alta-paciente.html">Nuevo usuario</a>
           <button class="btn borde" type="button" data-goto="activate">Vincular test</button>
-          <a class="btn borde" href="enviar-link-rapido.html">Nuevo enlace de pago</a>
           <button class="btn borde" type="button" data-goto="order">Pedir más tests</button>
-          <span class="pie"><b class="n-stock2">0 tests</b> por vincular en tu stock</span>
+        </div>
+      </div>
+      <div class="card quick">
+        <div class="card-h"><h2>Nuevo enlace de pago</h2><small>1 enlace = 1 test para 1 usuario</small></div>
+        <div class="q-row">
+          <input type="email" placeholder="Email del usuario" aria-label="Email del usuario">
+          <div class="chips-e"><button type="button" class="chip-e"><i style="background:var(--cobalto)"></i>Intestinal · Nutrición</button><button type="button" class="chip-e"><i style="background:var(--cobalto)"></i>Intestinal · Mujer</button><button type="button" class="chip-e"><i style="background:var(--coral)"></i>Vaginal</button></div>
+          <button type="button" class="btn negro grande" disabled>Enviar enlace</button>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-h"><h2>Dónde están tus test</h2><small>Toca una etapa para ver quién está en ella</small></div>
+        <div class="etapas">
+          <a class="etapa" href="stock-tests.html" data-goto="stock"><b class="n-stock">0</b><strong>En tu centro</strong><span>Listos para dar</span></a>
+          <a class="etapa" href="listado-pacientes.html?estado=usu"><b>2</b><strong>Cuestionario enviado</strong><span>Pendiente de rellenar</span></a>
+          <a class="etapa" href="listado-pacientes.html?estado=lab"><b>2</b><strong>En el laboratorio</strong><span>Unos 15 días hasta el informe</span></a>
+          <a class="etapa" href="listado-pacientes.html?estado=listo"><b>3</b><strong>Informe listo</strong><span>Para revisar y compartir</span></a>
+          <a class="etapa ambar" href="listado-pacientes.html?estado=rep"><b>1</b><strong>Para repetir</strong><span>Hace 6 meses o más de su test</span></a>
+        </div>
+      </div>
+      <div class="dos-col" style="margin-top:16px">
+        <div class="card">
+          <div class="card-h"><h2>Informes nuevos</h2><small>Revísalos y decide qué compartes</small></div>
+          <div class="fila-av"><span class="av">LM</span><div><b>Lucía M.</b><small><span class="ba int">Intestinal</span> Test Avanzado · listo ayer</small></div></div>
+          <div class="fila-av"><span class="av">PR</span><div><b>Pablo R.</b><small><span class="ba int">Intestinal</span> Test Avanzado · listo hoy</small></div></div>
+          <div class="fila-av"><span class="av vag">ET</span><div><b>Elena T.</b><small><span class="ba vag">Vaginal</span> Test Avanzado · listo ayer</small></div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h2>Para hoy</h2><small>0 de 2 hechas</small></div>
+          <div class="fila-av" style="grid-template-columns:minmax(0,1fr)"><div><b>Alba D. no ha rellenado el cuestionario</b><small>Tiene el test desde hace 5 días</small></div></div>
+          <div class="fila-av" style="grid-template-columns:minmax(0,1fr)"><div><b>Hugo S. no ha rellenado el cuestionario</b><small>Tiene el test desde hace 3 días</small></div></div>
         </div>
       </div>
     </section>
