@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Mockup · Aviso de recogida al cambiar de sede (ficha completa)</title>
+<link rel="stylesheet" href="tema.css">
+<style>
+  .ficha{display:grid;grid-template-columns:380px minmax(0,1fr);gap:20px;align-items:start}
+  .ficha .card+.card{margin-top:0}
+  .derecha{display:flex;flex-direction:column;gap:16px;min-width:0}
+  /* ===== Columna del usuario ===== */
+  .perfil{padding:24px 22px 20px;position:relative;text-align:center}
+  .edit-ic{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;background:var(--blanco);box-shadow:inset 0 0 0 1px var(--linea2);display:grid;place-items:center;text-align:center;font-size:14px}
+  .edit-ic:hover{box-shadow:inset 0 0 0 1px var(--cobalto);background:var(--cobalto2)}
+  .big-av{width:76px;height:76px;border-radius:50%;background:var(--cobalto2);color:var(--cobalto);display:grid;place-items:center;font:500 26px var(--display);margin:0 auto 10px}
+  .perfil h1{font-size:26px;line-height:1.1}
+  .codesel{margin-top:8px;border:0;background:var(--papel2);border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;color:var(--tinta);cursor:pointer;max-width:100%;box-shadow:inset 0 0 0 1px var(--linea)}
+  .codesel:hover{box-shadow:inset 0 0 0 1px var(--cobalto)}
+  .perfil .est{margin-top:10px}
+  .btn.ancho{width:100%;margin-top:16px;padding:12px 16px}
+  .bloque{text-align:left;border-top:1px solid var(--linea);margin-top:18px;padding-top:16px}
+  .ttl-m{font-size:11px;letter-spacing:.08em;color:var(--gris);margin:0 0 8px;text-transform:uppercase}
+  .sends{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:end}
+  .pago-n{display:flex;gap:8px;align-items:center;border-radius:14px;background:var(--cobalto2);padding:8px 12px;text-align:left}
+  .pago-n b{display:block;font-family:var(--display);font-weight:500;font-size:12.5px}
+  .pago-n small{display:block;font-size:11.5px;color:var(--gris);line-height:1.3}
+  .linkbox{display:flex;align-items:center;gap:6px;border-radius:999px;background:var(--papel2);padding:4px 4px 4px 12px;min-width:0}
+  .linkbox span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+  .ib{width:28px;height:28px;border-radius:50%;background:var(--blanco);box-shadow:inset 0 0 0 1px var(--linea2);display:grid;place-items:center;text-align:center;font-size:12px;flex:none}
+  .sub-st{font-size:11.5px;margin-top:6px}.sub-st.ok{color:var(--verde-tinta)}.sub-st.pend{color:var(--ambar-tinta)}.sub-st.nn{color:var(--gris)}
+  .sede-box{background:var(--cobalto2);border-radius:14px;padding:10px 12px;margin-bottom:10px}
+  .sede-box label{display:block;font-size:11px;color:var(--cobalto);letter-spacing:.08em;margin-bottom:6px;font-family:var(--display);font-weight:500}
+  .sede-box select{width:100%;height:38px;border-radius:999px;border:0;background:var(--blanco);box-shadow:inset 0 0 0 1px var(--cobalto);padding:0 14px;font:inherit;font-family:var(--display);font-weight:500;cursor:pointer}
+  .dato{display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px;align-items:center;padding:7px 0}
+  .dato .ic{width:30px;height:30px;border-radius:9px;background:var(--papel2);display:grid;place-items:center;font-size:13px}
+  .dato small{display:block;font-size:11.5px;color:var(--gris)}
+  .dato .vacio{color:var(--gris2)}
+  /* ===== Derecha ===== */
+  .proceso{padding:20px 26px}
+  .ph-t{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .ph-t h2{font-size:18px}
+  .ph-t h2 small{font-family:var(--text);font-weight:400;color:var(--gris);font-size:13px}
+  .modo-t{font-size:12.5px;color:var(--gris);margin:4px 0 0}
+  .proceso .track{margin-bottom:0}
+  .tabsbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .tabs-f{display:flex;gap:8px;flex-wrap:wrap}
+  .tab-f{font-family:var(--display);font-weight:500;font-size:13.5px;padding:8px 18px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--linea2);background:var(--blanco);color:var(--tinta)}
+  .tab-f.on{background:var(--tinta);color:#fff;box-shadow:none}
+  .tools{display:flex;gap:8px;flex-wrap:wrap}
+  .panel{display:flex;flex-direction:column;gap:16px}
+  .muestra{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+  .muestra h2{margin-bottom:6px}.muestra p{color:var(--gris);max-width:44ch}
+  .kp{display:flex}.kp div{padding:0 26px;border-left:1px solid var(--linea);text-align:right}.kp div:first-child{border:0}
+  .kp b{display:block;font:500 40px/1.1 var(--display)}.kp small{color:var(--gris)}
+  .fuera{background:var(--menta2)}
+  .fuera .t{display:flex;gap:16px;align-items:center;margin-bottom:12px}
+  .fuera .n{font:500 40px/1 var(--display);color:var(--cobalto)}
+  .fuera .f{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(22,22,22,.09)}
+  .vacio-c{text-align:center;padding:40px 20px}
+  .vacio-c .e{font-size:28px}.vacio-c h2{margin:6px 0}.vacio-c p{color:var(--gris);margin:0 0 16px}
+  .ulist{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow:auto;margin-top:10px}
+  .ulist .opc-big{align-items:center;padding:10px 14px}.ulist .cad{margin-left:auto;font-size:12px;color:var(--gris)}
+  .conf-sede{display:flex;gap:10px;align-items:center;font-size:15px;padding:12px 14px;border-radius:14px;background:var(--papel2);font-family:var(--display)}
+  @media (max-width:1100px){.ficha{grid-template-columns:minmax(0,1fr)}}
+
+  /* Aviso F19 */
+  .pickup{border-radius:14px;background:var(--papel2);padding:12px 14px;font-size:14px}
+  .pickup b{display:block;font-family:var(--display);font-weight:500}
+  .pickup small{display:block;color:var(--gris);font-size:12.5px;margin-top:2px;line-height:1.5}
+  .pickup.changed{background:var(--verde2)}
+  .pickup.warn{background:var(--ambar2)}
+  .conf-sede{display:flex;gap:10px;align-items:center;font-size:15px;padding:12px 14px;border-radius:14px;background:var(--papel2);font-family:var(--display)}
+  .conf-sede b{color:var(--cobalto);font-weight:500}
+  .dlg-av{border-top:6px solid var(--rojo)}
+  .a-cab{display:flex;gap:14px;align-items:center;padding:22px 24px 8px}
+  .a-ic{width:44px;height:44px;border-radius:50%;background:var(--rojo2);color:var(--rojo);display:grid;place-items:center;font:500 24px var(--display);flex:none}
+  .a-cab small{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--rojo);font-family:var(--display);font-weight:500}
+  .a-cab h2{font-size:22px}
+  .a-txt{padding:6px 24px 4px;font-size:15px;line-height:1.55}
+  .a-ops{padding:8px 24px;display:flex;flex-direction:column;gap:10px}
+  .a-nota{padding:4px 24px 16px;font-size:12.5px;color:var(--gris)}
+  .opc-big input{display:none}
+  .tag-rec{font-size:11px;background:var(--cobalto);color:#fff;padding:1px 8px;border-radius:999px;margin-left:6px;font-family:var(--display);font-weight:500}
+  .pickup{border-radius:14px;background:var(--papel2);padding:12px 14px;font-size:14px;text-align:left}
+  .pickup b{display:block;font-family:var(--display);font-weight:500}
+  .pickup small{display:block;color:var(--gris);font-size:12.5px;margin-top:2px;line-height:1.5}
+  .pickup.changed{background:var(--verde2)}.pickup.warn{background:var(--ambar2)}
+</style>
+</head>
+<body>
+<div id="demobar"></div>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main ancho">
+    <p class="migas"><a href="listado-pacientes.html">Usuarios</a> / Lucía Martín</p>
+    <div class="ficha">
+
+      <!-- ===== Columna izquierda: el usuario ===== -->
+      <aside class="card perfil">
+        <button class="edit-ic" type="button" title="Editar usuario" aria-label="Editar usuario" data-toast="Aquí se editarían los datos del usuario.">✎</button>
+        <div class="big-av">LM</div>
+        <h1>Lucía Martín</h1>
+        <div><select class="codesel" aria-label="Elegir test"><option>#999001002824 · Informe pendiente</option></select></div>
+        <div><span class="est ambar">Recogida solicitada</span></div>
+        <button class="btn negro ancho" type="button" data-toast="Aquí se abriría «Vincular nuevo test».">＋ Vincular nuevo test</button>
+
+        <div class="bloque">
+          <div class="sends">
+            <div style="min-width:0"><p class="ttl-m">Pago del test</p>
+              <div class="pago-n"><span aria-hidden="true">▣</span><div><b>Tienes tests en stock</b><small>Cobra el test en el centro.</small></div></div></div>
+            <div><p class="ttl-m">Formulario</p>
+              <button class="btn borde chico" type="button" data-toast="Formulario enviado por correo.">✉ Enviar</button>
+              <div class="sub-st ok">✓ Enviado el 5 nov</div></div>
+          </div>
+        </div>
+
+        <div class="bloque">
+          <div class="sede-box"><label for="sede">SEDE</label>
+            <select id="sede" aria-label="Sede del usuario"><option>Mallorca</option><option>Madrid</option><option>Valencia</option></select></div>
+          <p class="ttl-m" style="margin-top:12px">Recogida de la muestra</p>
+          <div class="pickup" id="pickup"></div>
+          <p class="ttl-m" style="margin-top:14px">Contacto</p>
+          <div class="dato"><span class="ic">✉</span><div><small>Email</small>lucia.martin@ejemplo.es</div></div>
+          <div class="dato"><span class="ic">☎</span><div><small>Teléfono</small>+34 600 000 000</div></div>
+        </div>
+      </aside>
+
+      <!-- ===== Derecha ===== -->
+      <section class="derecha">
+        <div class="card proceso">
+          <div class="ph-t"><h2>Microbiota intestinal · #999001002824</h2><span class="est ambar">Recogida solicitada</span></div>
+          <p class="modo-t">Presencial · test del stock del centro: se entrega y se cobra en el centro.</p>
+          <ol class="track" style="grid-template-columns:repeat(5,minmax(0,1fr))">
+            <li class="ok">Sin tubo<small>02/11/2026</small></li>
+            <li class="ok">Cuestionario enviado<small>05/11/2026</small></li>
+            <li class="ya">Recogida solicitada<small id="tlPickup">20/11/2026</small></li>
+            <li>Procesando<small>Pendiente</small></li>
+            <li>Informe listo<small>Pendiente</small></li>
+          </ol>
+        </div>
+        <div class="tabsbar"><div class="tabs-f"><button class="tab-f on" type="button">Informe</button><button class="tab-f" type="button">Microbiota</button><button class="tab-f" type="button">Cuestionario</button><button class="tab-f" type="button">Notas</button></div></div>
+        <div class="card vacio-c"><div class="e">▣</div><h2>Informe pendiente</h2><p>Este test todavía está en proceso. El informe aparecerá aquí cuando esté listo.</p></div>
+        <p class="nota">Prueba: cambia la <b>Sede</b> del usuario a <b>Madrid</b>. Primero sale la confirmación del cambio de sede (F10) y después el aviso de la recogida (F19). Los botones de la barra negra simulan si la recogida está en borrador o ya aceptada en Packlink.</p>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="velo" id="velo" hidden></div>
+
+<!-- Paso 1: confirmar cambio de sede (F10) -->
+<div class="modal sm" id="ovMove" hidden role="dialog" aria-modal="true" aria-labelledby="mvT">
+  <div class="m-cab"><span class="ico os">⇄</span><div><h2 id="mvT">¿Cambiar de sede a este usuario?</h2><p>Lucía Martín pasará a la sede nueva.</p></div></div>
+  <div class="m-cuerpo"><div class="m-paso"><span class="m-num">1</span><div><div class="conf-sede"><span id="mvFrom"></span> → <b id="mvTo"></b></div></div></div></div>
+  <div class="m-pie"><span class="res"></span><div class="bots"><button type="button" class="btn borde" onclick="cancelMove()">Cancelar</button><button type="button" class="btn negro" onclick="confirmMove()">Sí, cambiar de sede</button></div></div>
+</div>
+
+<!-- Paso 2: aviso de la recogida (F19) -->
+<div class="modal sm dlg-av" id="ovPick" hidden role="dialog" aria-modal="true" aria-labelledby="pkT">
+  <div class="a-cab"><span class="a-ic">!</span><div><small>Aviso importante</small><h2 id="pkT">La recogida ya estaba solicitada</h2></div></div>
+  <p class="a-txt">Has movido a <b>Lucía Martín</b> a la sede <b class="to"></b>, pero su recogida estaba solicitada en <b class="from"></b>. ¿Qué quieres hacer?</p>
+  <div class="a-ops">
+    <div class="aviso amb" id="pkAccepted" hidden style="display:block"><b>La recogida en <span class="from"></span> ya está confirmada con la empresa de transporte.</b><br>No podemos cambiarla desde aquí. Si eliges recogerla en <span class="to"></span>, avisaremos al equipo de Biotasmart para que la cambie.</div>
+    <label class="opc-big on" data-v="new"><input type="radio" name="pk" value="new" checked>
+      <span><b>Solicitar la recogida en <span class="to"></span> <span class="tag-rec">Recomendado</span></b><small id="pkNewTxt"></small></span><span class="chk"></span></label>
+    <label class="opc-big" data-v="keep"><input type="radio" name="pk" value="keep">
+      <span><b>Mantener la recogida en <span class="from"></span></b><small>El usuario cambia de sede, pero el mensajero sigue recogiendo la muestra en <span class="from"></span> (por ejemplo, si la muestra ya está allí).</small></span><span class="chk"></span></label>
+  </div>
+  <p class="a-nota">Esta elección solo afecta a la recogida de este test. Los próximos tests del usuario se recogerán ya en su sede nueva.</p>
+  <div class="m-pie"><span class="res"></span><div class="bots"><button type="button" class="btn borde" onclick="backPick()">Volver</button><button type="button" class="btn negro" onclick="donePick()">Confirmar</button></div></div>
+</div>
+
+
+<script src="tema.js"></script>
+<script>
+  var ADDR = { Mallorca: 'Avenida de ejemplo, 10 · 07001 Palma', Madrid: 'Calle de Ejemplo, 12 · 28001 Madrid', Valencia: 'Calle de ejemplo, 5 · 46001 Valencia' };
+  var sede = 'Mallorca', pickupAt = 'Mallorca', pickupNote = 'Solicitada el 20/11/2026', pendingTo = null, pickupCls = '', plMode = 'draft';
+  var $ = function (id) { return document.getElementById(id); };
+  var accepted = function () { return plMode === 'accepted'; };
+  Tema.shell({ nav: 'usuarios', badges: { usuarios: 2 },
+    demo: { title: 'Aviso F19', label: 'Simular (solo mockup):', current: 'draft', steps: [['draft', 'Recogida en borrador en Packlink'], ['accepted', 'Recogida ya aceptada en Packlink']],
+      onStep: function (s) { plMode = s; Tema.setStep(s); }, extra: [{ id: 'demo-reset', label: 'Reiniciar', cls: 'r' }] } });
+  function renderPickup() {
+    $('pickup').className = 'pickup ' + pickupCls;
+    $('pickup').innerHTML = '<b>Sede ' + pickupAt + '</b><small>' + ADDR[pickupAt] + '<br>' + pickupNote + '</small>';
+  }
+  function openM(id) { $('velo').hidden = false; $(id).hidden = false; }
+  function closeAll() { $('velo').hidden = true; $('ovMove').hidden = true; $('ovPick').hidden = true; }
+  $('sede').addEventListener('change', function (e) {
+    pendingTo = e.target.value; if (pendingTo === sede) return;
+    $('mvFrom').textContent = sede; $('mvTo').textContent = pendingTo; openM('ovMove');
+  });
+  function cancelMove() { $('sede').value = sede; closeAll(); }
+  function confirmMove() {
+    $('ovMove').hidden = true;
+    // El aviso solo sale si el test está en «Recogida solicitada», la recogida es en la sede y cambia de sede
+    if (pickupAt !== pendingTo) openPick(); else { sede = pendingTo; closeAll(); Tema.toast('Usuario movido a ' + sede); }
+  }
+  function openPick() {
+    document.querySelectorAll('#ovPick .from').forEach(function (x) { x.textContent = pickupAt; });
+    document.querySelectorAll('#ovPick .to').forEach(function (x) { x.textContent = pendingTo; });
+    $('pkAccepted').hidden = !accepted();
+    $('pkNewTxt').textContent = accepted() ? 'Avisamos al equipo de Biotasmart para que cambie la recogida a ' + ADDR[pendingTo] + '.'
+      : 'Anulamos la recogida en ' + pickupAt + ' y pedimos una nueva en ' + ADDR[pendingTo] + '.';
+    document.querySelector('input[name="pk"][value="new"]').checked = true; syncOpts();
+    $('ovPick').hidden = false;
+  }
+  document.querySelectorAll('.opc-big[data-v]').forEach(function (l) { l.addEventListener('click', function () { l.querySelector('input').checked = true; syncOpts(); }); });
+  function syncOpts() { document.querySelectorAll('#ovPick .opc-big').forEach(function (o) { o.classList.toggle('on', o.querySelector('input').checked); }); }
+  function backPick() { $('ovPick').hidden = true; $('ovMove').hidden = false; }
+  function donePick() {
+    var v = document.querySelector('input[name="pk"]:checked').value, t = new Date();
+    var d = [t.getDate(), t.getMonth() + 1, t.getFullYear()].map(function (n) { return String(n).padStart(2, '0'); }).join('/');
+    sede = pendingTo;
+    if (v === 'new') {
+      pickupAt = pendingTo;
+      if (accepted()) { pickupCls = 'warn'; pickupNote = 'Cambio pendiente: el equipo de Biotasmart está cambiando la recogida'; Tema.toast('Avisamos al equipo para cambiar la recogida a ' + sede); }
+      else { pickupCls = 'changed'; pickupNote = 'Nueva recogida solicitada el ' + d; $('tlPickup').textContent = d; Tema.toast('Recogida solicitada en ' + sede); }
+    } else { pickupCls = ''; pickupNote = 'Se mantiene la recogida en ' + pickupAt + ' · solicitada el 20/11/2026'; Tema.toast('Usuario movido a ' + sede + ' · la recogida sigue en ' + pickupAt); }
+    closeAll(); renderPickup();
+  }
+  $('demo-reset').addEventListener('click', function () { sede = 'Mallorca'; pickupAt = 'Mallorca'; pickupCls = ''; pickupNote = 'Solicitada el 20/11/2026'; $('sede').value = 'Mallorca'; $('tlPickup').textContent = '20/11/2026'; closeAll(); renderPickup(); });
+  renderPickup();
+</script>
+</body>
+</html>

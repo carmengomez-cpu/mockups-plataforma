@@ -15,6 +15,7 @@ Descarga el repo y abre cualquier `.html` en el navegador. Todos comparten `tema
 | Pedir más tests y revisar la solicitud (F17 / F18) | [pedir-tests.html](pedir-tests.html) |
 | Entregar un test, con pedir tests si no hay stock | [activar-test.html](activar-test.html) |
 | Aviso al cambiar de sede con recogida solicitada (F19) | [aviso-cambio-sede.html](aviso-cambio-sede.html) |
+| Aviso F19 sobre la ficha completa del usuario (variante) | [aviso-cambio-sede-ficha.html](aviso-cambio-sede-ficha.html) |
 | Enlace de pago en 2 clics (F20, la que se desarrolla) | [enviar-link-rapido.html](enviar-link-rapido.html) |
 | Enlace de pago, versión completa con pop-up (F20, alternativa) | [enviar-link.html](enviar-link.html) |
 | Estados vacíos | [vacios/](vacios/index.html) |
