@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Flujo · Entregar un test y pedir más</title>
+<title>Flujo · Vincular test y pedir más</title>
 <link rel="stylesheet" href="tema.css">
 <style>
   .chips-r{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
@@ -78,10 +78,10 @@
         <h2 style="margin-bottom:14px">Acciones rápidas</h2>
         <div class="home-acc">
           <a class="btn negro" href="alta-paciente.html">Nuevo usuario</a>
-          <button class="btn borde" type="button" data-goto="activate">Entregar un test</button>
+          <button class="btn borde" type="button" data-goto="activate">Vincular test</button>
           <a class="btn borde" href="enviar-link-rapido.html">Nuevo enlace de pago</a>
           <button class="btn borde" type="button" data-goto="order">Pedir más tests</button>
-          <span class="pie"><b class="n-stock2">0 tests</b> por entregar en tu stock</span>
+          <span class="pie"><b class="n-stock2">0 tests</b> por vincular en tu stock</span>
         </div>
       </div>
     </section>
@@ -92,12 +92,12 @@
       <div class="cabecera"><div><h1>Stock</h1><p class="meta">Cada tubo, del cajón del centro al laboratorio.</p></div></div>
       <div class="kpis">
         <div class="kpi"><b class="n-stock">0</b><span>Libres en el centro</span></div>
-        <div class="kpi"><b>0</b><span>Entregados a usuarios</span></div>
+        <div class="kpi"><b>0</b><span>Vinculados a usuarios</span></div>
         <div class="kpi"><b>0</b><span>En camino</span></div>
       </div>
       <div class="acciones-st">
         <button type="button" class="acc-st" data-toast="Aquí se confirmaría un pedido o se escanearía un tubo."><span class="ico az">▣</span><span><b>Añadir al stock</b><small>Confirma un pedido o escanea un tubo</small></span></button>
-        <button type="button" class="acc-st" data-goto="activate"><span class="ico ve">⇢</span><span><b>Entregar a un usuario</b><small>Sale del stock en cuanto lo das</small></span></button>
+        <button type="button" class="acc-st" data-goto="activate"><span class="ico ve">⇢</span><span><b>Vincular a un usuario</b><small>Sale del stock en cuanto lo das</small></span></button>
         <button type="button" class="acc-st" data-goto="order"><span class="ico os">＋</span><span><b>Pedir más</b><small>Sin mínimo · llega en 3-4 días laborables</small></span></button>
       </div>
       <div class="card">
@@ -192,7 +192,7 @@
         <div class="precio"><s>349,00 €</s><b>296,65 €</b><small> / test</small><span class="dto">−15 %</span><span style="display:block;font-size:12.5px;color:var(--verde-tinta);margin-top:2px">Ahorras 52,35 €</span></div>
         <div class="stepper" data-key="vaginal" data-label="Test Vaginal"></div>
       </div>
-      <p class="nota">El usuario se elige al entregar cada test.</p>
+      <p class="nota">El usuario se elige al vincular cada test.</p>
     </div></div>
     <div class="m-paso"><span class="m-num">2</span><div>
       <h4>Resumen</h4>
@@ -210,19 +210,19 @@
     <div class="bots"><button type="button" class="btn borde" data-close-order>Cancelar</button><button type="button" class="btn negro" id="to-review">Revisar solicitud</button></div></div>
 </div>
 
-<!-- ===== Pop-up: Entregar a un usuario ===== -->
+<!-- ===== Pop-up: Vincular a un usuario ===== -->
 <div class="modal sm" id="m-activate" hidden role="dialog" aria-modal="true" aria-labelledby="act-title">
-  <div class="m-cab"><span class="ico ve">⇢</span><div><h2 id="act-title">Entregar a un usuario</h2><p>El tubo sale de tu stock en cuanto se lo das.</p></div><button type="button" class="cerrar" data-close-act aria-label="Cerrar">×</button></div>
+  <div class="m-cab"><span class="ico ve">⇢</span><div><h2 id="act-title">Vincular a un usuario</h2><p>El tubo sale de tu stock en cuanto se lo das.</p></div><button type="button" class="cerrar" data-close-act aria-label="Cerrar">×</button></div>
   <div class="m-cuerpo">
     <div class="m-paso"><span class="m-num">1</span><div>
       <h4>¿A quién?</h4>
       <div class="campo"><select id="act-patient" aria-label="Usuario"></select></div>
       <p style="margin-top:8px"><button type="button" class="lnk" id="act-new">Nuevo usuario</button></p>
-      <div class="aviso amb" id="act-empty" style="margin-top:12px;display:block"><b>No tienes tests por entregar en tu stock.</b><br><span id="act-empty-sub"></span></div>
+      <div class="aviso amb" id="act-empty" style="margin-top:12px;display:block"><b>No tienes tests por vincular en tu stock.</b><br><span id="act-empty-sub"></span></div>
       <div class="aviso verde" id="act-ok" hidden style="margin-top:12px"></div>
     </div></div>
   </div>
-  <div class="m-pie"><span class="res"></span><div class="bots"><button type="button" class="btn borde" data-close-act>Cancelar</button><button type="button" class="btn negro" id="act-order">Pedir más tests</button><button type="button" class="btn negro" id="act-go" hidden>Entregar tubo</button></div></div>
+  <div class="m-pie"><span class="res"></span><div class="bots"><button type="button" class="btn borde" data-close-act>Cancelar</button><button type="button" class="btn negro" id="act-order">Pedir más tests</button><button type="button" class="btn negro" id="act-go" hidden>Vincular test</button></div></div>
 </div>
 
 <!-- ===== Pop-up: completar la sede ===== -->
@@ -314,7 +314,7 @@
       : 'Te enviaremos ' + vals.countText + ' a tu sede. Tienes 30 días desde la fecha de la factura para pagar ' + vals.total + ' por transferencia.';
   }
 
-  /* ---------- Stock y entregar ---------- */
+  /* ---------- Stock y vincular ---------- */
   function renderStock() {
     var plural = stockCount === 1 ? ' test' : ' tests';
     document.querySelectorAll('.n-stock').forEach(function (e) { e.textContent = stockCount; });
@@ -324,8 +324,8 @@
     }).join('') : '<tr><td colspan="4" class="gr" style="text-align:center;padding:30px 0">No tienes tubos en stock. Pide más para tenerlos.</td></tr>';
     var has = stockCount > 0, who = $('act-patient').value;
     $('act-empty').hidden = has; $('act-ok').hidden = !has;
-    $('act-ok').textContent = 'Tienes ' + stockCount + plural + ' por entregar en tu stock.';
-    $('act-empty-sub').textContent = 'Pídelos aquí mismo: llegan en 3-4 días laborables y entonces podrás entregar el test a ' + who + '.';
+    $('act-ok').textContent = 'Tienes ' + stockCount + plural + ' por vincular en tu stock.';
+    $('act-empty-sub').textContent = 'Pídelos aquí mismo: llegan en 3-4 días laborables y entonces podrás vincular el test a ' + who + '.';
     $('act-order').hidden = has; $('act-go').hidden = !has;
     var t = $('stock-toggle'); if (t) t.textContent = 'Stock en la demo: ' + stockCount + ' · cambiar';
   }
@@ -344,10 +344,10 @@
     renderStock();
     Tema.setNav(origin === 'home' ? 'inicio' : 'stock'); Tema.setStep(step);
     $('order-for').hidden = !(step === 'order' && pendingPatient);
-    $('order-for').textContent = pendingPatient ? 'Pedido para poder entregar un test a ' + pendingPatient + ' cuando llegue.' : '';
+    $('order-for').textContent = pendingPatient ? 'Pedido para poder vincular un test a ' + pendingPatient + ' cuando llegue.' : '';
     $('done-back').textContent = origin === 'home' ? 'Volver a Inicio' : 'Volver a Stock';
     $('done-activate').hidden = !pendingPatient;
-    $('done-activate').textContent = pendingPatient ? 'Cuando lleguen tus tests, entrega uno a ' + pendingPatient + ' desde Acciones rápidas.' : '';
+    $('done-activate').textContent = pendingPatient ? 'Cuando lleguen tus tests, vincula uno a ' + pendingPatient + ' desde Acciones rápidas.' : '';
     if (step !== 'order' && step !== 'activate') window.scrollTo(0, 0);
   }
   document.addEventListener('click', function (e) {
@@ -393,12 +393,12 @@
     closeSede(); update(); $('pay-btn').focus();
   });
 
-  /* ---------- Entregar a un usuario: con stock se entrega; sin stock se puede pedir aquí mismo ---------- */
+  /* ---------- Vincular a un usuario: con stock se entrega; sin stock se puede pedir aquí mismo ---------- */
   var actSel = $('act-patient');
   actSel.innerHTML = PATIENTS.map(function (n) { return '<option>' + n + '</option>'; }).join('');
   actSel.addEventListener('change', renderStock);
   $('act-order').addEventListener('click', function () { pendingPatient = actSel.value; go('order'); });
-  $('act-go').addEventListener('click', function () { var n = actSel.value; stockCount--; go(origin); Tema.toast('Test entregado a ' + n); });
+  $('act-go').addEventListener('click', function () { var n = actSel.value; stockCount--; go(origin); Tema.toast('Test vinculado a ' + n); });
   document.querySelectorAll('[data-close-act]').forEach(function (b) { b.addEventListener('click', function () { go(origin); }); });
   $('act-new').addEventListener('click', function () { Tema.toast('Aquí se abriría «Nuevo usuario».'); });
 
@@ -418,8 +418,8 @@
     nav: ACT ? 'inicio' : 'stock', badges: { usuarios: 2 },
     handlers: ACT ? { inicio: function () { go('home'); }, stock: function () { go('stock'); } } : { stock: function () { go('stock'); } },
     demo: {
-      title: ACT ? 'Entregar un test' : 'Pedir más tests', label: 'Flujo de demo:', current: current, onStep: function (s) { go(s); },
-      steps: (ACT ? [['home', '1 Inicio'], ['activate', '2 Entregar un test']] : [['stock', '1 Stock']]).concat([['order', ACT ? '3 Elegir tests' : '2 Elegir tests'], ['review', ACT ? '4 Revisar solicitud' : '3 Revisar solicitud'], ['done', ACT ? '5 Confirmación' : '4 Confirmación']]),
+      title: ACT ? 'Vincular test' : 'Pedir más tests', label: 'Flujo de demo:', current: current, onStep: function (s) { go(s); },
+      steps: (ACT ? [['home', '1 Inicio'], ['activate', '2 Vincular test']] : [['stock', '1 Stock']]).concat([['order', ACT ? '3 Elegir tests' : '2 Elegir tests'], ['review', ACT ? '4 Revisar solicitud' : '3 Revisar solicitud'], ['done', ACT ? '5 Confirmación' : '4 Confirmación']]),
       extra: (ACT ? [{ id: 'stock-toggle', label: '' }] : []).concat([{ id: 'demo-reset', label: 'Reiniciar', cls: 'r' }])
     }
   });

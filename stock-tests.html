@@ -32,7 +32,7 @@
 
     <div class="kpis">
       <div class="kpi"><b id="kLibres"></b><span id="kLibresT">Libres en el centro</span></div>
-      <div class="kpi"><b id="kEnt"></b><span>Entregados a usuarios</span></div>
+      <div class="kpi"><b id="kEnt"></b><span>Vinculados a usuarios</span></div>
       <div class="kpi"><b>20</b><span>En camino</span></div>
     </div>
 
@@ -41,7 +41,7 @@
         <span class="ico az">▣</span><span><b>Añadir al stock</b><small>Confirma un pedido o escanea un tubo</small></span>
       </button>
       <button type="button" class="acc-st" id="accEntregar">
-        <span class="ico ve">⇢</span><span><b>Entregar a un usuario</b><small>Sale del stock en cuanto lo das</small></span>
+        <span class="ico ve">⇢</span><span><b>Vincular a un usuario</b><small>Sale del stock en cuanto lo das</small></span>
       </button>
       <a class="acc-st" href="pedir-tests.html" style="text-decoration:none">
         <span class="ico os">＋</span><span><b>Pedir más</b><small>Sin mínimo · llega en 3-4 días laborables</small></span>
@@ -81,7 +81,7 @@
       <div class="aviso bulk" id="bulk" hidden>
         <span><b id="selN">1</b> <span id="selTxt">test seleccionado</span></span>
         <div class="bots">
-          <button type="button" class="btn negro chico" id="aLink">Entregar a un usuario</button>
+          <button type="button" class="btn negro chico" id="aLink">Vincular a un usuario</button>
           <button type="button" class="btn borde chico" id="aMove">Mover de sede</button>
           <button type="button" class="btn borde chico" id="aClear">Quitar selección</button>
         </div>
@@ -99,15 +99,15 @@
 
 <div class="velo" id="velo" hidden></div>
 
-<!-- Entregar a un usuario -->
+<!-- Vincular a un usuario -->
 <div class="modal sm" id="mLink" hidden role="dialog" aria-modal="true" aria-labelledby="lt">
-  <div class="m-cab"><span class="ico ve">⇢</span><div><h2 id="lt">Entregar a un usuario</h2><p>El tubo sale de tu stock en cuanto se lo das.</p></div><button type="button" class="cerrar" data-close aria-label="Cerrar">×</button></div>
+  <div class="m-cab"><span class="ico ve">⇢</span><div><h2 id="lt">Vincular a un usuario</h2><p>El tubo sale de tu stock en cuanto se lo das.</p></div><button type="button" class="cerrar" data-close aria-label="Cerrar">×</button></div>
   <div class="m-cuerpo">
     <div class="m-paso"><span class="m-num">1</span><div><h4>El tubo <small id="linkCode"></small></h4>
       <label class="flt-q" style="display:flex"><input type="search" id="pq" placeholder="Busca un usuario por nombre o correo" aria-label="Buscar usuario" autocomplete="off"></label>
       <div class="ulist" id="plist"></div></div></div>
   </div>
-  <div class="m-pie"><span class="res" id="linkRes">Elige a quién se lo entregas.</span><div class="bots"><button type="button" class="btn borde" data-close>Cancelar</button><button type="button" class="btn negro" id="doLink" disabled>Entregar tubo</button></div></div>
+  <div class="m-pie"><span class="res" id="linkRes">Elige a quién se lo vinculas.</span><div class="bots"><button type="button" class="btn borde" data-close>Cancelar</button><button type="button" class="btn negro" id="doLink" disabled>Vincular test</button></div></div>
 </div>
 
 <!-- Mover de sede -->
@@ -207,7 +207,7 @@
   });
   $('pq').addEventListener('input', function (e) { drawUsers(e.target.value); });
   function startLink(code) {
-    pPick = null; $('doLink').disabled = true; $('pq').value = ''; $('linkRes').textContent = 'Elige a quién se lo entregas.';
+    pPick = null; $('doLink').disabled = true; $('pq').value = ''; $('linkRes').textContent = 'Elige a quién se lo vinculas.';
     $('linkCode').textContent = code; drawUsers(); openM('mLink');
   }
   $('aLink').addEventListener('click', function () { startLink(Array.from(selected)[0]); });
@@ -218,7 +218,7 @@
   $('doLink').addEventListener('click', function () {
     var c = Array.from(selected)[0], u = USERS[pPick][1];
     var t = TUBES.filter(function (x) { return x[0] === c; })[0]; t[4] = u; t[3] = 'hoy';
-    selected.clear(); closeM(); render(); Tema.toast('Tubo ' + c + ' entregado a ' + u);
+    selected.clear(); closeM(); render(); Tema.toast('Tubo ' + c + ' vinculado a ' + u);
   });
   $('aMove').addEventListener('click', function () {
     var codes = Array.from(selected);

@@ -11,7 +11,7 @@ const ROWS = [
   ['Stock', 'stock-tests.html', ''],
   ['Pedidos, factura y cancelar solicitud (F16)', 'pagos.html', T('BTV-39')],
   ['Pedir más tests y revisar la solicitud (F17 / F18)', 'pedir-tests.html', T('BTV-40') + ' · ' + T('BTV-41')],
-  ['Entregar un test, con pedir tests si no hay stock', 'activar-test.html', T('BTV-40')],
+  ['Vincular test, con pedir tests si no hay stock', 'activar-test.html', T('BTV-40')],
   ['Aviso al cambiar de sede con recogida solicitada (F19)', 'aviso-cambio-sede.html', T('BTV-42')],
   ['Aviso F19 sobre la ficha completa del usuario (variante)', 'aviso-cambio-sede-ficha.html', T('BTV-42')],
   ['Enlace de pago en 2 clics (F20, la que se desarrolla)', 'enviar-link-rapido.html', T('BTV-43')],
