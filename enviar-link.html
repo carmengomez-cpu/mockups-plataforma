@@ -40,8 +40,9 @@
   .stx { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: calc(100vh - 48px - 34px); background: #FFF; color: #1A1A1A; }
   .st-l { padding: 44px 48px; }
   .st-r { padding: 44px 48px; box-shadow: -14px 0 18px -14px rgba(0,0,0,.14); }
-  .st-l .in { max-width: 470px; margin-left: auto; }
-  .st-r .in { max-width: 520px; }
+  .st-l .stin { max-width: 470px; margin-left: auto; }
+  .st-r .stin { max-width: 520px; }
+  .stx, .stx * { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
   .st-back { display: flex; align-items: center; gap: 14px; margin-bottom: 38px; }
   .st-back .arr { color: #8A8A8A; font-size: 20px; }
   .st-back .logo { width: 42px; height: 42px; border-radius: 50%; background: #FFF; box-shadow: 0 1px 6px rgba(0,0,0,.14); display: grid; place-items: center; font-size: 17px; }
@@ -76,7 +77,7 @@
   .st-pay { margin-top: 28px; width: 100%; height: 52px; border: 0; border-radius: 6px; background: #2E5F78; color: #FFF; font-size: 17px; font-weight: 600; }
   .st-pay:hover { filter: brightness(1.08); }
   .st-foot { margin: 22px 0 0; font-size: 13px; color: #777; text-align: center; }
-  @media (max-width: 900px) { .stx { grid-template-columns: minmax(0, 1fr); } .st-l, .st-r { padding: 28px 20px; box-shadow: none; } .st-l .in { margin-left: 0; } }
+  @media (max-width: 900px) { .stx { grid-template-columns: minmax(0, 1fr); } .st-l, .st-r { padding: 28px 20px; box-shadow: none; } .st-l .stin { margin-left: 0; } }
 
   
 </style>
@@ -169,14 +170,14 @@
 <div class="patient" id="v-shop" hidden>
   <p class="pt-tag">Página de pago de Stripe que abre el usuario desde el email (datos de ejemplo)</p>
   <form class="stx" id="shopForm" novalidate>
-    <div class="st-l"><div class="in">
+    <div class="st-l"><div class="stin">
       <div class="st-back"><span class="arr" aria-hidden="true">←</span><span class="logo" aria-hidden="true">🏪</span><b>biotasmart</b></div>
       <p class="st-name" data-b="stripeName"></p>
       <p class="st-price">349,00 €</p>
       <p class="st-qty">Cantidad 1, 349,00 € unidad</p>
       <p class="st-desc" data-b="stripeDesc"></p>
     </div></div>
-    <div class="st-r"><div class="in">
+    <div class="st-r"><div class="stin">
       <h3 class="st-h">Información de contacto</h3>
       <label class="st-lbl" for="s-mail">Correo electrónico</label>
       <input id="s-mail" class="st-in" type="email" readonly data-v="email">
