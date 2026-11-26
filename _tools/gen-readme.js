@@ -6,14 +6,11 @@ const ROWS = [
   ['Inicio', 'inicio.html', T('BTV-14')],
   ['Usuarios (listado)', 'listado-pacientes.html', ''],
   ['Nuevo usuario', 'alta-paciente.html', ''],
-  ['Ficha del usuario (con test)', 'ficha-con-test.html', ''],
-  ['Ficha del usuario (sin test)', 'ficha-sin-test.html', ''],
+  ['Ficha del usuario (con test y sin test, con aviso de recogida al cambiar de sede · F19)', 'ficha-con-test.html', T('BTV-42')],
   ['Stock', 'stock-tests.html', ''],
   ['Pedidos, factura y cancelar solicitud (F16)', 'pagos.html', T('BTV-39')],
   ['Pedir más tests y revisar la solicitud (F17 / F18)', 'pedir-tests.html', T('BTV-40') + ' · ' + T('BTV-41')],
   ['Vincular test, con pedir tests si no hay stock', 'activar-test.html', T('BTV-40')],
-  ['Aviso al cambiar de sede con recogida solicitada (F19)', 'aviso-cambio-sede.html', T('BTV-42')],
-  ['Aviso F19 sobre la ficha completa del usuario (variante)', 'aviso-cambio-sede-ficha.html', T('BTV-42')],
   ['Estados vacíos', 'vacios/index.html', ''],
   ['Emails de entrega de la muestra (F13)', 'emails-recordatorio.html', T('BTV-36')]
 ];

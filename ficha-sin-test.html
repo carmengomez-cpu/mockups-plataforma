@@ -220,10 +220,13 @@
     nav: 'usuarios', badges: { usuarios: 2 },
     demo: { title: CON ? 'Ficha con test' : 'Ficha sin test', label: 'Simular cuenta:', current: 'stock', steps: [['stock', 'Con stock'], ['nostock', 'Sin stock']],
       onStep: function (s) { hasStock = s === 'stock'; Tema.setStep(s); renderPago(); },
-      extra: [{ text: true, label: 'Tipo de consulta:' }, { id: 'm-presencial', label: 'Presencial' }, { id: 'm-online', label: 'Online' }, { id: 'm-hibrido', label: 'Híbrido' }, { text: true, label: 'Recogida en Packlink:' }, { id: 'pl-draft', label: 'Borrador' }, { id: 'pl-acc', label: 'Ya aceptada' }] }
+      extra: [{ text: true, label: 'Usuario:' }, { id: 'u-con', label: 'Con test' }, { id: 'u-sin', label: 'Sin test' }, { text: true, label: 'Tipo de consulta:' }, { id: 'm-presencial', label: 'Presencial' }, { id: 'm-online', label: 'Online' }, { id: 'm-hibrido', label: 'Híbrido' }, { text: true, label: 'Recogida en Packlink:' }, { id: 'pl-draft', label: 'Borrador' }, { id: 'pl-acc', label: 'Ya aceptada' }] }
   });
   function pintarModo() { ['presencial', 'online', 'hibrido'].forEach(function (m) { $('m-' + m).classList.toggle('on', Tema.modo() === m); }); }
   ['presencial', 'online', 'hibrido'].forEach(function (m) { $('m-' + m).addEventListener('click', function () { Tema.setModo(m); pintarModo(); renderAll(); }); });
+  $('u-' + FICHA).classList.add('on');   // una sola ficha: este interruptor cambia entre usuario con test y sin test
+  $('u-con').addEventListener('click', function () { location.href = 'ficha-con-test.html'; });
+  $('u-sin').addEventListener('click', function () { location.href = 'ficha-sin-test.html'; });
   var plMode = 'draft';
   function pintarPl() { $('pl-draft').classList.toggle('on', plMode === 'draft'); $('pl-acc').classList.toggle('on', plMode === 'accepted'); }
   $('pl-draft').addEventListener('click', function () { plMode = 'draft'; pintarPl(); });
