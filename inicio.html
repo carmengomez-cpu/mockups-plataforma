@@ -123,12 +123,10 @@
   });
   $('qSend').addEventListener('click', function () {
     var st = qState();
-    $('qOk').hidden = false;
-    $('qOk').innerHTML = '<span>✓ Enlace enviado a <b>' + st.email + '</b> · ' + (st.idx >= 0 ? 'asignado a ' + USERS[st.idx][0] : 'usuario nuevo creado') + '.</span><a class="lnk" href="listado-pacientes.html">Ver en Usuarios →</a>';
     Tema.toast('Enlace enviado a ' + st.email);
-    $('qEmail').value = ''; qEnf = null;
-    document.querySelectorAll('.chip-e').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
-    qState();
+    var url = 'listado-pacientes.html?enlace=' + encodeURIComponent(st.email) + '&enf=' + qEnf + (st.idx >= 0 ? '&u=' + encodeURIComponent(USERS[st.idx][0]) : '');
+    $('qSend').disabled = true;
+    setTimeout(function () { location.href = url; }, 900);   // el flujo sigue en Usuarios: ahí aparece el usuario con el enlace pendiente
   });
   qState();
   document.querySelectorAll('[data-toast]').forEach(function (b) { b.addEventListener('click', function () { Tema.toast(b.dataset.toast); }); });

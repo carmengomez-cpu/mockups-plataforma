@@ -30,6 +30,8 @@
       </div>
     </div>
 
+    <div id="banner" hidden></div>
+
     <div class="card">
       <div class="flt">
         <div class="flt-r">
@@ -61,8 +63,8 @@
 <script>
   Tema.shell({ nav: 'usuarios', badges: { usuarios: 2 } });
   var ESTADOS = [['', 'Todos'], ['listo', 'Informe listo'], ['lab', 'En el laboratorio'], ['usu', 'Cuestionario enviado'], ['rec', 'Recogida solicitada'], ['rep', 'Para repetir']];
-  var LABEL = { listo: 'Informe listo', lab: 'En el laboratorio', usu: 'Cuestionario enviado', rec: 'Recogida solicitada', rep: 'Para repetir' };
-  var CLS = { listo: 'listo', lab: 'lab', usu: 'usu', rec: 'ambar', rep: 'rep' };
+  var LABEL = { pago: 'Pendiente de pago', listo: 'Informe listo', lab: 'En el laboratorio', usu: 'Cuestionario enviado', rec: 'Recogida solicitada', rep: 'Para repetir' };
+  var CLS = { pago: 'ambar', listo: 'listo', lab: 'lab', usu: 'usu', rec: 'ambar', rep: 'rep' };
   // nombre, correo, tipo, estado, novedad, sede, fecha
   var D = [
     ['Lucía Martín', 'lucia.martin@ejemplo.com', 'int', 'listo', 'Informe listo ayer', 'Madrid', '27 nov'],
@@ -76,6 +78,20 @@
     ['Diego Alonso', 'diego.alonso@ejemplo.com', 'int', 'rep', 'Test hecho hace 6 meses', 'Barcelona', '28 may']
   ];
   var SEDES = ['Madrid', 'Barcelona', 'Valencia'];
+  // Llegada desde «Nuevo enlace de pago» (Inicio): el usuario aparece con el test pendiente de pago
+  (function () {
+    var P = new URLSearchParams(location.search), email = P.get('enlace'); if (!email) return;
+    var enf = P.get('enf'), tipoT = enf === 'vag' ? 'vag' : 'int', existente = P.get('u'), hoy = '27 nov';
+    ESTADOS.splice(1, 0, ['pago', 'Pendiente de pago']);
+    var ban = document.getElementById('banner'); ban.hidden = false; ban.className = 'aviso verde'; ban.style.cssText = 'display:block;margin-bottom:14px';
+    if (existente) {
+      D.forEach(function (d) { if (d[0] === existente) { d[2] = tipoT; d[3] = 'pago'; d[4] = 'Enlace de pago enviado hoy'; d[6] = hoy; } });
+      ban.innerHTML = '<b>Enlace de pago enviado a ' + existente + '</b> (' + email + '). Su test queda «Pendiente de pago» hasta que pague en Stripe.';
+    } else {
+      D.unshift(['Pendiente de datos', email, tipoT, 'pago', 'Faltan datos: los rellena al pagar', 'Valencia', hoy]);
+      ban.innerHTML = '<b>Enlace de pago enviado a ' + email + '.</b> Hemos creado el usuario solo con el email. Faltan sus datos (nombre, teléfono, dirección…): los rellenará él mismo mientras paga en Stripe.';
+    }
+  })();
   D.forEach(function (d, i) { d.i = i; });
   var tipo = '', est = '', q = '';
   var $ = function (id) { return document.getElementById(id); };
@@ -93,7 +109,7 @@
     });
     $('rows').innerHTML = rows.length ? rows.map(function (d) {
       return '<tr class="click" data-href="ficha-con-test.html">' +
-        '<td><div class="who"><span class="av' + (d[2] === 'vag' ? ' vag' : '') + '">' + d[0].split(' ').map(function (x) { return x[0]; }).slice(0, 2).join('') + '</span><div><b>' + d[0] + '</b><small>' + d[1] + '</small></div></div></td>' +
+        '<td><div class="who"><span class="av' + (d[2] === 'vag' ? ' vag' : '') + '">' + d[0].split(' ').map(function (x) { return x[0]; }).slice(0, 2).join('').toUpperCase() + '</span><div><b>' + d[0] + '</b><small>' + d[1] + '</small></div></div></td>' +
         '<td>' + badge(d[2]) + '</td>' +
         '<td><span class="est ' + CLS[d[3]] + '">' + LABEL[d[3]] + '</span></td>' +
         '<td class="gr">' + d[6] + '</td>' +
