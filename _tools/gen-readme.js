@@ -12,7 +12,7 @@ const ROWS = [
   ['Pedir más tests y revisar la solicitud (F17 / F18)', 'pedir-tests.html', T('BTV-40') + ' · ' + T('BTV-41')],
   ['Vincular test, con pedir tests si no hay stock', 'activar-test.html', T('BTV-40')],
   ['Editar cuenta (desde el desplegable del centro, arriba del menú)', 'cuenta.html', ''],
-  ['Ajustes: notificaciones y pagos (mismo desplegable)', 'ajustes.html', ''],
+  ['Ajustes: cobros con Stripe, avisos, direcciones y acceso (mismo desplegable)', 'ajustes.html', ''],
   ['Estados vacíos', 'vacios/index.html', ''],
   ['Emails de entrega de la muestra (F13)', 'emails-recordatorio.html', T('BTV-36')]
 ];

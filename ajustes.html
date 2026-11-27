@@ -7,91 +7,107 @@
 <title>Mockup · Ajustes</title>
 <link rel="stylesheet" href="tema.css">
 <style>
-  .aj{display:grid;grid-template-columns:220px minmax(0,1fr);gap:18px;align-items:start}
-  .aj-nav{display:flex;flex-direction:column;gap:4px;padding:10px}
-  .aj-nav button{text-align:left;font:inherit;font-size:14.5px;padding:10px 14px;border-radius:12px;background:none;border:0;cursor:pointer;color:var(--tinta)}
-  .aj-nav button:hover{background:var(--papel2)}
-  .aj-nav button.on{background:var(--tinta);color:#fff}
-  .fila-sw{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-top:1px solid var(--linea)}
-  .fila-sw:first-of-type{border-top:0}
-  .fila-sw b{display:block;font-family:var(--display);font-weight:500;font-size:14.5px}
-  .fila-sw small{display:block;color:var(--gris);font-size:12.5px;margin-top:2px}
-  .sw{position:relative;width:44px;height:26px;flex:none}
-  .sw input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0}
-  .sw i{position:absolute;inset:0;border-radius:999px;background:var(--linea2);transition:background .15s;pointer-events:none}
-  .sw i::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .15s}
-  .sw input:checked+i{background:var(--cobalto)}
-  .sw input:checked+i::after{transform:translateX(18px)}
-  .sw input:focus-visible+i{outline:2px solid var(--cobalto);outline-offset:2px}
-  .sec-t{font-size:17px;margin:0 0 4px}
-  .sec-s{color:var(--gris);font-size:13.5px;margin:0 0 10px}
-  .tarjeta{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;background:var(--papel2)}
-  .tarjeta .marca{width:44px;height:30px;border-radius:6px;background:#1F2326;color:#fff;display:grid;place-items:center;font:600 11px var(--display);letter-spacing:.06em;flex:none}
-  .tarjeta b{display:block;font-family:var(--display);font-weight:500}
-  .tarjeta small{color:var(--gris);font-size:12.5px}
-  .pie-f{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;padding-top:16px;border-top:1px solid var(--linea)}
-  .bloque-a{margin-top:22px}
-  @media (max-width:800px){.aj{grid-template-columns:minmax(0,1fr)}.aj-nav{flex-direction:row;flex-wrap:wrap}}
+  .ajs{display:flex;flex-direction:column;gap:16px}
+  .ajs .card h2{font-size:18px;margin:0 0 4px}
+  .ajs .sub{color:var(--gris);font-size:14px;line-height:1.5;margin:0 0 14px;max-width:80ch}
+  .card-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .nota-s{font-size:12.5px;color:var(--gris);line-height:1.5;margin:6px 0 0 28px;max-width:90ch}
+  .chk-fila{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;font-family:var(--display);font-weight:500;cursor:pointer}
+  .chk-fila input{width:18px;height:18px;margin-top:2px;accent-color:var(--cobalto)}
+  .aviso-fila{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:center;padding:14px 0;border-top:1px solid var(--linea)}
+  .aviso-fila:first-of-type{border-top:0}
+  .aviso-fila b{display:block;font-family:var(--display);font-weight:500;font-size:14.5px}
+  .aviso-fila small{display:block;color:var(--gris);font-size:13px;line-height:1.45;margin-top:2px}
+  .quien select{width:100%;font:inherit;font-size:14.5px;border:0;border-radius:999px;padding:11px 16px;background:var(--papel2);box-shadow:inset 0 0 0 1px var(--linea2);color:var(--tinta);cursor:pointer}
+  .quien input{width:100%;margin-top:6px;font:inherit;font-size:14px;border:0;border-radius:999px;padding:9px 16px;background:var(--blanco);box-shadow:inset 0 0 0 1px var(--linea2)}
+  .pie-aj{font-size:12.5px;color:var(--gris);margin:10px 0 0}
+  .dir{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .dir b{font-family:var(--display);font-weight:500;font-size:15px}
+  .dir .tag{display:inline-block;font-size:12px;padding:2px 10px;border-radius:999px;background:var(--cobalto2);color:var(--cobalto);margin-left:8px;font-weight:400}
+  .dir small{display:block;font-size:14px;color:var(--tinta);margin-top:2px}
+  @media (max-width:800px){.aviso-fila{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
+<div id="demobar"></div>
 <div class="shell">
   <aside class="side" id="side"></aside>
   <main class="main">
     <span class="cel cel-racimo" aria-hidden="true"></span><span class="cel cel-flor2" aria-hidden="true"></span>
     <div class="cabecera">
-      <div><h1>Ajustes</h1><p class="meta">Cómo quieres recibir los avisos y cómo pagas. Tus datos personales están en «Editar cuenta».</p></div>
+      <div><h1>Ajustes</h1><p class="meta">Cobros, avisos, direcciones y acceso. Tus datos personales están en «Editar cuenta».</p></div>
       <div class="acciones"><a class="btn borde" href="cuenta.html">Editar cuenta</a></div>
     </div>
 
-    <div class="aj">
-      <nav class="card aj-nav" id="nav" aria-label="Secciones de ajustes">
-        <button type="button" data-s="notif" class="on">Notificaciones</button>
-        <button type="button" data-s="pagos">Pagos</button>
-      </nav>
-
-      <section class="card" id="s-notif">
-        <h2 class="sec-t">Notificaciones</h2>
-        <p class="sec-s">Elige de qué quieres que te avisemos por correo.</p>
-        <div class="fila-sw"><div><b>Informe listo</b><small>Cuando el informe de un usuario está disponible.</small></div><label class="sw"><input type="checkbox" checked aria-label="Informe listo"><i></i></label></div>
-        <div class="fila-sw"><div><b>Formulario sin rellenar</b><small>Si un usuario lleva días sin rellenar su formulario.</small></div><label class="sw"><input type="checkbox" checked aria-label="Formulario sin rellenar"><i></i></label></div>
-        <div class="fila-sw"><div><b>Recogida de la muestra</b><small>Cuando se solicita, se confirma o cambia una recogida.</small></div><label class="sw"><input type="checkbox" checked aria-label="Recogida de la muestra"><i></i></label></div>
-        <div class="fila-sw"><div><b>Pedidos de tests</b><small>Cuando un pedido se prepara, se envía o se entrega.</small></div><label class="sw"><input type="checkbox" aria-label="Pedidos de tests"><i></i></label></div>
-        <div class="fila-sw"><div><b>Pagos de usuarios</b><small>Cuando un usuario paga un enlace de pago.</small></div><label class="sw"><input type="checkbox" checked aria-label="Pagos de usuarios"><i></i></label></div>
-        <div class="pie-f"><button type="button" class="btn negro" data-toast="Notificaciones guardadas.">Guardar</button></div>
+    <div class="ajs">
+      <!-- Solo online e híbrido: sin enlace de pago no hay cobros online -->
+      <section class="card" id="sStripe">
+        <div class="card-top"><h2>Cuenta de cobro con Stripe</h2><span class="est verde">Activa</span></div>
+        <p class="sub">Tus usuarios online pagan en tu propia cuenta de Stripe; Biotasmart recibe su parte automáticamente.</p>
+        <p style="margin:0 0 14px;font-size:14.5px">Tu cuenta está lista para cobrar. Tus cobros y transferencias están en tu panel de Stripe.</p>
+        <button type="button" class="btn borde" data-toast="Aquí se abriría tu panel de Stripe.">Ir a mi Stripe</button>
       </section>
 
-      <section class="card" id="s-pagos" hidden>
-        <h2 class="sec-t">Pagos</h2>
-        <p class="sec-s">Cómo pagas los pedidos de tests de tu centro.</p>
-        <div class="tarjeta"><span class="marca">VISA</span><div><b>Visa terminada en 4242</b><small>Caduca 08/2028 · método principal</small></div><button type="button" class="btn borde chico" style="margin-left:auto" data-toast="Aquí se cambiaría la tarjeta.">Cambiar</button></div>
-        <div class="bloque-a">
-          <h3 class="sec-t" style="font-size:15px">Datos de facturación</h3>
-          <div class="campos" style="margin-top:10px">
-            <label class="campo full"><span>Razón social</span><input value="Centro Demo S.L."></label>
-            <label class="campo"><span>NIF</span><input value="B00000000"></label>
-            <label class="campo"><span>Correo para facturas</span><input type="email" value="facturas@ejemplo.com"></label>
-            <label class="campo full"><span>Dirección fiscal</span><input value="Calle de Ejemplo, 12 · 46001 Valencia"></label>
-          </div>
-        </div>
-        <div class="bloque-a">
-          <div class="fila-sw"><div><b>Pagar por transferencia</b><small>Permite pagar los pedidos a 30 días desde la factura.</small></div><label class="sw"><input type="checkbox" checked aria-label="Pagar por transferencia"><i></i></label></div>
-        </div>
-        <div class="pie-f"><button type="button" class="btn negro" data-toast="Datos de pago guardados.">Guardar</button></div>
+      <section class="card" id="sForm">
+        <h2>Formulario de los tests online</h2>
+        <p class="sub">Cuando entregamos un pedido pagado con un enlace de pago, enviamos al comprador un correo con el enlace al formulario de cada test, firmado con el nombre de tu clínica. Así nadie tiene que esperar a que se lo mandes tú.</p>
+        <label class="chk-fila"><input type="checkbox" id="chkForm" checked> Enviar el formulario al comprador al entregar el paquete</label>
+        <p class="nota-s">Viene encendido. Si lo apagas, no sale ningún correo: comparte tú el enlace de cada test desde el detalle del pedido («Copiar enlace del formulario»). También se puede parar en un pedido concreto, desde su detalle, antes de la entrega.</p>
+      </section>
+
+      <section class="card">
+        <h2>Avisos</h2>
+        <p class="sub">Elige quién recibe cada aviso: las cuentas de tu clínica y, si quieres, otros correos. Un aviso sin nadie no se envía.</p>
+        <div id="avisos"></div>
+        <p class="pie-aj">Las cuentas nuevas entran sin avisos. El cambio de profesional y las invitaciones siguen yendo al correo principal, marta.gomez@ejemplo.com.</p>
+      </section>
+
+      <section class="card">
+        <div class="card-top"><div><h2>Direcciones de entrega</h2><p class="sub" style="margin:0">Elígelas en el pago en vez de escribirlas cada vez. Las que uses en un pedido se guardan solas.</p></div>
+          <button type="button" class="btn borde" data-toast="Aquí se añadiría una dirección de entrega.">Añadir dirección</button></div>
+        <div class="dir" style="margin-top:14px"><div><b>Centro Demo <span class="tag">Por defecto</span></b><small>Calle de Ejemplo, 12, 46010 Valencia</small></div>
+          <button type="button" class="btn borde chico" data-toast="Aquí se editaría la dirección.">Editar</button></div>
+      </section>
+
+      <section class="card">
+        <h2>Acceso</h2>
+        <p class="sub" style="margin-bottom:8px">Puedes entrar con un enlace que te enviamos por correo o con Google, siempre con el mismo email.</p>
+        <p class="sub">Si marcas «Mantener la sesión 14 días en este dispositivo», no tendrás que volver a entrar durante dos semanas.</p>
+        <button type="button" class="btn borde" data-toast="Te enviaríamos un correo para cambiar la contraseña.">Cambiar contraseña</button>
       </section>
     </div>
   </main>
 </div>
 <script src="tema.js"></script>
 <script>
-  Tema.shell({ nav: '', badges: { usuarios: 2 } });
   var $ = function (id) { return document.getElementById(id); };
-  $('nav').addEventListener('click', function (e) {
-    var b = e.target.closest('button'); if (!b) return;
-    this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
-    $('s-notif').hidden = b.dataset.s !== 'notif'; $('s-pagos').hidden = b.dataset.s !== 'pagos';
+  var AVISOS = [
+    ['Informe listo', 'Cuando Biotasmart lo revisa y lo libera.'],
+    ['Formulario completado', 'Tu usuario ha rellenado el formulario.'],
+    ['Muestra en laboratorio', 'La muestra ha llegado al laboratorio.'],
+    ['Etiquetas de recogida', 'La etiqueta de envío de cada recogida de muestras en la clínica o en una sede, para imprimirla y pegarla en el paquete, y el aviso cuando empieza una recogida a domicilio.'],
+    ['Formulario pendiente', 'Tu usuario aún no ha rellenado el formulario y su muestra ya está en el laboratorio (aviso a los 3 días y recordatorio a los 7).'],
+    ['Pedidos y pagos', 'Peticiones de pago, pagos recibidos o pedidos emitidos, enlaces de pago a tus usuarios y problemas con un pago.'],
+    ['Facturación', 'Facturas de tus pedidos y recordatorios de facturas pendientes.']
+  ];
+  var OPC = ['Marta Gómez', 'Todas las cuentas de la clínica', 'Otros correos…', 'Nadie'];
+  $('avisos').innerHTML = AVISOS.map(function (a, i) {
+    return '<div class="aviso-fila"><div><b>' + a[0] + '</b><small>' + a[1] + '</small></div><div class="quien"><select data-i="' + i + '" aria-label="Quién recibe «' + a[0] + '»">' +
+      OPC.map(function (o) { return '<option>' + o + '</option>'; }).join('') + '</select><input type="text" placeholder="correo1@ejemplo.com, correo2@ejemplo.com" hidden aria-label="Otros correos"></div></div>';
+  }).join('');
+  $('avisos').addEventListener('change', function (e) {
+    var s = e.target.closest('select'); if (!s) return;
+    s.parentNode.querySelector('input').hidden = s.value !== 'Otros correos…';
+    Tema.toast('Guardado.');
   });
+  $('chkForm').addEventListener('change', function () { Tema.toast(this.checked ? 'Se enviará el formulario al comprador al entregar el paquete.' : 'No se enviará ningún correo: comparte tú el enlace de cada test.'); });
   document.querySelectorAll('[data-toast]').forEach(function (b) { b.addEventListener('click', function () { Tema.toast(b.dataset.toast); }); });
+  // Tipo de consulta: presencial no cobra online (sin Stripe ni formulario por correo al comprador)
+  function aplicarModo(m) { $('sStripe').hidden = m === 'presencial'; $('sForm').hidden = m === 'presencial'; }
+  Tema.shell({ nav: '', badges: { usuarios: 2 },
+    demo: { title: 'Ajustes', label: 'Tipo de consulta:', current: Tema.modo(), steps: [['presencial', 'Presencial'], ['online', 'Online'], ['hibrido', 'Híbrido']],
+      onStep: function (m) { Tema.setModo(m); aplicarModo(m); Tema.setStep(m); } } });
+  aplicarModo(Tema.modo());
 </script>
 </body>
 </html>
