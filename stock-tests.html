@@ -118,6 +118,7 @@
   <div class="m-cab"><span class="ico az">⇄</span><div><h2 id="mvt">Mover de sede</h2><p>Vas a mover <b id="moveN"></b>.</p></div><button type="button" class="cerrar" data-close aria-label="Cerrar">×</button></div>
   <div class="m-cuerpo">
     <div class="m-paso"><span class="m-num">1</span><div><h4>Tubos</h4><div class="chips-s" id="moveChips"></div>
+      <p class="aviso amb" id="moveNota" hidden style="display:block;margin:0 0 10px"></p>
       <h4 style="margin-top:14px">Sede de destino</h4>
       <div class="campo"><select id="moveTo"><option value="">Elige la sede de destino…</option><option>Madrid</option><option>Barcelona</option><option>Mallorca</option></select></div></div></div>
   </div>
@@ -169,10 +170,10 @@
     $('selN').textContent = n; $('selTxt').textContent = n === 1 ? 'test seleccionado' : 'tests seleccionados';
     var sel = Array.from(selected).map(function (c) { return TUBES.filter(function (t) { return t[0] === c; })[0]; });
     var todosLibres = sel.every(function (t) { return !t[4]; });
-    $('aLink').hidden = !todosLibres; $('aMove').hidden = !todosLibres;
+    $('aLink').hidden = !todosLibres; $('aMove').hidden = false;
     $('aLink').disabled = n !== 1;
     $('aFicha').hidden = !(n === 1 && !todosLibres);
-    $('bulkHint').textContent = todosLibres ? '' : (n === 1 ? 'Este tubo ya está con ' + sel[0][4] + ': no se puede vincular otra vez.' : 'Hay tubos que ya están con un usuario: no se pueden vincular ni mover.');
+    $('bulkHint').textContent = todosLibres ? '' : (n === 1 ? 'Este tubo ya está con ' + sel[0][4] + ': no se puede vincular otra vez, pero sí moverlo de sede.' : 'Hay tubos que ya están con un usuario: no se pueden vincular, pero sí mover de sede.');
     $('ckAll').checked = n > 0 && n === visible.length;
     $('ckAll').indeterminate = n > 0 && n < visible.length;
   }
@@ -232,6 +233,9 @@
     var codes = Array.from(selected);
     $('moveN').textContent = codes.length === 1 ? '1 test' : codes.length + ' tests';
     $('moveChips').innerHTML = codes.map(function (c) { return '<span>' + c + ' · ' + TUBES.filter(function (t) { return t[0] === c; })[0][1] + '</span>'; }).join('');
+    var conUsuario = codes.filter(function (c) { return TUBES.filter(function (t) { return t[0] === c; })[0][4]; });
+    $('moveNota').hidden = !conUsuario.length;
+    $('moveNota').textContent = conUsuario.length ? (conUsuario.length === 1 ? 'Este tubo ya está con un usuario: se mueve el tubo de sede, el usuario no cambia.' : conUsuario.length + ' de estos tubos ya están con un usuario: se mueven los tubos de sede, los usuarios no cambian.') : '';
     $('moveTo').value = ''; $('doMove').disabled = true; openM('mMove');
   });
   $('moveTo').addEventListener('change', function () { $('doMove').disabled = !this.value; });

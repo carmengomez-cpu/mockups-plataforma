@@ -163,7 +163,7 @@
           <p class="meta">Acepta y paga la solicitud, o cancélala si ya no la necesitas.</p>
           <div class="chips-r"><span class="est ambar">Pendiente de pago</span><span class="est gris">Enviada el 24/11/2026</span><span class="est gris">Caduca el 24/12/2026</span></div>
         </div>
-        <div class="acciones"><button class="lnk suave" type="button" data-goto="back" id="btn-cancel">Cancelar solicitud</button></div>
+        <div class="acciones"><button class="lnk suave" type="button" id="btn-cancel">Cancelar solicitud</button></div>
       </div>
 
       <div class="addr-line" id="addr-line">
@@ -271,6 +271,12 @@
     </div></div>
   </div>
   <div class="m-pie"><span class="res"></span><div class="bots"><button type="button" class="btn borde" data-close-act>Cancelar</button><button type="button" class="btn negro" id="act-order">Pedir más tests</button><button type="button" class="btn negro" id="act-go" hidden>Vincular test</button></div></div>
+</div>
+
+<!-- ===== Pop-up: confirmar la cancelación ===== -->
+<div class="modal sm" id="m-cancel" hidden role="alertdialog" aria-modal="true" aria-labelledby="cx-title" style="z-index:80">
+  <div class="m-cab"><span class="ico os">!</span><div><h2 id="cx-title">¿Seguro que quieres cancelar la solicitud del pedido?</h2><p>Se perderán los tests que has elegido.</p></div></div>
+  <div class="m-pie"><span class="res"></span><div class="bots"><button type="button" class="btn borde" id="cx-no">No</button><button type="button" class="btn negro" id="cx-si">Sí, cancelar</button></div></div>
 </div>
 
 <!-- ===== Pop-up: completar la sede ===== -->
@@ -409,7 +415,17 @@
     if (t) { e.preventDefault(); if (t.dataset.goto === 'order' && $('view-review').hidden) pendingPatient = null; go(t.dataset.goto); return; }
     var s = e.target.closest('[data-toast]'); if (s) Tema.toast(s.dataset.toast);
   });
-  document.querySelectorAll('[data-close-order]').forEach(function (b) { b.addEventListener('click', function () { go($('view-review').hidden ? origin : 'review'); }); });
+  function cerrarCancel() { $('m-cancel').hidden = true; $('velo').hidden = !(current === 'order' || current === 'activate'); }
+  function salirOrden() {
+    var enRevision = !$('view-review').hidden;
+    if (!enRevision && qty.intestinal + qty.vaginal > 0) { $('velo').hidden = false; $('m-cancel').hidden = false; return; }
+    go(enRevision ? 'review' : origin);
+  }
+  function cancelarSolicitud() { $('m-cancel').hidden = true; $('view-review').hidden = true; qty = { intestinal: 0, vaginal: 0 }; update(); go(origin); }
+  $('cx-no').addEventListener('click', cerrarCancel);
+  $('cx-si').addEventListener('click', cancelarSolicitud);
+  $('btn-cancel').addEventListener('click', function () { $('velo').hidden = false; $('m-cancel').hidden = false; });
+  document.querySelectorAll('[data-close-order]').forEach(function (b) { b.addEventListener('click', function () { salirOrden(); }); });
   $('to-review').addEventListener('click', function () { $('view-review').hidden = false; go('review'); });
 
   /* ---------- Pago ---------- */
@@ -461,14 +477,16 @@
   $('act-new').addEventListener('click', function () { Tema.toast('Aquí se abriría «Nuevo usuario».'); });
 
   $('velo').addEventListener('click', function () {
+    if (!$('m-cancel').hidden) { cerrarCancel(); return; }
     if (!$('m-sede').hidden) { closeSede(); return; }
-    if (current === 'order') go($('view-review').hidden ? origin : 'review');
+    if (current === 'order') salirOrden();
     else if (current === 'activate') go(origin);
   });
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
+    if (!$('m-cancel').hidden) { cerrarCancel(); return; }
     if (!$('m-sede').hidden) { closeSede(); return; }
-    if (current === 'order') go($('view-review').hidden ? origin : 'review'); else if (current === 'activate') go(origin);
+    if (current === 'order') salirOrden(); else if (current === 'activate') go(origin);
   });
 
   /* ---------- Barra de demo y menú ---------- */
