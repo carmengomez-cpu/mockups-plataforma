@@ -245,27 +245,39 @@
     { code: '#999001009001', type: 'Microbiota intestinal (nuevo)', modo: 'stock', recogida: 'En el domicilio del usuario', done: false, state: 'Sin tubo', cues: 'Sin enviar',
       dates: { 'Sin tubo': '26/11/2026' } },
     { code: '#999001008850', type: 'Microbiota intestinal (recogida pedida)', modo: 'stock', recogida: 'En la sede de Madrid', pickupAt: 'Madrid', done: false, state: 'Recogida solicitada', cues: 'Enviado el 12 nov',
-      dates: { 'Sin tubo': '12/11/2026', 'Cuestionario enviado': '12/11/2026', 'Recogida solicitada': '20/11/2026' } }
+      dates: { 'Sin tubo': '12/11/2026', 'Cuestionario enviado': '12/11/2026', 'Recogida solicitada': '20/11/2026' } },
+    { code: '#999001004477', type: 'Microbiota intestinal', modo: 'online', recogida: 'En el domicilio del usuario', done: true, state: 'Informe listo · sin ver', cues: 'Enviado el 2 oct',
+      dates: { 'Sin tubo': '29/09/2026', 'Pendiente de pago': '29/09/2026', 'Envío del test': '01/10/2026', 'Cuestionario enviado': '02/10/2026', 'Recogida solicitada': '05/10/2026', 'Procesando': '12/10/2026', 'Informe listo': '27/10/2026' } },
+    { code: '#999001009002', type: 'Microbiota intestinal (nuevo)', modo: 'online', recogida: 'En el domicilio del usuario', done: false, state: 'Pendiente de pago', cues: 'Sin enviar',
+      dates: { 'Sin tubo': '27/11/2026', 'Pendiente de pago': '27/11/2026' } }
   ] : [];
   var MODO_TXT = { stock: 'Presencial · test del stock del centro: se entrega y se cobra en el centro, sin «Pendiente de pago» ni «Envío del test».',
     online: 'Online · el usuario paga con el enlace y le enviamos el test a casa.' };
   if (CON) curTest = 1;
-  var ORDER = [3, 2, 1, 0];   // del más reciente al más antiguo
+  var ORDER = [5, 4, 3, 2, 1, 0];   // del más reciente al más antiguo
+  // Presencial: solo tests del stock del centro. Online: solo tests online, sin nada de stock. Híbrido: todos.
+  function visibles() { var m = Tema.modo(); return ORDER.filter(function (i) { return m === 'hibrido' || TESTS[i].modo === (m === 'online' ? 'online' : 'stock'); }); }
+  function conStock() { return hasStock && Tema.modo() !== 'online'; }
+  function aplicarModoFicha() {
+    var on = Tema.modo() === 'online';   // online: la barra de demo no ofrece «Con stock / Sin stock»
+    document.querySelectorAll('#demobar [data-step]').forEach(function (b) { b.hidden = on; });
+    var k = document.querySelector('#demobar .k'); if (k) k.hidden = on;
+  }
 
   function renderPerfil() {
     if (CON) {
       var t = TESTS[curTest];
-      $('codeWrap').innerHTML = '<select id="testSel" class="codesel" aria-label="Elegir test">' + ORDER.map(function (i) {
+      $('codeWrap').innerHTML = '<select id="testSel" class="codesel" aria-label="Elegir test">' + visibles().map(function (i) {
         var x = TESTS[i]; return '<option value="' + i + '"' + (i === curTest ? ' selected' : '') + '>' + x.code + ' · ' + (x.done ? 'Informe listo' : 'Informe pendiente') + '</option>';
       }).join('') + '</select>';
       $('testSel').addEventListener('change', function () { curTest = +this.value; renderAll(); });
       $('estado').className = 'est ' + (t.done ? 'verde' : 'ambar'); $('estado').textContent = t.state;
-      $('bLink').textContent = '＋ Vincular nuevo test';
+      $('bLink').textContent = Tema.modo() === 'online' ? '＋ Enviar enlace de pago' : '＋ Vincular nuevo test';
       $('recogida').textContent = t.recogida; $('recRow').hidden = false; var env = !!t.dates['Cuestionario enviado']; $('formSt').className = 'sub-st ' + (env ? 'ok' : 'nn'); $('formSt').textContent = env ? '✓ ' + t.cues : 'Sin enviar';
     } else {
       $('codeWrap').innerHTML = '';
       $('estado').className = 'est gris'; $('estado').textContent = 'Sin test vinculado';
-      $('bLink').textContent = '＋ Vincular test';
+      $('bLink').textContent = Tema.modo() === 'online' ? '＋ Enviar enlace de pago' : '＋ Vincular test';
       $('recRow').hidden = true; $('formSt').className = 'sub-st nn'; $('formSt').textContent = 'Sin enviar';
     }
   }
@@ -296,7 +308,7 @@
       '<div class="card fuera"><div class="t"><span class="n">18</span><div><h3>Fuera del rango</h3><p class="nota">de la población de referencia</p></div></div><div class="f"><span>Alistipes</span><b>15,9 %</b></div></div>';
   }
   function bindToast() { document.querySelectorAll('[data-toast]').forEach(function (b) { if (b._t) return; b._t = 1; b.addEventListener('click', function () { Tema.toast(b.dataset.toast); }); }); }
-  function renderPago() { $('paySede').hidden = !hasStock; $('payOnline').hidden = hasStock; $('paySedeT').textContent = CON ? 'Cobra el test en el centro.' : 'Vincula uno y cóbralo en el centro.'; }
+  function renderPago() { $('paySede').hidden = !conStock(); $('payOnline').hidden = conStock(); $('paySedeT').textContent = CON ? 'Cobra el test en el centro.' : 'Vincula uno y cóbralo en el centro.'; }
   function hoy() { var d = new Date(); return [d.getDate(), d.getMonth() + 1, d.getFullYear()].map(function (n) { return String(n).padStart(2, '0'); }).join('/'); }
   function formRelleno() { return CON && !!TESTS[curTest].dates['Recogida solicitada']; }   // al responder el cuestionario se solicita la recogida
   function abrirForm() { $('velo').hidden = false; $('mForm').hidden = false; }
@@ -324,7 +336,7 @@
     var t = TESTS[curTest]; if (!t.dates['Cuestionario enviado']) t.dates['Cuestionario enviado'] = hoy(); t.dates['Recogida solicitada'] = hoy(); if (t.modo === 'stock') { t.pickupAt = current; t.recogida = 'En la sede de ' + current; } t.state = 'Recogida solicitada'; t.cues = 'Rellenado en consulta el ' + hoy();
     cerrarForm(); renderAll(); Tema.toast('Formulario guardado. Se ha solicitado la recogida.');
   });
-  function renderAll() { renderPerfil(); renderProceso(); renderPanel(); renderPago(); renderForm(); bindToast(); $('bLink').onclick = openLink; }
+  function renderAll() { if (CON && visibles().indexOf(curTest) < 0) curTest = visibles()[0]; aplicarModoFicha(); renderPerfil(); renderProceso(); renderPanel(); renderPago(); renderForm(); bindToast(); $('bLink').onclick = openLink; }
   document.querySelectorAll('.tab-f').forEach(function (t) {
     t.addEventListener('click', function () { document.querySelectorAll('.tab-f').forEach(function (x) { x.classList.toggle('on', x === t); }); curTab = t.dataset.tab; renderPanel(); });
   });
@@ -380,7 +392,7 @@
   }
   $('tlist').addEventListener('click', function (e) { var b = e.target.closest('.opc-big'); if (!b) return; picked = +b.dataset.i; $('doLink').disabled = false; $('tRes').innerHTML = '<b>' + STOCK[picked][0] + '</b> → Lucía Martín'; drawTubes($('tq').value); });
   $('tq').addEventListener('input', function (e) { drawTubes(e.target.value); });
-  function openLink() { if (hasStock) { picked = null; $('tq').value = ''; $('doLink').disabled = true; $('tRes').textContent = 'Elige un tubo.'; drawTubes(); openM('mStock'); } else openM('mNo'); }
+  function openLink() { if (Tema.modo() === 'online') { Tema.toast('Online: se envía un enlace de pago, un test por enlace.'); return; } if (hasStock) { picked = null; $('tq').value = ''; $('doLink').disabled = true; $('tRes').textContent = 'Elige un tubo.'; drawTubes(); openM('mStock'); } else openM('mNo'); }
   $('doLink').addEventListener('click', function () { closeM(); Tema.toast('Test ' + STOCK[picked][0] + ' vinculado a Lucía Martín'); });
   renderAll();
 </script>

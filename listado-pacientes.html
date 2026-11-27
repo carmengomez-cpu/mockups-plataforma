@@ -25,7 +25,7 @@
     <div class="cabecera">
       <div><h1>Usuarios</h1><p class="meta" id="meta"></p></div>
       <div class="acciones">
-        <a class="btn borde" href="activar-test.html?abrir=vincular">Vincular test</a>
+        <a class="btn borde" id="accVincular" href="activar-test.html?abrir=vincular">Vincular test</a>
         <a class="btn negro" href="alta-paciente.html">Nuevo usuario</a>
       </div>
     </div>
@@ -131,6 +131,10 @@
   $('confirm').addEventListener('click', function () {
     D[pend.i][5] = pend.to; var nom = D[pend.i][0], to = pend.to; pend = null; cerrar(); render(); Tema.toast(nom + ' movido a ' + to);
   });
+  // Online no hay stock físico: no se vincula un test del stock
+  function aplicarModo(m) { $('accVincular').hidden = m === 'online'; }
+  document.addEventListener('tema-modo', function (e) { aplicarModo(e.detail); });
+  aplicarModo(Tema.modo());
   render();
 </script>
 </body>
