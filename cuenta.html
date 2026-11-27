@@ -7,14 +7,25 @@
 <title>Mockup · Editar cuenta</title>
 <link rel="stylesheet" href="tema.css">
 <style>
-  .cuenta-card{max-width:760px}
-  .foto{display:flex;align-items:center;gap:20px;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--linea)}
-  .foto .grande-av{width:92px;height:92px;border-radius:50%;background:var(--cobalto2);color:var(--cobalto);display:grid;place-items:center;font:500 32px var(--display);overflow:hidden;flex:none}
+  .cuenta-card{display:grid;grid-template-columns:300px minmax(0,1fr);gap:0 40px;align-items:start}
+  .cuenta-card .datos{min-width:0}
+  .cuenta-card .pie-f{grid-column:1/-1}
+  @media (max-width:900px){.cuenta-card{grid-template-columns:minmax(0,1fr)}.foto{border-right:0!important}}
+  .foto{display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;padding:6px 40px 6px 0;border-right:1px solid var(--linea);align-self:stretch}
+  .foto .grande-av{width:140px;height:140px;border-radius:50%;background:var(--cobalto2);color:var(--cobalto);display:grid;place-items:center;font:500 46px var(--display);overflow:hidden;flex:none}
   .foto .grande-av.sube{background:var(--menta2)}
   .foto small{display:block;color:var(--gris);font-size:12.5px;margin-top:6px}
-  .foto .bots{display:flex;gap:8px;flex-wrap:wrap}
+  .foto .bots{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
   .pie-f{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid var(--linea)}
   .sec-t{font-size:15px;margin:0 0 12px}
+  .dirs{margin-top:16px}
+  .dirs .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px}
+  .dirs h2{font-size:18px;margin:0 0 4px}
+  .dirs .sub{color:var(--gris);font-size:14px;margin:0}
+  .dir{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-top:1px solid var(--linea);margin-top:12px}
+  .dir b{font-family:var(--display);font-weight:500;font-size:15px}
+  .dir .tag{display:inline-block;font-size:12px;padding:2px 10px;border-radius:999px;background:var(--cobalto2);color:var(--cobalto);margin-left:8px;font-weight:400}
+  .dir small{display:block;font-size:14px;color:var(--tinta);margin-top:2px}
 </style>
 </head>
 <body>
@@ -23,7 +34,7 @@
   <main class="main">
     <span class="cel cel-flor2" aria-hidden="true"></span><span class="cel cel-racimo" aria-hidden="true"></span>
     <div class="cabecera">
-      <div><h1>Editar cuenta</h1><p class="meta">Tus datos personales. Los ajustes del centro (notificaciones, pagos…) están en «Ajustes».</p></div>
+      <div><h1>Editar cuenta</h1><p class="meta">Tus datos personales y las direcciones de entrega. Los cobros y avisos están en «Ajustes».</p></div>
       <div class="acciones"><a class="btn borde" href="ajustes.html">Ir a Ajustes</a></div>
     </div>
 
@@ -35,6 +46,7 @@
           <small>JPG o PNG, hasta 5 MB.</small>
         </div>
       </div>
+      <div class="datos">
       <h2 class="sec-t">Datos de la cuenta</h2>
       <div class="campos">
         <label class="campo"><span>Nombre</span><input name="nombre" value="Marta" autocomplete="off"></label>
@@ -44,8 +56,16 @@
         <label class="campo full"><span>Sede</span>
           <select name="sede"><option>Madrid</option><option selected>Valencia</option><option>Barcelona</option><option>Mallorca</option></select></label>
       </div>
+      </div>
       <div class="pie-f"><a class="btn borde" href="inicio.html">Cancelar</a><button type="submit" class="btn negro" id="guardar" disabled>Guardar cambios</button></div>
     </form>
+
+    <section class="card dirs">
+      <div class="top"><div><h2>Direcciones de entrega</h2><p class="sub">Elígelas en el pago en vez de escribirlas cada vez. Las que uses en un pedido se guardan solas.</p></div>
+        <button type="button" class="btn borde" data-toast="Aquí se añadiría una dirección de entrega.">Añadir dirección</button></div>
+      <div class="dir"><div><b>Centro Demo <span class="tag">Por defecto</span></b><small>Calle de Ejemplo, 12, 46010 Valencia</small></div>
+        <button type="button" class="btn borde chico" data-toast="Aquí se editaría la dirección.">Editar</button></div>
+    </section>
   </main>
 </div>
 <script src="tema.js"></script>
@@ -66,6 +86,7 @@
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.correo.value.trim())) { Tema.toast('Escribe un correo válido.'); return; }
     $('guardar').disabled = true; Tema.toast('Cambios guardados.');
   });
+  document.querySelectorAll('[data-toast]').forEach(function (b) { b.addEventListener('click', function () { Tema.toast(b.dataset.toast); }); });
   pintaAv();
 </script>
 </body>
