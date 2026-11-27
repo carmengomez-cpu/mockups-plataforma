@@ -92,7 +92,7 @@
     lista.forEach(function (x) {
       var tipoT = x.enf === 'vag' ? 'vag' : 'int';
       if (x.u) { D.forEach(function (d) { if (d[0] === x.u) { d[2] = tipoT; d[3] = 'pago'; d[4] = 'Enlace de pago enviado hoy'; d[6] = hoy; } }); }
-      else if (!D.some(function (d) { return d[1] === x.email; })) D.unshift(['Pendiente de datos', x.email, tipoT, 'pago', 'Faltan datos: los rellena al pagar', 'Valencia', hoy]);
+      else if (!D.some(function (d) { return d[1] === x.email; })) { var n = [x.email, x.email, tipoT, 'pago', 'Faltan datos: los rellena al pagar', 'Valencia', hoy]; n.faltan = true; D.unshift(n); }
     });
     if (!email) return;   // el aviso solo sale justo después de enviar el enlace
     var ban = document.getElementById('banner'); ban.hidden = false; ban.className = 'aviso verde'; ban.style.cssText = 'display:block;margin-bottom:14px';
@@ -118,7 +118,7 @@
     });
     $('rows').innerHTML = rows.length ? rows.map(function (d) {
       return '<tr class="click" data-href="ficha-con-test.html">' +
-        '<td><div class="who"><span class="av' + (d[2] === 'vag' ? ' vag' : '') + '">' + d[0].split(' ').map(function (x) { return x[0]; }).slice(0, 2).join('').toUpperCase() + '</span><div><b>' + d[0] + '</b><small>' + d[1] + '</small></div></div></td>' +
+        '<td><div class="who"><span class="av' + (d[2] === 'vag' ? ' vag' : '') + '">' + (d.faltan ? '@' : d[0].split(' ').map(function (x) { return x[0]; }).slice(0, 2).join('').toUpperCase()) + '</span><div><b>' + d[0] + '</b><small>' + (d.faltan ? '<span style="color:var(--ambar-tinta);font-weight:500">Faltan los datos del usuario</span>' : d[1]) + '</small></div></div></td>' +
         '<td>' + badge(d[2]) + '</td>' +
         '<td><span class="est ' + CLS[d[3]] + '">' + LABEL[d[3]] + '</span></td>' +
         '<td class="gr">' + d[6] + '</td>' +
