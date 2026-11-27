@@ -53,7 +53,7 @@
     cs.addEventListener('click', function (e) { e.stopPropagation(); menu(cm.hidden); });
     cm.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return; menu(false);
-      var h = o.handlers && o.handlers[b.dataset.m]; if (h) h(); else toast('«' + b.textContent + '» no está en este mockup.');
+      var h = o.handlers && o.handlers[b.dataset.m], pg = { cuenta: 'cuenta.html', ajustes: 'ajustes.html' }[b.dataset.m]; if (h) h(); else if (pg) location.href = base + pg; else toast('«' + b.textContent + '» no está en este mockup.');
     });
     document.addEventListener('click', function () { menu(false); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') menu(false); });

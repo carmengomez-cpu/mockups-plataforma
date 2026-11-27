@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Mockup · Editar cuenta</title>
+<link rel="stylesheet" href="tema.css">
+<style>
+  .cuenta-card{max-width:760px}
+  .foto{display:flex;align-items:center;gap:20px;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--linea)}
+  .foto .grande-av{width:92px;height:92px;border-radius:50%;background:var(--cobalto2);color:var(--cobalto);display:grid;place-items:center;font:500 32px var(--display);overflow:hidden;flex:none}
+  .foto .grande-av.sube{background:var(--menta2)}
+  .foto small{display:block;color:var(--gris);font-size:12.5px;margin-top:6px}
+  .foto .bots{display:flex;gap:8px;flex-wrap:wrap}
+  .pie-f{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid var(--linea)}
+  .sec-t{font-size:15px;margin:0 0 12px}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main">
+    <span class="cel cel-flor2" aria-hidden="true"></span><span class="cel cel-racimo" aria-hidden="true"></span>
+    <div class="cabecera">
+      <div><h1>Editar cuenta</h1><p class="meta">Tus datos personales. Los ajustes del centro (notificaciones, pagos…) están en «Ajustes».</p></div>
+      <div class="acciones"><a class="btn borde" href="ajustes.html">Ir a Ajustes</a></div>
+    </div>
+
+    <form class="card cuenta-card" id="cuenta" novalidate>
+      <div class="foto">
+        <div class="grande-av" id="av">MG</div>
+        <div>
+          <div class="bots"><button type="button" class="btn borde chico" id="subir">Cambiar foto</button><button type="button" class="btn borde chico" id="quitar">Quitar foto</button></div>
+          <small>JPG o PNG, hasta 5 MB.</small>
+        </div>
+      </div>
+      <h2 class="sec-t">Datos de la cuenta</h2>
+      <div class="campos">
+        <label class="campo"><span>Nombre</span><input name="nombre" value="Marta" autocomplete="off"></label>
+        <label class="campo"><span>Apellido</span><input name="apellido" value="Gómez" autocomplete="off"></label>
+        <label class="campo"><span>Correo</span><input name="correo" type="email" value="marta.gomez@ejemplo.com" autocomplete="off"></label>
+        <label class="campo"><span>Teléfono</span><input name="tel" type="tel" value="+34 600 000 000" autocomplete="off"></label>
+        <label class="campo full"><span>Sede</span>
+          <select name="sede"><option>Madrid</option><option selected>Valencia</option><option>Barcelona</option><option>Mallorca</option></select></label>
+      </div>
+      <div class="pie-f"><a class="btn borde" href="inicio.html">Cancelar</a><button type="submit" class="btn negro" id="guardar" disabled>Guardar cambios</button></div>
+    </form>
+  </main>
+</div>
+<script src="tema.js"></script>
+<script>
+  Tema.shell({ nav: '', badges: { usuarios: 2 } });
+  var $ = function (id) { return document.getElementById(id); };
+  var f = $('cuenta');
+  function iniciales() { return ((f.nombre.value.trim()[0] || '') + (f.apellido.value.trim()[0] || '')).toUpperCase() || '·'; }
+  var foto = true;
+  function pintaAv() { $('av').textContent = foto ? iniciales() : '＋'; $('av').classList.toggle('sube', !foto); $('quitar').hidden = !foto; }
+  function cambio() { $('guardar').disabled = false; pintaAv(); }
+  f.addEventListener('input', cambio);
+  $('subir').addEventListener('click', function () { foto = true; cambio(); Tema.toast('Aquí se elegiría la foto de perfil.'); });
+  $('quitar').addEventListener('click', function () { foto = false; cambio(); });
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!f.nombre.value.trim() || !f.apellido.value.trim()) { Tema.toast('Nombre y apellido son obligatorios.'); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.correo.value.trim())) { Tema.toast('Escribe un correo válido.'); return; }
+    $('guardar').disabled = true; Tema.toast('Cambios guardados.');
+  });
+  pintaAv();
+</script>
+</body>
+</html>
