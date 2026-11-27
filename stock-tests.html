@@ -81,9 +81,10 @@
       </div>
 
       <div class="aviso bulk" id="bulk" hidden>
-        <span><b id="selN">1</b> <span id="selTxt">test seleccionado</span></span>
+        <span><b id="selN">1</b> <span id="selTxt">test seleccionado</span> <small id="bulkHint" style="color:var(--gris);margin-left:6px"></small></span>
         <div class="bots">
           <button type="button" class="btn negro chico" id="aLink">Vincular a un usuario</button>
+          <button type="button" class="btn negro chico" id="aFicha" hidden>Ver ficha del usuario</button>
           <button type="button" class="btn borde chico" id="aMove">Mover de sede</button>
           <button type="button" class="btn borde chico" id="aClear">Quitar selección</button>
         </div>
@@ -148,12 +149,11 @@
   }
   function render() {
     var rows = rowsNow(), s = $('sede').value;
-    visible = rows.filter(function (t) { return !t[4]; }).map(function (t) { return t[0]; });
+    visible = rows.map(function (t) { return t[0]; });
     selected = new Set(Array.from(selected).filter(function (c) { return visible.indexOf(c) !== -1; }));
     $('tbody').innerHTML = rows.length ? rows.map(function (t) {
       var libre = !t[4], on = selected.has(t[0]);
-      return '<tr data-code="' + t[0] + '" class="' + (libre ? 'click' : '') + (on ? ' sel' : '') + '"><td class="ck">' +
-        (libre ? '<input type="checkbox" ' + (on ? 'checked' : '') + ' aria-label="Seleccionar ' + t[0] + '">' : '') + '</td>' +
+      return '<tr data-code="' + t[0] + '" class="click' + (on ? ' sel' : '') + '"><td class="ck"><input type="checkbox" ' + (on ? 'checked' : '') + ' aria-label="Seleccionar ' + t[0] + '"></td>' +
         '<td class="cod">' + t[0] + '</td><td>' + badge(t[2]) + '</td><td>' + (libre ? 'Libre' : 'Con ' + t[4]) + '</td><td class="gr">' + t[1] + '</td><td class="gr">' + t[3] + '</td></tr>';
     }).join('') : '<tr><td colspan="6" class="gr" style="text-align:center;padding:30px 0">No hay tubos con estos filtros.</td></tr>';
     var libres = TUBES.filter(function (t) { return !t[4] && (s === 'all' || t[1] === s); }).length;
@@ -167,7 +167,12 @@
     var n = selected.size;
     $('bulk').hidden = n === 0;
     $('selN').textContent = n; $('selTxt').textContent = n === 1 ? 'test seleccionado' : 'tests seleccionados';
+    var sel = Array.from(selected).map(function (c) { return TUBES.filter(function (t) { return t[0] === c; })[0]; });
+    var todosLibres = sel.every(function (t) { return !t[4]; });
+    $('aLink').hidden = !todosLibres; $('aMove').hidden = !todosLibres;
     $('aLink').disabled = n !== 1;
+    $('aFicha').hidden = !(n === 1 && !todosLibres);
+    $('bulkHint').textContent = todosLibres ? '' : (n === 1 ? 'Este tubo ya está con ' + sel[0][4] + ': no se puede vincular otra vez.' : 'Hay tubos que ya están con un usuario: no se pueden vincular ni mover.');
     $('ckAll').checked = n > 0 && n === visible.length;
     $('ckAll').indeterminate = n > 0 && n < visible.length;
   }
@@ -176,6 +181,7 @@
     var c = tr.dataset.code; selected.has(c) ? selected['delete'](c) : selected.add(c); render();
   });
   $('ckAll').addEventListener('change', function () { selected = this.checked ? new Set(visible) : new Set(); render(); });
+  $('aFicha').addEventListener('click', function () { location.href = 'ficha-con-test.html'; });
   $('aClear').addEventListener('click', function () { selected.clear(); render(); });
   $('q').addEventListener('input', function (e) { q = e.target.value.trim().toLowerCase(); render(); });
   $('sede').addEventListener('change', render);

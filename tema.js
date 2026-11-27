@@ -75,6 +75,8 @@
     });
     (d.extra || []).forEach(function (x) { html += x.text ? '<span class="k">' + x.label + '</span>' : '<button type="button" class="' + (x.cls || '') + '" id="' + x.id + '">' + x.label + '</button>'; });
     el.className = 'demobar'; el.innerHTML = html;
+    function alto() { document.documentElement.style.setProperty('--dbh', el.offsetHeight + 'px'); }
+    alto(); window.addEventListener('resize', alto);
     el.addEventListener('click', function (e) {
       var b = e.target.closest('[data-step]'); if (!b) return;
       if (d.onStep) d.onStep(b.dataset.step);

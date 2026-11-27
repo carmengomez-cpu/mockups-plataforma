@@ -11,10 +11,10 @@ Abre cualquier mockup desde la tabla. Todos comparten `tema.css`, `tema.js` y la
 | Usuarios (listado) | [listado-pacientes.html](listado-pacientes.html) | — | 27/11/2026 |
 | Nuevo usuario | [alta-paciente.html](alta-paciente.html) | — | 26/11/2026 |
 | Ficha del usuario (con test y sin test, con aviso de recogida al cambiar de sede · F19) | [ficha-con-test.html](ficha-con-test.html) | [BTV-42](https://biotasmart.atlassian.net/browse/BTV-42) | 27/11/2026 |
-| Stock | [stock-tests.html](stock-tests.html) | — | 26/11/2026 |
+| Stock | [stock-tests.html](stock-tests.html) | — | 27/11/2026 |
 | Pedidos, factura y cancelar solicitud (F16) | [pagos.html](pagos.html) | [BTV-39](https://biotasmart.atlassian.net/browse/BTV-39) | 26/11/2026 |
-| Pedir más tests y revisar la solicitud (F17 / F18) | [pedir-tests.html](pedir-tests.html) | [BTV-40](https://biotasmart.atlassian.net/browse/BTV-40) · [BTV-41](https://biotasmart.atlassian.net/browse/BTV-41) | 26/11/2026 |
-| Vincular test, con pedir tests si no hay stock | [activar-test.html](activar-test.html) | [BTV-40](https://biotasmart.atlassian.net/browse/BTV-40) | 26/11/2026 |
+| Pedir más tests y revisar la solicitud (F17 / F18) | [pedir-tests.html](pedir-tests.html) | [BTV-40](https://biotasmart.atlassian.net/browse/BTV-40) · [BTV-41](https://biotasmart.atlassian.net/browse/BTV-41) | 27/11/2026 |
+| Vincular test, con pedir tests si no hay stock | [activar-test.html](activar-test.html) | [BTV-40](https://biotasmart.atlassian.net/browse/BTV-40) | 27/11/2026 |
 | Editar cuenta: datos personales y direcciones de entrega (desde el desplegable del centro) | [cuenta.html](cuenta.html) | — | 27/11/2026 |
 | Ajustes: cobros con Stripe, avisos y acceso (mismo desplegable) | [ajustes.html](ajustes.html) | — | 27/11/2026 |
 | Estados vacíos | [vacios/index.html](vacios/index.html) | — | 26/11/2026 |

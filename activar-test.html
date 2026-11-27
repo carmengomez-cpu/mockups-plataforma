@@ -76,6 +76,10 @@
   .q-who b{color:var(--tinta);font-weight:500}.q-who.ok{color:var(--verde-tinta)}
 
   .n-stock2{display:none}
+  .cerrar-flota{position:absolute;right:16px;top:14px;z-index:2}
+  #m-order .m-cuerpo{padding-top:34px}
+  #m-order .m-paso{display:block}
+  #m-order .m-paso + .m-paso{margin-top:6px}
 </style>
 </head>
 <body>
@@ -219,11 +223,11 @@
 <div class="velo" id="velo" hidden></div>
 
 <!-- ===== Pop-up: Pedir más tests ===== -->
-<div class="modal" id="m-order" hidden role="dialog" aria-modal="true" aria-labelledby="dlg-title">
-  <div class="m-cab"><span class="ico os">＋</span><div><h2 id="dlg-title">Pedir más tests</h2><p>Para tu consulta: entran en tu stock.</p></div><button type="button" class="cerrar" data-close-order aria-label="Cerrar">×</button></div>
+<div class="modal" id="m-order" hidden role="dialog" aria-modal="true" aria-label="Pedir más tests">
+  <button type="button" class="cerrar cerrar-flota" data-close-order aria-label="Cerrar">×</button>
   <div class="m-cuerpo">
     <div class="act-for" id="order-for" hidden></div>
-    <div class="m-paso"><span class="m-num">1</span><div>
+    <div class="m-paso"><div>
       <h4>Qué test <small>sin mínimo</small></h4>
       <div class="fila-q">
         <div><h3><span class="ba int">Intestinal</span> Test Intestinal Avanzado <span class="tip" tabindex="0" data-tip="[PENDIENTE: texto informativo del Test Intestinal Avanzado]" aria-label="Más información">i</span></h3><small>Informe de la microbiota intestinal</small></div>
@@ -237,7 +241,7 @@
       </div>
       <p class="nota">El usuario se elige al vincular cada test.</p>
     </div></div>
-    <div class="m-paso"><span class="m-num">2</span><div>
+    <div class="m-paso"><div>
       <h4>Resumen</h4>
       <div class="resu" style="margin:0">
         <div class="row"><span>Subtotal · <span data-bind="countText"></span> <small>(sin descuento)</small></span><span data-bind="subtotal"></span></div>

@@ -103,6 +103,7 @@
         <div id="codeWrap"></div>
         <div><span class="est" id="estado"></span></div>
         <button class="btn negro ancho" type="button" id="bLink"></button>
+        <div class="sub-st nn" id="linkHint" hidden style="text-align:center"></div>
 
         <div class="bloque">
           <div class="sends">
@@ -220,7 +221,7 @@
     nav: 'usuarios', badges: { usuarios: 2 },
     demo: { title: CON ? 'Ficha con test' : 'Ficha sin test', label: 'Simular cuenta:', current: 'stock', steps: [['stock', 'Con stock'], ['nostock', 'Sin stock']],
       onStep: function (s) { hasStock = s === 'stock'; Tema.setStep(s); renderPago(); },
-      extra: [{ text: true, label: 'Usuario:' }, { id: 'u-con', label: 'Con test' }, { id: 'u-sin', label: 'Sin test' }, { text: true, label: 'Tipo de consulta:' }, { id: 'm-presencial', label: 'Presencial' }, { id: 'm-online', label: 'Online' }, { id: 'm-hibrido', label: 'Híbrido' }, { text: true, label: 'Recogida en Packlink:' }, { id: 'pl-draft', label: 'Borrador' }, { id: 'pl-acc', label: 'Ya aceptada' }] }
+      extra: [{ text: true, label: 'Usuario:' }, { id: 'u-con', label: 'Con test' }, { id: 'u-sin', label: 'Sin test' }, { text: true, label: 'Tipo de consulta:' }, { id: 'm-presencial', label: 'Presencial' }, { id: 'm-online', label: 'Online' }, { id: 'm-hibrido', label: 'Híbrido' }, { text: true, label: 'Recogida en Packlink:' }, { id: 'pl-draft', label: 'Borrador' }, { id: 'pl-acc', label: 'Ya aceptada' }, { text: true, label: 'Vincular con un test en curso:' }, { id: 'bq-perm', label: 'Permitido' }, { id: 'bq-bloq', label: 'Bloqueado' }, { text: true, label: 'Formulario del test:' }, { id: 'fm-sin', label: 'Sin enviar' }, { id: 'fm-env', label: 'Enviado' }, { id: 'fm-rel', label: 'Rellenado' }] }
   });
   function pintarModo() { ['presencial', 'online', 'hibrido'].forEach(function (m) { $('m-' + m).classList.toggle('on', Tema.modo() === m); }); }
   ['presencial', 'online', 'hibrido'].forEach(function (m) { $('m-' + m).addEventListener('click', function () { Tema.setModo(m); pintarModo(); renderAll(); }); });
@@ -232,6 +233,12 @@
   $('pl-draft').addEventListener('click', function () { plMode = 'draft'; pintarPl(); });
   $('pl-acc').addEventListener('click', function () { plMode = 'accepted'; pintarPl(); });
   pintarPl();
+  var bloqueo = false;   // ¿se puede vincular un test nuevo mientras el último sigue en proceso?
+  function pintarBq() { $('bq-perm').classList.toggle('on', !bloqueo); $('bq-bloq').classList.toggle('on', bloqueo); }
+  $('bq-perm').addEventListener('click', function () { bloqueo = false; pintarBq(); renderAll(); });
+  $('bq-bloq').addEventListener('click', function () { bloqueo = true; pintarBq(); renderAll(); });
+  pintarBq();
+  ['sin', 'env', 'rel'].forEach(function (e) { $('fm-' + e).addEventListener('click', function () { estadoFormulario(e); }); });
   pintarModo();
 
   // ===== Estados del test (F12) =====
@@ -253,10 +260,16 @@
   ] : [];
   var MODO_TXT = { stock: 'Presencial · test del stock del centro: se entrega y se cobra en el centro, sin «Pendiente de pago» ni «Envío del test».',
     online: 'Online · el usuario paga con el enlace y le enviamos el test a casa.' };
-  if (CON) curTest = 1;
+  var PRIMERO = true;
   var ORDER = [5, 4, 3, 2, 1, 0];   // del más reciente al más antiguo
   // Presencial: solo tests del stock del centro. Online: solo tests online, sin nada de stock. Híbrido: todos.
-  function visibles() { var m = Tema.modo(); return ORDER.filter(function (i) { return m === 'hibrido' || TESTS[i].modo === (m === 'online' ? 'online' : 'stock'); }); }
+  function visibles() { var m = Tema.modo(); return TESTS.map(function (t, i) { return i; }).reverse().filter(function (i) { return m === 'hibrido' || TESTS[i].modo === (m === 'online' ? 'online' : 'stock'); }); }
+  function elegirInicial() {
+    var v = visibles(), m = Tema.modo();
+    var sinEnviar = v.filter(function (i) { return !TESTS[i].done && !TESTS[i].dates['Cuestionario enviado']; });
+    var propios = sinEnviar.filter(function (i) { return TESTS[i].modo === (m === 'online' ? 'online' : 'stock'); });
+    return propios.length ? propios[0] : (sinEnviar.length ? sinEnviar[0] : v[0]);
+  }
   function conStock() { return hasStock && Tema.modo() !== 'online'; }
   function aplicarModoFicha() {
     var on = Tema.modo() === 'online';   // online: la barra de demo no ofrece «Con stock / Sin stock»
@@ -336,7 +349,41 @@
     var t = TESTS[curTest]; if (!t.dates['Cuestionario enviado']) t.dates['Cuestionario enviado'] = hoy(); t.dates['Recogida solicitada'] = hoy(); if (t.modo === 'stock') { t.pickupAt = current; t.recogida = 'En la sede de ' + current; } t.state = 'Recogida solicitada'; t.cues = 'Rellenado en consulta el ' + hoy();
     cerrarForm(); renderAll(); Tema.toast('Formulario guardado. Se ha solicitado la recogida.');
   });
-  function renderAll() { if (CON && visibles().indexOf(curTest) < 0) curTest = visibles()[0]; aplicarModoFicha(); renderPerfil(); renderProceso(); renderPanel(); renderPago(); renderForm(); bindToast(); $('bLink').onclick = openLink; }
+  function ultimo() { var v = visibles(); return CON && v.length ? TESTS[v[0]] : null; }
+  var FLUJOS = { online: ['Sin tubo', 'Pendiente de pago', 'Envío del test'], stock: ['Sin tubo'] };
+  function estadoFormulario(e) {   // solo para la demo: coloca el formulario del test actual en uno de los tres casos
+    var t = CON ? TESTS[curTest] : null;
+    if (!t) { Tema.toast('Este usuario aún no tiene ningún test.'); return; }
+    if (t.done) { Tema.toast('Este test ya tiene informe. Elige otro en el desplegable.'); return; }
+    delete t.dates['Cuestionario enviado']; delete t.dates['Recogida solicitada']; delete t.pickupAt;
+    var d = hoy();
+    if (e === 'sin') {
+      var previos = FLUJOS[t.modo].filter(function (x) { return t.dates[x]; });
+      t.state = previos.length ? previos[previos.length - 1] : 'Sin tubo'; t.cues = 'Sin enviar';
+      if (t.modo === 'stock') t.recogida = 'En el domicilio del usuario';
+    } else if (e === 'env') { t.dates['Cuestionario enviado'] = d; t.state = 'Cuestionario enviado'; t.cues = 'Enviado el ' + d; }
+    else { t.dates['Cuestionario enviado'] = d; t.dates['Recogida solicitada'] = d; t.state = 'Recogida solicitada'; t.cues = 'Rellenado en consulta el ' + d;
+      if (t.modo === 'stock') { t.pickupAt = current; t.recogida = 'En la sede de ' + current; } }
+    renderAll();
+  }
+  function renderLink() {
+    var tt = CON ? TESTS[curTest] : null, fs_ = !tt ? '' : (tt.dates['Recogida solicitada'] ? 'rel' : (tt.dates['Cuestionario enviado'] ? 'env' : 'sin'));
+    ['sin', 'env', 'rel'].forEach(function (e) { $('fm-' + e).classList.toggle('on', fs_ === e); });
+    var u = ultimo(), b = $('bLink'), enCurso = !!u && !u.done;
+    b.disabled = bloqueo && enCurso;
+    $('linkHint').hidden = !(bloqueo && enCurso);
+    if (u) $('linkHint').textContent = 'Podrás vincular otro test cuando termine el actual (' + u.code + ').';
+  }
+  // Crea el test nuevo y lo deja como el actual: empieza desde el principio del proceso
+  function nuevoTest(code, tipoTxt, online) {
+    var d = hoy(), t = online
+      ? { code: code, type: 'Microbiota ' + tipoTxt, modo: 'online', recogida: 'En el domicilio del usuario', done: false, state: 'Pendiente de pago', cues: 'Sin enviar', dates: { 'Sin tubo': d, 'Pendiente de pago': d } }
+      : { code: code, type: 'Microbiota ' + tipoTxt, modo: 'stock', recogida: 'En el domicilio del usuario', done: false, state: 'Sin tubo', cues: 'Sin enviar', dates: { 'Sin tubo': d } };
+    TESTS.push(t); curTest = TESTS.length - 1; CON = true; curTab = 'informe';
+    document.querySelectorAll('.tab-f').forEach(function (x) { x.classList.toggle('on', x.dataset.tab === 'informe'); });
+    renderAll();
+  }
+  function renderAll() { if (CON && PRIMERO) { PRIMERO = false; curTest = elegirInicial(); } if (CON && visibles().indexOf(curTest) < 0) curTest = elegirInicial(); aplicarModoFicha(); renderPerfil(); renderProceso(); renderPanel(); renderPago(); renderForm(); renderLink(); bindToast(); $('bLink').onclick = openLink; }
   document.querySelectorAll('.tab-f').forEach(function (t) {
     t.addEventListener('click', function () { document.querySelectorAll('.tab-f').forEach(function (x) { x.classList.toggle('on', x === t); }); curTab = t.dataset.tab; renderPanel(); });
   });
@@ -392,8 +439,8 @@
   }
   $('tlist').addEventListener('click', function (e) { var b = e.target.closest('.opc-big'); if (!b) return; picked = +b.dataset.i; $('doLink').disabled = false; $('tRes').innerHTML = '<b>' + STOCK[picked][0] + '</b> → Lucía Martín'; drawTubes($('tq').value); });
   $('tq').addEventListener('input', function (e) { drawTubes(e.target.value); });
-  function openLink() { if (Tema.modo() === 'online') { Tema.toast('Online: se envía un enlace de pago, un test por enlace.'); return; } if (hasStock) { picked = null; $('tq').value = ''; $('doLink').disabled = true; $('tRes').textContent = 'Elige un tubo.'; drawTubes(); openM('mStock'); } else openM('mNo'); }
-  $('doLink').addEventListener('click', function () { closeM(); Tema.toast('Test ' + STOCK[picked][0] + ' vinculado a Lucía Martín'); });
+  function openLink() { if (Tema.modo() === 'online') { nuevoTest('#9990010' + String(Math.floor(Math.random() * 90000) + 10000), 'intestinal', true); Tema.toast('Enlace de pago enviado a Lucía Martín. El test queda «Pendiente de pago».'); return; } if (hasStock) { picked = null; $('tq').value = ''; $('doLink').disabled = true; $('tRes').textContent = 'Elige un tubo.'; drawTubes(); openM('mStock'); } else openM('mNo'); }
+  $('doLink').addEventListener('click', function () { var tb = STOCK[picked]; closeM(); nuevoTest(tb[0], /Vaginal/.test(tb[1]) ? 'vaginal' : 'intestinal', false); Tema.toast('Test ' + tb[0] + ' vinculado a Lucía Martín. Empieza en «Sin tubo».'); });
   renderAll();
 </script>
 </body>

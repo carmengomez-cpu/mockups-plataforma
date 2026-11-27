@@ -27,7 +27,7 @@ p{margin:0}
 input[type=checkbox],input[type=radio]{accent-color:var(--cobalto)}
 
 /* ===== Barra de demo (no forma parte del producto) ===== */
-.demobar{position:sticky;top:0;z-index:40;min-height:38px;display:flex;align-items:center;gap:6px;padding:5px 14px;background:#161616;color:#fff;font-family:var(--display);font-size:12.5px;overflow-x:auto;white-space:nowrap}
+.demobar{position:sticky;top:0;z-index:40;min-height:38px;display:flex;align-items:center;gap:6px;padding:5px 14px;background:#161616;color:#fff;font-family:var(--display);font-size:12.5px;flex-wrap:wrap;row-gap:4px}
 .demobar b{font-weight:500;margin-right:6px}
 .demobar .k{color:#B9BCBE;margin:0 2px 0 8px}
 .demobar button{border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:1px 10px;color:#fff;font-size:12px;line-height:1.7;flex:none}
@@ -37,9 +37,9 @@ input[type=checkbox],input[type=radio]{accent-color:var(--cobalto)}
 
 /* ===== Estructura ===== */
 .shell{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
-.has-demobar .shell{min-height:calc(100vh - 38px)}
+.has-demobar .shell{min-height:calc(100vh - var(--dbh,38px))}
 .side{border-right:1px solid var(--linea);padding:26px 18px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto}
-.has-demobar .side{top:38px;height:calc(100vh - 38px)}
+.has-demobar .side{top:var(--dbh,38px);height:calc(100vh - var(--dbh,38px))}
 .side>*{flex:0 0 auto}
 .side .logo{height:18px;width:130px;display:block;align-self:flex-start;margin:0 8px 26px}
 .centro-sel{display:block;width:calc(100% - 8px);margin:0 4px 14px;background:var(--blanco);border-radius:14px;padding:10px 30px 10px 12px;box-shadow:var(--blk-sombra);position:relative;line-height:1.35}
