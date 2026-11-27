@@ -398,10 +398,16 @@
   $('cancel').addEventListener('click', function () { sel.value = current; closeM(); });
   // F10 confirma el cambio; F19 avisa si el test está en «Recogida solicitada» en la sede de antes
   $('confirm').addEventListener('click', function () {
-    var t = CON ? TESTS[curTest] : null;
-    if (t && t.state === 'Recogida solicitada' && t.pickupAt && t.pickupAt !== pendingTo) { $('mSede').hidden = true; openPick(t); return; }
+    var t = CON ? testConRecogida() : null;
+    if (t) { pickT = t; $('mSede').hidden = true; openPick(t); return; }
     current = pendingTo; closeM(); Tema.toast('Usuario movido a ' + current);
   });
+  var pickT = null;
+  // Cualquier test del usuario con la recogida solicitada en otra sede (no solo el que se está viendo)
+  function testConRecogida() {
+    var c = TESTS.filter(function (x) { return x.state === 'Recogida solicitada' && x.pickupAt && x.pickupAt !== pendingTo; });
+    return c.indexOf(TESTS[curTest]) >= 0 ? TESTS[curTest] : (c[c.length - 1] || null);
+  }
   function openPick(t) {
     document.querySelectorAll('#ovPick .from').forEach(function (x) { x.textContent = t.pickupAt; });
     document.querySelectorAll('#ovPick .to').forEach(function (x) { x.textContent = pendingTo; });
@@ -414,7 +420,7 @@
   function syncOpts() { document.querySelectorAll('#ovPick .opc-big').forEach(function (o) { o.classList.toggle('on', o.querySelector('input').checked); }); }
   function backPick() { $('ovPick').hidden = true; $('mSede').hidden = false; }
   function donePick() {
-    var v = document.querySelector('input[name="pk"]:checked').value, t = TESTS[curTest], d = hoy();
+    var v = document.querySelector('input[name="pk"]:checked').value, t = pickT, d = hoy();
     var antes = t.pickupAt; current = pendingTo;
     if (v === 'new') {
       t.pickupAt = pendingTo;
