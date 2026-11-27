@@ -78,19 +78,28 @@
     ['Diego Alonso', 'diego.alonso@ejemplo.com', 'int', 'rep', 'Test hecho hace 6 meses', 'Barcelona', '28 may']
   ];
   var SEDES = ['Madrid', 'Barcelona', 'Valencia'];
-  // Llegada desde «Nuevo enlace de pago» (Inicio): el usuario aparece con el test pendiente de pago
+  // Enlaces de pago enviados desde Inicio (se guardan en la sesión): el usuario aparece en la lista como «Pendiente de pago»
   (function () {
-    var P = new URLSearchParams(location.search), email = P.get('enlace'); if (!email) return;
-    var enf = P.get('enf'), tipoT = enf === 'vag' ? 'vag' : 'int', existente = P.get('u'), hoy = '27 nov';
-    ESTADOS.splice(1, 0, ['pago', 'Pendiente de pago']);
-    var ban = document.getElementById('banner'); ban.hidden = false; ban.className = 'aviso verde'; ban.style.cssText = 'display:block;margin-bottom:14px';
-    if (existente) {
-      D.forEach(function (d) { if (d[0] === existente) { d[2] = tipoT; d[3] = 'pago'; d[4] = 'Enlace de pago enviado hoy'; d[6] = hoy; } });
-      ban.innerHTML = '<b>Enlace de pago enviado a ' + existente + '</b> (' + email + '). Su test queda «Pendiente de pago» hasta que pague en Stripe.';
-    } else {
-      D.unshift(['Pendiente de datos', email, tipoT, 'pago', 'Faltan datos: los rellena al pagar', 'Valencia', hoy]);
-      ban.innerHTML = '<b>Enlace de pago enviado a ' + email + '.</b> Hemos creado el usuario solo con el email. Faltan sus datos (nombre, teléfono, dirección…): los rellenará él mismo mientras paga en Stripe.';
+    var lista = []; try { lista = JSON.parse(sessionStorage.getItem('tema-enlaces') || '[]'); } catch (e) {}
+    var P = new URLSearchParams(location.search), email = P.get('enlace');
+    if (email && !lista.some(function (x) { return x.email === email; })) {
+      lista.push({ email: email, enf: P.get('enf'), u: P.get('u') || '' });
+      try { sessionStorage.setItem('tema-enlaces', JSON.stringify(lista)); } catch (e) {}
     }
+    if (!lista.length) return;
+    var hoy = '27 nov';
+    ESTADOS.splice(1, 0, ['pago', 'Pendiente de pago']);
+    lista.forEach(function (x) {
+      var tipoT = x.enf === 'vag' ? 'vag' : 'int';
+      if (x.u) { D.forEach(function (d) { if (d[0] === x.u) { d[2] = tipoT; d[3] = 'pago'; d[4] = 'Enlace de pago enviado hoy'; d[6] = hoy; } }); }
+      else if (!D.some(function (d) { return d[1] === x.email; })) D.unshift(['Pendiente de datos', x.email, tipoT, 'pago', 'Faltan datos: los rellena al pagar', 'Valencia', hoy]);
+    });
+    if (!email) return;   // el aviso solo sale justo después de enviar el enlace
+    var ban = document.getElementById('banner'); ban.hidden = false; ban.className = 'aviso verde'; ban.style.cssText = 'display:block;margin-bottom:14px';
+    var u = P.get('u');
+    ban.innerHTML = u
+      ? '<b>Enlace de pago enviado a ' + u + '</b> (' + email + '). Su test queda «Pendiente de pago» hasta que pague en Stripe.'
+      : '<b>Enlace de pago enviado a ' + email + '.</b> Hemos creado el usuario solo con el email. Faltan sus datos (nombre, teléfono, dirección…): los rellenará él mismo mientras paga en Stripe.';
   })();
   D.forEach(function (d, i) { d.i = i; });
   var tipo = '', est = '', q = '';
